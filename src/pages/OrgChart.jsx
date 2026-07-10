@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import { buildOrgTree } from '../data/orgChart.js';
 import SectionCard from '../components/ui/SectionCard.jsx';
-import AreaNode from '../components/orgchart/AreaNode.jsx';
+import OrgVizTree from '../components/orgchart/OrgVizTree.jsx';
 import EmployeeSearch from '../components/orgchart/EmployeeSearch.jsx';
 import { formatNumber } from '../utils/format.js';
 
@@ -15,7 +15,7 @@ export default function OrgChart() {
       <div className="page-header">
         <div>
           <h1>Organograma</h1>
-          <p className="page-subtitle">Estrutura organizacional por área — clique para expandir gestores e ver o time</p>
+          <p className="page-subtitle">Clique em uma área ou gestor para expandir o time — use os controles de zoom para navegar</p>
         </div>
         <EmployeeSearch employees={metrics.activeNow} />
       </div>
@@ -36,9 +36,7 @@ export default function OrgChart() {
         </SectionCard>
       </div>
 
-      <div>
-        {tree.areas.map((area) => <AreaNode key={area.name} area={area} />)}
-      </div>
+      <OrgVizTree company={tree.company} areas={tree.areas} />
     </div>
   );
 }

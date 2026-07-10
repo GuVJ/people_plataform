@@ -22,6 +22,7 @@ import Dados from './pages/Dados.jsx';
 import OrgChart from './pages/OrgChart.jsx';
 import EmployeeProfile from './pages/EmployeeProfile.jsx';
 import EmployeeDirectory from './pages/EmployeeDirectory.jsx';
+import ManagerView from './pages/ManagerView.jsx';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/funcionarios" element={<EmployeeDirectory />} />
                 <Route path="/dados" element={<Dados />} />
                 <Route path="/organograma" element={<OrgChart />} />
+                <Route path="/gestor" element={<ManagerView />} />
                 <Route path="/funcionario/:id" element={<EmployeeProfile />} />
               </Route>
             </Routes>
