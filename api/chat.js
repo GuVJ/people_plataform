@@ -39,7 +39,14 @@ ${JSON.stringify(context ?? {}, null, 2)}`;
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemInstruction }] },
           contents: [{ role: 'user', parts: [{ text: message }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 500 },
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 1024,
+            // gemini-2.5-flash has extended "thinking" on by default, which eats into
+            // maxOutputTokens before the visible answer is written — leading to answers
+            // truncated mid-sentence. This is a quick Q&A use case, not a reasoning task.
+            thinkingConfig: { thinkingBudget: 0 },
+          },
         }),
       },
     );

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MiniMarkdown from './MiniMarkdown.jsx';
 import BarChart from '../ui/BarChart.jsx';
 import Table from '../ui/Table.jsx';
+import EmployeeCard from './EmployeeCard.jsx';
 import './ChatMessage.css';
 
 export default function ChatMessage({ message }) {
@@ -23,18 +24,20 @@ export default function ChatMessage({ message }) {
     );
   }
 
-  const { text, chart, table, recommendations, financialImpact, source } = message.content;
+  const { text, chart, table, recommendations, financialImpact, source, employeeCard } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
       <div className="chat-avatar-ai">✦</div>
       <div className="chat-bubble chat-bubble-assistant">
-        {source && (
+        {source && !employeeCard && (
           <span className={`chat-source-badge chat-source-${source}`}>
             {source === 'gemini' ? '✦ Gemini' : '⚙ Motor local'}
           </span>
         )}
         <MiniMarkdown text={text} />
+
+        {employeeCard && <EmployeeCard employee={employeeCard} />}
 
         {chart && (
           <div className="chat-chart">

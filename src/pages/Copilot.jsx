@@ -34,12 +34,16 @@ export default function Copilot() {
     const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk });
     let answer = { ...localAnswer, source: 'local' };
 
-    try {
-      const context = buildCopilotContext({ metrics, insights, risk });
-      const geminiText = await askGemini(q, context);
-      answer = { ...localAnswer, text: geminiText, source: 'gemini' };
-    } catch {
-      // Gemini not configured yet or request failed — the grounded local answer above still stands.
+    // Employee lookups are a deterministic card, not a generative summary — skip the Gemini
+    // round-trip entirely so the profile always shows up instantly and doesn't get reworded.
+    if (!localAnswer.employeeCard) {
+      try {
+        const context = buildCopilotContext({ metrics, insights, risk });
+        const geminiText = await askGemini(q, context);
+        answer = { ...localAnswer, text: geminiText, source: 'gemini' };
+      } catch {
+        // Gemini not configured yet or request failed — the grounded local answer above still stands.
+      }
     }
 
     setMessages((m) => [...m, { role: 'assistant', content: answer }]);

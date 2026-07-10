@@ -1,4 +1,5 @@
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
+import { diffInYears } from '../utils/dates.js';
 
 const SUGGESTED_PROMPTS = [
   'Por que o turnover aumentou?',
@@ -17,11 +18,60 @@ function has(text, ...keywords) {
   return keywords.some((k) => text.includes(k));
 }
 
+// A chart earns its place only when the question actually asks for a breakdown/ranking/
+// comparison — a single-fact question ("qual é o headcount total?") reads better as just
+// a number in the text than as a bar chart the user didn't ask to see.
+function wantsBreakdown(q) {
+  return has(
+    q,
+    'por area', 'por área', 'por gestor', 'por unidade', 'por regiao', 'por região',
+    'distribui', 'ranking', 'quais area', 'quais área', 'cada area', 'cada área',
+    'comparar', 'comparaç', 'onde estao', 'onde estão', 'top ', 'maiores', 'menores', 'motivo',
+  );
+}
+
+// Looks for a specific colleague named in the question (needs >=2 matching name tokens to
+// avoid one common first name accidentally matching the wrong person).
+function findEmployeeMention(q, activeNow) {
+  const qTokens = new Set(q.split(/\s+/).filter((t) => t.length > 2));
+  let best = null;
+  let bestScore = 0;
+  for (const e of activeNow) {
+    const nameTokens = normalize(e.name).split(/\s+/).filter((t) => t.length > 2);
+    const matches = nameTokens.filter((t) => qTokens.has(t)).length;
+    if (matches >= 2 && matches > bestScore) {
+      bestScore = matches;
+      best = e;
+    }
+  }
+  return best;
+}
+
 export function answerQuestion(question, ctx) {
   const { metrics, forecasts, insights, risk } = ctx;
   const q = normalize(question);
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
+
+  const mentionedEmployee = findEmployeeMention(q, metrics.activeNow);
+  if (mentionedEmployee) {
+    const riskEntry = risk.find((r) => r.id === mentionedEmployee.id);
+    return {
+      text: `Encontrei **${mentionedEmployee.name}** no quadro atual — aqui está o resumo:`,
+      employeeCard: {
+        id: mentionedEmployee.id,
+        name: mentionedEmployee.name,
+        roleLevel: mentionedEmployee.roleLevel,
+        area: mentionedEmployee.area,
+        managerName: mentionedEmployee.managerName,
+        tenureYears: diffInYears(mentionedEmployee.admissionDate, metrics.referenceDate),
+        performanceBucket: mentionedEmployee.performanceBucket,
+        potential: mentionedEmployee.potential,
+        engagementScore: mentionedEmployee.engagementScore,
+        risk: riskEntry ? { score: riskEntry.score, level: riskEntry.level } : null,
+      },
+    };
+  }
 
   if (has(q, 'turnover', 'rotativ')) {
     const turn = last(metrics.turnoverSeries);
@@ -109,24 +159,27 @@ export function answerQuestion(question, ctx) {
 
   if (has(q, 'absenteismo', 'falta')) {
     const last12 = metrics.absenteeismSeries.slice(-12).reduce((s, a) => s + a.totalDays, 0);
+    const breakdown = wantsBreakdown(q);
     return {
-      text: `O índice de absenteísmo do último mês fechado é ${formatPercent(last(metrics.absenteeismSeries).rate)}, totalizando ${formatNumber(last12)} dias perdidos nos últimos 12 meses. O principal motivo registrado é "${metrics.absenteeismByReason[0]?.reason}".`,
-      chart: { type: 'bar', title: 'Motivos de absenteísmo', data: metrics.absenteeismByReason, valueKey: 'days', labelKey: 'reason', formatValue: (v) => formatNumber(v) },
+      text: `O índice de absenteísmo do último mês fechado é ${formatPercent(last(metrics.absenteeismSeries).rate)}, totalizando ${formatNumber(last12)} dias perdidos nos últimos 12 meses.${breakdown ? ` O principal motivo registrado é "${metrics.absenteeismByReason[0]?.reason}".` : ''}`,
+      chart: breakdown ? { type: 'bar', title: 'Motivos de absenteísmo', data: metrics.absenteeismByReason, valueKey: 'days', labelKey: 'reason', formatValue: (v) => formatNumber(v) } : undefined,
     };
   }
 
   if (has(q, 'headcount', 'quadro', 'colaboradores')) {
+    const breakdown = wantsBreakdown(q);
     return {
-      text: `O headcount ativo atual é de ${formatNumber(metrics.activeNow.length)} colaboradores, distribuídos principalmente em ${metrics.headcountByArea[0].area} (${formatNumber(metrics.headcountByArea[0].count)}) e ${metrics.headcountByArea[1].area} (${formatNumber(metrics.headcountByArea[1].count)}).`,
-      chart: { type: 'bar', title: 'Headcount por área', data: metrics.headcountByArea, valueKey: 'count', labelKey: 'area', formatValue: (v) => formatNumber(v) },
+      text: `O headcount ativo atual é de ${formatNumber(metrics.activeNow.length)} colaboradores${breakdown ? `, distribuídos principalmente em ${metrics.headcountByArea[0].area} (${formatNumber(metrics.headcountByArea[0].count)}) e ${metrics.headcountByArea[1].area} (${formatNumber(metrics.headcountByArea[1].count)})` : ''}.`,
+      chart: breakdown ? { type: 'bar', title: 'Headcount por área', data: metrics.headcountByArea, valueKey: 'count', labelKey: 'area', formatValue: (v) => formatNumber(v) } : undefined,
     };
   }
 
   if (has(q, 'horas extras', 'hora extra')) {
     const last12 = metrics.overtimeSeries.slice(-12).reduce((s, o) => s + o.cost, 0);
+    const breakdown = wantsBreakdown(q);
     return {
-      text: `O custo de horas extras nos últimos 12 meses somou ${formatCurrency(last12, { compact: true })}, com a área ${metrics.overtimeByArea[0]?.area} concentrando o maior volume.`,
-      chart: { type: 'bar', title: 'Custo de horas extras por área', data: metrics.overtimeByArea, valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) },
+      text: `O custo de horas extras nos últimos 12 meses somou ${formatCurrency(last12, { compact: true })}${breakdown ? `, com a área ${metrics.overtimeByArea[0]?.area} concentrando o maior volume` : ''}.`,
+      chart: breakdown ? { type: 'bar', title: 'Custo de horas extras por área', data: metrics.overtimeByArea, valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) } : undefined,
     };
   }
 
