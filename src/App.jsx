@@ -19,6 +19,8 @@ import Planning from './pages/Planning.jsx';
 import Benchmark from './pages/Benchmark.jsx';
 import Reports from './pages/Reports.jsx';
 import Dados from './pages/Dados.jsx';
+import OrgChart from './pages/OrgChart.jsx';
+import EmployeeProfile from './pages/EmployeeProfile.jsx';
 
 function App() {
   return (
@@ -43,6 +45,8 @@ function App() {
                 <Route path="/benchmark" element={<Benchmark />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/dados" element={<Dados />} />
+                <Route path="/organograma" element={<OrgChart />} />
+                <Route path="/funcionario/:id" element={<EmployeeProfile />} />
               </Route>
             </Routes>
           </BrowserRouter>

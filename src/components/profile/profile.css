@@ -1,0 +1,232 @@
+.ai-insight-panel {
+  padding: 18px 20px;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-surface) 60%);
+}
+
+.ai-insight-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-insight-icon {
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.ai-insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.ai-insight-badge {
+  font-size: 10px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.profile-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.profile-role {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 3px;
+}
+
+.profile-meta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.profile-meta-row a {
+  color: var(--color-primary);
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 20px;
+}
+
+@media (max-width: 900px) {
+  .fact-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.fact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fact-label {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.fact-value {
+  font-size: 13.5px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.benefit-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.benefit-chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
+}
+
+.profile-stat-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12.5px;
+}
+
+.profile-stat-row:last-child {
+  border-bottom: none;
+}
+
+.profile-stat-label {
+  color: var(--color-text-secondary);
+}
+
+.profile-stat-value {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.risk-factor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+
+.team-row:hover {
+  background: var(--color-surface-subtle);
+}
+
+.training-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.profile-not-found {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.org-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.org-report-name {
+  display: block;
+  font-size: 12.5px;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.org-report-role {
+  display: block;
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.risk-factor-chip {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.risk-factor-chip.up {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.risk-factor-chip.down {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}

@@ -6,6 +6,7 @@ import './TopBar.css';
 
 const DASHBOARD_LINKS = [
   { to: '/workforce', label: 'Workforce' },
+  { to: '/organograma', label: 'Organograma' },
   { to: '/turnover', label: 'Turnover' },
   { to: '/recruitment', label: 'Recrutamento' },
   { to: '/absenteeism', label: 'Absenteísmo' },

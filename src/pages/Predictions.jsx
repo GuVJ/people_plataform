@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
@@ -70,7 +71,7 @@ export default function Predictions() {
       <SectionCard title="Colaboradores com maior risco de saída" subtitle="Score calculado a partir de tenure, engajamento, clima, salário, horas extras e absenteísmo">
         <Table
           columns={[
-            { key: 'name', label: 'Nome' },
+            { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
             { key: 'area', label: 'Área' },
             { key: 'managerName', label: 'Gestor' },
             { key: 'score', label: 'Score', align: 'right' },

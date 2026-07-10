@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
@@ -70,7 +71,7 @@ export default function Performance() {
       <SectionCard title="Talentos críticos" subtitle="Alto desempenho e alto potencial — priorizar planos de retenção">
         <Table
           columns={[
-            { key: 'name', label: 'Nome' },
+            { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
             { key: 'area', label: 'Área' },
             { key: 'roleLevel', label: 'Cargo' },
             { key: 'managerName', label: 'Gestor' },
