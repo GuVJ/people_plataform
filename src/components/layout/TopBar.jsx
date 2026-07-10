@@ -22,6 +22,7 @@ const PRIMARY_LINKS = [
   { to: '/planning', label: 'Planejamento' },
   { to: '/benchmark', label: 'Benchmark' },
   { to: '/reports', label: 'Relatórios' },
+  { to: '/funcionarios', label: 'Funcionários' },
   { to: '/dados', label: 'Dados' },
 ];
 
