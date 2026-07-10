@@ -1,0 +1,61 @@
+.relationship-map {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.relationship-hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  text-align: center;
+}
+
+.relationship-hub-badge {
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.relationship-hub-caption {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+
+.relationship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relationship-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-subtle);
+  font-size: 11.5px;
+  flex-wrap: wrap;
+}
+
+.relationship-from,
+.relationship-to {
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  color: var(--color-text);
+}
+
+.relationship-arrow {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.relationship-cardinality {
+  margin-left: auto;
+}

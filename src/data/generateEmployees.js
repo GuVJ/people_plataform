@@ -32,7 +32,7 @@ function pickName(rng, gender) {
   return `${pick(rng, pool)} ${pick(rng, LAST_NAMES)} ${pick(rng, LAST_NAMES)}`;
 }
 
-function resolveGeneration(birthYear) {
+export function resolveGeneration(birthYear) {
   if (birthYear >= 1997) return 'Geração Z';
   if (birthYear >= 1981) return 'Millennial';
   if (birthYear >= 1965) return 'Geração X';

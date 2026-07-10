@@ -18,6 +18,7 @@ import Predictions from './pages/Predictions.jsx';
 import Planning from './pages/Planning.jsx';
 import Benchmark from './pages/Benchmark.jsx';
 import Reports from './pages/Reports.jsx';
+import Dados from './pages/Dados.jsx';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/planning" element={<Planning />} />
                 <Route path="/benchmark" element={<Benchmark />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/dados" element={<Dados />} />
               </Route>
             </Routes>
           </BrowserRouter>

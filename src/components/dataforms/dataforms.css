@@ -1,0 +1,127 @@
+.dform-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 16px;
+}
+
+@media (max-width: 680px) {
+  .dform-grid { grid-template-columns: 1fr; }
+}
+
+.dform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dform-field-full {
+  grid-column: 1 / -1;
+}
+
+.dform-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.dform-required {
+  color: var(--color-primary);
+}
+
+.dform-hint {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.dform-input,
+.dform-select {
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  width: 100%;
+}
+
+.dform-input:focus,
+.dform-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.dform-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+.dform-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+.dform-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.dform-feedback {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  margin-top: 4px;
+}
+
+.dform-feedback-success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.dform-feedback-error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.dform-feedback-error ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+
+.dform-recent {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.dform-recent-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.import-panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.import-result {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.import-result-summary {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
