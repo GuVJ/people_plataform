@@ -85,6 +85,16 @@
   font-size: 10px;
 }
 
+.line-chart-axis-label {
+  font-size: 9.5px;
+  fill: var(--color-text-tertiary);
+}
+
+.line-chart-value-label {
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
 .donut-center-value {
   font-size: 20px;
   font-weight: 700;

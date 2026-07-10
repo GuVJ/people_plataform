@@ -1,18 +1,18 @@
 import './charts.css';
 
-export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220 }) {
+export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220, formatValue = (v) => `${Math.round(v)}` }) {
   const width = 640;
-  const padTop = 16;
+  const padTop = 20;
   const padBottom = 26;
-  const padLeft = 8;
-  const padRight = 8;
+  const padLeft = 52;
+  const padRight = 12;
   const plotH = height - padTop - padBottom;
   const plotW = width - padLeft - padRight;
 
   const allPoints = [...history.map((h) => ({ ...h, kind: 'history' })), ...forecast.map((f) => ({ ...f, kind: 'forecast' }))];
   const values = [...history.map((h) => h.y), ...forecast.flatMap((f) => [f.low, f.high, f.y])];
   const min = Math.min(...values, 0);
-  const max = Math.max(...values) * 1.08;
+  const max = Math.max(...values) * 1.08 || 1;
   const range = max - min || 1;
 
   const n = allPoints.length;
@@ -38,9 +38,26 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
   ];
   const bandPath = [...bandTop, ...bandBottom].join(' ') + ' Z';
 
+  const GRID_STEPS = 4;
+  const gridLines = Array.from({ length: GRID_STEPS + 1 }, (_, i) => min + (range * i) / GRID_STEPS);
+
+  const lastHistory = history[history.length - 1];
+  const lastForecast = forecast[forecast.length - 1];
+  const clampLabelY = (y) => Math.min(Math.max(y, padTop + 10), height - padBottom - 4);
+
   return (
     <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg" width="100%" height={height}>
-      <line x1={padLeft} y1={yAt(0)} x2={width - padRight} y2={yAt(0)} stroke="var(--color-border)" strokeWidth="1" />
+      {gridLines.map((v, i) => {
+        const label = formatValue(v);
+        const isDuplicate = i > 0 && label === formatValue(gridLines[i - 1]);
+        return (
+          <g key={`grid-${i}`}>
+            <line x1={padLeft} y1={yAt(v)} x2={width - padRight} y2={yAt(v)} stroke="var(--color-border)" strokeWidth="1" strokeDasharray={v === 0 ? undefined : '3 4'} />
+            {!isDuplicate && <text x={padLeft - 8} y={yAt(v)} textAnchor="end" dominantBaseline="middle" className="line-chart-axis-label">{label}</text>}
+          </g>
+        );
+      })}
+
       <path d={bandPath} fill={color} opacity="0.1" stroke="none" />
       <path d={historyPath} fill="none" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       <path d={forecastPath} fill="none" stroke={color} strokeWidth="2.2" strokeDasharray="5 4" strokeLinecap="round" strokeLinejoin="round" />
@@ -50,9 +67,21 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
       {forecast.map((f, i) => (
         <circle key={`f-${i}`} cx={xAt(forecastStartIdx + 1 + i)} cy={yAt(f.y)} r="2.8" fill="var(--color-surface)" stroke={color} strokeWidth="2" />
       ))}
+
+      {lastHistory && (
+        <text x={xAt(history.length - 1)} y={clampLabelY(yAt(lastHistory.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+          {formatValue(lastHistory.y)}
+        </text>
+      )}
+      {lastForecast && (
+        <text x={xAt(n - 1)} y={clampLabelY(yAt(lastForecast.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+          {formatValue(lastForecast.y)}
+        </text>
+      )}
+
       {allPoints.map((p, i) => (
         (i % Math.ceil(n / 10) === 0 || i === n - 1) && (
-          <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle">{p.label}</text>
+          <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle" className="line-chart-axis-label">{p.label}</text>
         )
       ))}
       <rect x={xAt(forecastStartIdx)} y={padTop} width={plotW - forecastStartIdx * stepX} height={plotH} fill="var(--color-surface-subtle)" opacity="0.35" />

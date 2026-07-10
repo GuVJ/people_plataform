@@ -62,7 +62,7 @@ export default function Recruitment() {
 
       <div className="grid grid-cols-2">
         <SectionCard title="Tempo para contratar" subtitle="Evolução mensal (dias)">
-          <LineChart history={timeToHireHistory} />
+          <LineChart history={timeToHireHistory} formatValue={(v) => `${formatNumber(v, 0)}d`} />
         </SectionCard>
         <SectionCard title="SLA por área" subtitle="Tempo médio de contratação (dias)">
           <BarChart data={recruitment.byAreaTimeToHire} valueKey="days" labelKey="area" color="var(--color-navy)" formatValue={(v) => `${formatNumber(v)}d`} />

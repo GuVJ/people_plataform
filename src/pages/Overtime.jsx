@@ -47,7 +47,7 @@ export default function Overtime() {
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <SectionCard title="Evolução do custo de horas extras" subtitle="Últimos 12 meses">
-          <LineChart history={history} />
+          <LineChart history={history} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
         <SectionCard title="Ranking de áreas" subtitle="Custo acumulado (24 meses)">
           <BarChart data={metrics.overtimeByArea} valueKey="cost" labelKey="area" formatValue={(v) => formatCurrency(v, { compact: true })} />

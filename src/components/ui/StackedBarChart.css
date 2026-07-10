@@ -36,6 +36,18 @@
 .stacked-chart-seg {
   width: 100%;
   transition: height 0.5s var(--ease-out);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.stacked-chart-seg-label {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
 }
 
 .stacked-chart-label {

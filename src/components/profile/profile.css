@@ -230,3 +230,72 @@
   background: var(--color-success-bg);
   color: var(--color-success);
 }
+
+.comparison-row {
+  margin-bottom: 16px;
+}
+
+.comparison-row:last-child {
+  margin-bottom: 0;
+}
+
+.comparison-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.comparison-label {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+.comparison-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comparison-delta {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+}
+
+.comparison-delta.good { background: var(--color-success-bg); color: var(--color-success); }
+.comparison-delta.bad { background: var(--color-danger-bg); color: var(--color-danger); }
+.comparison-delta.neutral { background: var(--color-surface-subtle); color: var(--color-text-tertiary); }
+
+.comparison-track {
+  position: relative;
+  height: 8px;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-pill);
+  margin-bottom: 4px;
+}
+
+.comparison-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+  transition: width 0.6s var(--ease-out);
+}
+
+.comparison-reference-marker {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 14px;
+  background: var(--color-text);
+  opacity: 0.4;
+}
+
+.comparison-reference-label {
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+}

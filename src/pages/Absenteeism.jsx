@@ -48,7 +48,7 @@ export default function Absenteeism() {
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <SectionCard title="Tendência de absenteísmo" subtitle="Últimos 12 meses">
-          <LineChart history={history} />
+          <LineChart history={history} formatValue={(v) => formatPercent(v)} />
         </SectionCard>
         <SectionCard title="Motivos de ausência" subtitle="Últimos 24 meses">
           <BarChart data={metrics.absenteeismByReason} valueKey="days" labelKey="reason" color="var(--chart-5)" formatValue={(v) => formatNumber(v)} />

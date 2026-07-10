@@ -48,7 +48,7 @@ export default function Predictions() {
               subtitle={`Projeção para os próximos 3 meses`}
               action={<span className={`badge ${isGood ? 'badge-success' : 'badge-warning'}`}>{trendUp ? '↑' : '↓'} {formatNumber(Math.abs(f.result.trendPct), 1)}%</span>}
             >
-              <LineChart history={f.result.history} forecast={f.result.forecast} />
+              <LineChart history={f.result.history} forecast={f.result.forecast} formatValue={(v) => formatByType(v, f.format)} />
               <div className="forecast-footer">
                 <span>Último real: <strong>{formatByType(f.result.history.at(-1).y, f.format)}</strong></span>
                 <span>Projeção ({f.result.forecast.at(-1).label}): <strong>{formatByType(f.result.forecast.at(-1).y, f.format)}</strong></span>

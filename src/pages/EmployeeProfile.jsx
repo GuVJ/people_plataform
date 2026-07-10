@@ -3,11 +3,13 @@ import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
 import { usePreferences } from '../context/PreferencesContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
-import Sparkline from '../components/ui/Sparkline.jsx';
+import LineChart from '../components/ui/LineChart.jsx';
 import AIInsightPanel from '../components/profile/AIInsightPanel.jsx';
+import ComparisonBar from '../components/profile/ComparisonBar.jsx';
 import EmployeeSearch from '../components/orgchart/EmployeeSearch.jsx';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { buildLocalEmployeeInsight, buildEmployeeCopilotContext } from '../data/employeeInsight.js';
+import { buildEmployeeBenchmark } from '../data/employeeBenchmark.js';
 import { monthKey } from '../utils/dates.js';
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import '../components/profile/profile.css';
@@ -36,14 +38,20 @@ export default function EmployeeProfile() {
     [employees, employee],
   );
 
+  const benchmark = useMemo(
+    () => (employee ? buildEmployeeBenchmark({ employee, riskEntry, activeNow: metrics.activeNow, risk }) : null),
+    [employee, riskEntry, metrics.activeNow, risk],
+  );
+
   const monthlySeries = useMemo(() => {
     if (!employee) return { absence: [], overtime: [] };
     const recentMonths = metrics.months.slice(-12);
+    const recentLabels = metrics.labels.slice(-12);
     return {
-      absence: recentMonths.map((m) => employee.monthlyAbsence.get(monthKey(m))?.days ?? 0),
-      overtime: recentMonths.map((m) => employee.monthlyOvertime.get(monthKey(m)) ?? 0),
+      absence: recentMonths.map((m, i) => ({ month: m, label: recentLabels[i], y: employee.monthlyAbsence.get(monthKey(m))?.days ?? 0 })),
+      overtime: recentMonths.map((m, i) => ({ month: m, label: recentLabels[i], y: employee.monthlyOvertime.get(monthKey(m)) ?? 0 })),
     };
-  }, [employee, metrics.months]);
+  }, [employee, metrics.months, metrics.labels]);
 
   if (!employee) {
     return (
@@ -150,6 +158,11 @@ export default function EmployeeProfile() {
                   <span className={`badge badge-${RISK_LEVEL_COLOR[riskEntry.level]}`}>{riskEntry.level} · {riskEntry.score}/100</span>
                 </span>
               </div>
+              {benchmark.riskPercentile !== null && (
+                <p className="text-secondary" style={{ fontSize: 11.5, marginTop: -2, marginBottom: 8 }}>
+                  Risco maior que {benchmark.riskPercentile}% dos colaboradores de {employee.area}.
+                </p>
+              )}
               <div className="risk-factor-list">
                 {riskEntry.factors.map((f, i) => (
                   <span key={i} className={`risk-factor-chip ${f.impact > 0 ? 'up' : 'down'}`} style={{ alignSelf: 'flex-start' }}>
@@ -162,12 +175,61 @@ export default function EmployeeProfile() {
         </SectionCard>
       </div>
 
+      <div style={{ marginBottom: 16 }}>
+        <SectionCard title="Comparativos" subtitle={`Frente aos ${benchmark.areaPeerCount} colaboradores ativos de ${employee.area}`}>
+          <div className="grid grid-cols-2">
+            <div>
+              <ComparisonBar
+                label="Salário"
+                value={benchmark.salary.value}
+                reference={benchmark.salary.reference}
+                diffPct={benchmark.salary.diffPct}
+                format={(v) => formatCurrency(v, { compact: true })}
+                referenceLabel="mediana da área"
+                higherIsBetter={null}
+              />
+              <ComparisonBar
+                label="Engajamento"
+                value={benchmark.engagement.value}
+                reference={benchmark.engagement.referenceCompany}
+                diffPct={benchmark.engagement.diffPct}
+                format={(v) => formatPercent(v)}
+                referenceLabel="média da empresa"
+                higherIsBetter
+              />
+            </div>
+            <div>
+              {benchmark.performance && (
+                <ComparisonBar
+                  label="Desempenho"
+                  value={benchmark.performance.value}
+                  reference={benchmark.performance.reference}
+                  diffPct={benchmark.performance.diffPct}
+                  format={(v) => formatNumber(v, 1)}
+                  referenceLabel="média da área"
+                  higherIsBetter
+                />
+              )}
+              <ComparisonBar
+                label="Tempo de casa"
+                value={benchmark.tenure.value}
+                reference={benchmark.tenure.reference}
+                diffPct={benchmark.tenure.diffPct}
+                format={(v) => `${formatNumber(v, 1)} anos`}
+                referenceLabel="média da área"
+                higherIsBetter={null}
+              />
+            </div>
+          </div>
+        </SectionCard>
+      </div>
+
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <SectionCard title="Absenteísmo" subtitle="Dias perdidos por mês — últimos 12 meses">
-          <Sparkline values={monthlySeries.absence.length > 1 ? monthlySeries.absence : [0, 0]} width={260} height={60} color="var(--color-warning)" />
+          <LineChart history={monthlySeries.absence} color="var(--color-warning)" height={160} formatValue={(v) => formatNumber(v, 0)} />
         </SectionCard>
         <SectionCard title="Horas extras" subtitle="Horas por mês — últimos 12 meses">
-          <Sparkline values={monthlySeries.overtime.length > 1 ? monthlySeries.overtime : [0, 0]} width={260} height={60} color="var(--color-info)" />
+          <LineChart history={monthlySeries.overtime} color="var(--color-info)" height={160} formatValue={(v) => formatNumber(v, 0)} />
         </SectionCard>
       </div>
 
