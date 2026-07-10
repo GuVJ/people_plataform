@@ -9,6 +9,7 @@ import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { buildManagerView } from '../data/managerView.js';
 import { buildLocalManagerInsight, buildManagerCopilotContext } from '../data/managerInsight.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
+import { PRIMARY_RGB } from '../utils/colors.js';
 import './ManagerView.css';
 
 function initials(name) {
@@ -106,7 +107,7 @@ export default function ManagerView() {
                 {view.nineBoxGrid.map((c, i) => {
                   const intensity = 0.08 + (c.count / maxNineBox) * 0.7;
                   return (
-                    <div key={i} className="manager-ninebox-cell" style={{ background: `rgba(230, 17, 126, ${intensity})`, color: intensity > 0.45 ? '#fff' : 'var(--color-text)' }}>
+                    <div key={i} className="manager-ninebox-cell" style={{ background: `rgba(${PRIMARY_RGB}, ${intensity})`, color: intensity > 0.45 ? '#fff' : 'var(--color-text)' }}>
                       <span className="manager-ninebox-count">{c.count}</span>
                       <span className="manager-ninebox-caption">{c.performance} / {c.potential}</span>
                     </div>

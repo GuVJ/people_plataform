@@ -1,0 +1,12 @@
+.year-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.year-chart-target-swatch {
+  background: repeating-linear-gradient(90deg, var(--color-text-tertiary) 0 4px, transparent 4px 7px);
+  border-radius: 0;
+  height: 2px;
+  align-self: center;
+}

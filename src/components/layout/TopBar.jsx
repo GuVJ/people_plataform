@@ -21,6 +21,7 @@ const PRIMARY_LINKS = [
   { to: '/copilot', label: 'Copiloto IA' },
   { to: '/predictions', label: 'Preditivo' },
   { to: '/planning', label: 'Planejamento' },
+  { to: '/orcamento', label: 'Orçamento' },
   { to: '/benchmark', label: 'Benchmark' },
   { to: '/reports', label: 'Relatórios' },
   { to: '/funcionarios', label: 'Funcionários' },

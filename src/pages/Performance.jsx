@@ -5,6 +5,7 @@ import BarChart from '../components/ui/BarChart.jsx';
 import Table from '../components/ui/Table.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
+import { PRIMARY_RGB } from '../utils/colors.js';
 import './Performance.css';
 
 function NineBox({ grid }) {
@@ -14,7 +15,7 @@ function NineBox({ grid }) {
       {grid.map((cell, i) => {
         const intensity = 0.1 + (cell.count / max) * 0.7;
         return (
-          <div key={i} className="nine-box-cell" style={{ background: `rgba(230, 17, 126, ${intensity})`, color: intensity > 0.45 ? '#fff' : 'var(--color-text)' }}>
+          <div key={i} className="nine-box-cell" style={{ background: `rgba(${PRIMARY_RGB}, ${intensity})`, color: intensity > 0.45 ? '#fff' : 'var(--color-text)' }}>
             <span className="nine-box-count">{cell.count}</span>
             <span className="nine-box-caption">{cell.performance} perf. / {cell.potential} pot.</span>
           </div>

@@ -1,0 +1,99 @@
+.budget-edit-year-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.budget-edit-year-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.budget-edit-year-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.budget-edit-saved-flash {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-success);
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.budget-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 720px) {
+  .budget-edit-grid { grid-template-columns: 1fr; }
+}
+
+.budget-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.budget-edit-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.budget-edit-hint {
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 4px;
+}
+
+.budget-edit-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.budget-edit-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.budget-edit-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.budget-edit-unit {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  min-width: 56px;
+}
+
+.budget-edit-preview {
+  font-size: 12.5px;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.budget-edit-default-note {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}

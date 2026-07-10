@@ -1,4 +1,5 @@
 import './HeatmapTable.css';
+import { PRIMARY_RGB } from '../../utils/colors.js';
 
 // rows: [{ label, values: { colKey: number }, total }]
 // cols: [{ key, label }]
@@ -23,7 +24,7 @@ export default function HeatmapTable({ rows, cols, formatValue = (v) => v }) {
                 const v = r.values[c.key] ?? 0;
                 const alpha = v > 0 ? Math.min(0.9, 0.12 + (v / max) * 0.78) : 0;
                 return (
-                  <td key={c.key} className="heatmap-cell" style={{ background: `rgba(230, 17, 126, ${alpha})`, color: alpha > 0.5 ? '#fff' : 'var(--color-text)' }}>
+                  <td key={c.key} className="heatmap-cell" style={{ background: `rgba(${PRIMARY_RGB}, ${alpha})`, color: alpha > 0.5 ? '#fff' : 'var(--color-text)' }}>
                     {v > 0 ? formatValue(v) : '—'}
                   </td>
                 );

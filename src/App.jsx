@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PreferencesProvider } from './context/PreferencesContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { DataProvider } from './context/DataContext.jsx';
+import { BudgetProvider } from './context/BudgetContext.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
 
 import Home from './pages/Home.jsx';
@@ -23,37 +24,43 @@ import OrgChart from './pages/OrgChart.jsx';
 import EmployeeProfile from './pages/EmployeeProfile.jsx';
 import EmployeeDirectory from './pages/EmployeeDirectory.jsx';
 import ManagerView from './pages/ManagerView.jsx';
+import Budget from './pages/Budget.jsx';
+import BudgetEdit from './pages/BudgetEdit.jsx';
 
 function App() {
   return (
     <PreferencesProvider>
       <AuthProvider>
         <DataProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route element={<AppLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/workforce" element={<Workforce />} />
-                <Route path="/turnover" element={<Turnover />} />
-                <Route path="/recruitment" element={<Recruitment />} />
-                <Route path="/absenteeism" element={<Absenteeism />} />
-                <Route path="/overtime" element={<Overtime />} />
-                <Route path="/diversity" element={<Diversity />} />
-                <Route path="/training" element={<Training />} />
-                <Route path="/performance" element={<Performance />} />
-                <Route path="/copilot" element={<Copilot />} />
-                <Route path="/predictions" element={<Predictions />} />
-                <Route path="/planning" element={<Planning />} />
-                <Route path="/benchmark" element={<Benchmark />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/funcionarios" element={<EmployeeDirectory />} />
-                <Route path="/dados" element={<Dados />} />
-                <Route path="/organograma" element={<OrgChart />} />
-                <Route path="/gestor" element={<ManagerView />} />
-                <Route path="/funcionario/:id" element={<EmployeeProfile />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+          <BudgetProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route element={<AppLayout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/workforce" element={<Workforce />} />
+                  <Route path="/turnover" element={<Turnover />} />
+                  <Route path="/recruitment" element={<Recruitment />} />
+                  <Route path="/absenteeism" element={<Absenteeism />} />
+                  <Route path="/overtime" element={<Overtime />} />
+                  <Route path="/diversity" element={<Diversity />} />
+                  <Route path="/training" element={<Training />} />
+                  <Route path="/performance" element={<Performance />} />
+                  <Route path="/copilot" element={<Copilot />} />
+                  <Route path="/predictions" element={<Predictions />} />
+                  <Route path="/planning" element={<Planning />} />
+                  <Route path="/benchmark" element={<Benchmark />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/funcionarios" element={<EmployeeDirectory />} />
+                  <Route path="/dados" element={<Dados />} />
+                  <Route path="/organograma" element={<OrgChart />} />
+                  <Route path="/gestor" element={<ManagerView />} />
+                  <Route path="/funcionario/:id" element={<EmployeeProfile />} />
+                  <Route path="/orcamento" element={<Budget />} />
+                  <Route path="/orcamento/metas" element={<BudgetEdit />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </BudgetProvider>
         </DataProvider>
       </AuthProvider>
     </PreferencesProvider>
