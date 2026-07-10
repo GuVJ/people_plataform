@@ -1,0 +1,33 @@
+.forecast-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.risk-factors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 360px;
+}
+
+.risk-factor-chip {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.risk-factor-chip.up {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.risk-factor-chip.down {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}

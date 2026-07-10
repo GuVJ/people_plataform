@@ -1,0 +1,54 @@
+.planning-label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.planning-slider {
+  width: 100%;
+  accent-color: var(--color-primary);
+  height: 4px;
+}
+
+.planning-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+}
+
+.planning-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.planning-summary-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.planning-summary-label {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+}
+
+.planning-summary-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.planning-summary-delta {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.planning-summary-delta.good { color: var(--color-success); }
+.planning-summary-delta.bad { color: var(--color-danger); }
+
+.value-good { color: var(--color-success); }
+.value-bad { color: var(--color-danger); }

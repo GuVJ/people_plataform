@@ -1,0 +1,49 @@
+.nine-box {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px 4px 22px 60px;
+}
+
+.nine-box-cell {
+  aspect-ratio: 1.3;
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: background 0.4s var(--ease-out);
+}
+
+.nine-box-count {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.nine-box-caption {
+  font-size: 9.5px;
+  text-align: center;
+  opacity: 0.85;
+  padding: 0 6px;
+}
+
+.nine-box-axis {
+  position: absolute;
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-weight: 600;
+}
+
+.nine-box-axis-x {
+  bottom: 0;
+  left: 60px;
+}
+
+.nine-box-axis-y {
+  left: -4px;
+  top: 50%;
+  transform: rotate(-90deg) translateX(50%);
+  transform-origin: left center;
+}
