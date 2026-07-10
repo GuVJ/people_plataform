@@ -124,3 +124,23 @@
 .chat-copy-btn:hover {
   color: var(--color-primary);
 }
+
+.chat-source-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.chat-source-gemini {
+  background: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+.chat-source-local {
+  background: var(--color-surface-subtle);
+  color: var(--color-text-tertiary);
+}

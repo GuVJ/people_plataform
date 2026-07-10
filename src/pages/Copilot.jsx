@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import ChatMessage from '../components/copilot/ChatMessage.jsx';
 import { answerQuestion, SUGGESTED_PROMPTS } from '../data/copilotEngine.js';
+import { buildCopilotContext } from '../data/copilotContext.js';
+import { askGemini } from '../data/geminiClient.js';
 import './Copilot.css';
 
 const INITIAL_MESSAGE = {
@@ -22,17 +24,26 @@ export default function Copilot() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, thinking]);
 
-  function send(question) {
+  async function send(question) {
     const q = question.trim();
     if (!q || thinking) return;
     setMessages((m) => [...m, { role: 'user', content: q }]);
     setInput('');
     setThinking(true);
-    setTimeout(() => {
-      const answer = answerQuestion(q, { metrics, forecasts, insights, risk });
-      setMessages((m) => [...m, { role: 'assistant', content: answer }]);
-      setThinking(false);
-    }, 550);
+
+    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk });
+    let answer = { ...localAnswer, source: 'local' };
+
+    try {
+      const context = buildCopilotContext({ metrics, insights, risk });
+      const geminiText = await askGemini(q, context);
+      answer = { ...localAnswer, text: geminiText, source: 'gemini' };
+    } catch {
+      // Gemini not configured yet or request failed — the grounded local answer above still stands.
+    }
+
+    setMessages((m) => [...m, { role: 'assistant', content: answer }]);
+    setThinking(false);
   }
 
   return (

@@ -23,12 +23,17 @@ export default function ChatMessage({ message }) {
     );
   }
 
-  const { text, chart, table, recommendations, financialImpact } = message.content;
+  const { text, chart, table, recommendations, financialImpact, source } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
       <div className="chat-avatar-ai">✦</div>
       <div className="chat-bubble chat-bubble-assistant">
+        {source && (
+          <span className={`chat-source-badge chat-source-${source}`}>
+            {source === 'gemini' ? '✦ Gemini' : '⚙ Motor local'}
+          </span>
+        )}
         <MiniMarkdown text={text} />
 
         {chart && (
