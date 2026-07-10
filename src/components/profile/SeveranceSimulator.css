@@ -1,0 +1,89 @@
+.severance-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.severance-tab {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.severance-tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.severance-tab.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.severance-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.severance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.severance-row:last-child {
+  border-bottom: none;
+}
+
+.severance-row-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.severance-row-desc {
+  display: block;
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+  margin-top: 1px;
+}
+
+.severance-row-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.severance-row-value.zero {
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.severance-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 2px solid var(--color-border-strong);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.severance-total-value {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--color-primary);
+}

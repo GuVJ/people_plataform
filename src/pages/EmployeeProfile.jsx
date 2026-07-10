@@ -6,6 +6,7 @@ import SectionCard from '../components/ui/SectionCard.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import AIInsightPanel from '../components/profile/AIInsightPanel.jsx';
 import ComparisonBar from '../components/profile/ComparisonBar.jsx';
+import SeveranceSimulator from '../components/profile/SeveranceSimulator.jsx';
 import EmployeeSearch from '../components/orgchart/EmployeeSearch.jsx';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { buildLocalEmployeeInsight, buildEmployeeCopilotContext } from '../data/employeeInsight.js';
@@ -223,6 +224,14 @@ export default function EmployeeProfile() {
           </div>
         </SectionCard>
       </div>
+
+      {employee.status === 'Ativo' && (
+        <div style={{ marginBottom: 16 }}>
+          <SectionCard title="Simulação de custo de rescisão" subtitle="Estimativa CLT para desligamento na data de hoje">
+            <SeveranceSimulator employee={employee} referenceDate={metrics.referenceDate} privacyMode={privacyMode} />
+          </SectionCard>
+        </div>
+      )}
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <SectionCard title="Absenteísmo" subtitle="Dias perdidos por mês — últimos 12 meses">
