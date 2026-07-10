@@ -33,7 +33,10 @@ export default function Predictions() {
           <h1>Preditivo &amp; Machine Learning</h1>
           <p className="page-subtitle">Modelos de previsão para os principais indicadores e classificação de risco de saída</p>
         </div>
-        <ExportButton filename="risco_colaboradores" sheetName="Risco" rows={exportRows} />
+        <div style={{ display: 'flex', gap: 10 }}>
+          <Link to="/organograma" className="btn btn-sm">Ver organograma</Link>
+          <ExportButton filename="risco_colaboradores" sheetName="Risco" rows={exportRows} />
+        </div>
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>

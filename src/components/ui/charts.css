@@ -90,6 +90,10 @@
   fill: var(--color-text-tertiary);
 }
 
+.line-chart-month-label {
+  font-size: 8.3px;
+}
+
 .line-chart-value-label {
   font-size: 10.5px;
   font-weight: 700;

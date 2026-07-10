@@ -80,9 +80,7 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
       )}
 
       {allPoints.map((p, i) => (
-        (i % Math.ceil(n / 10) === 0 || i === n - 1) && (
-          <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle" className="line-chart-axis-label">{p.label}</text>
-        )
+        <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle" className="line-chart-axis-label line-chart-month-label">{p.label}</text>
       ))}
       <rect x={xAt(forecastStartIdx)} y={padTop} width={plotW - forecastStartIdx * stepX} height={plotH} fill="var(--color-surface-subtle)" opacity="0.35" />
     </svg>
