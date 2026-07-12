@@ -52,10 +52,10 @@ export function computeRiskForEmployees(activeNow, months) {
     const salaryGapPct = ((e.salary - medianSalary) / (medianSalary || 1)) * 100;
     if (salaryGapPct < -12) {
       score += 16;
-      factors.push({ label: 'Salário abaixo da mediana da área', impact: 16 });
+      factors.push({ label: 'Salário abaixo da mediana da diretoria', impact: 16 });
     } else if (salaryGapPct > 15) {
       score -= 5;
-      factors.push({ label: 'Salário acima da mediana da área', impact: -5 });
+      factors.push({ label: 'Salário acima da mediana da diretoria', impact: -5 });
     }
 
     const recentOvertime = recentAverage(e.monthlyOvertime, recentKeys);

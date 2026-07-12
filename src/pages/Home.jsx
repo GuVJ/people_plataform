@@ -13,7 +13,7 @@ const QUICK_LINKS = [
   { to: '/turnover', label: 'Turnover', desc: 'Rotatividade voluntária e involuntária' },
   { to: '/recruitment', label: 'Recrutamento', desc: 'Funil, SLA e fontes de candidatos' },
   { to: '/absenteeism', label: 'Absenteísmo', desc: 'Índice, motivos e tendências' },
-  { to: '/overtime', label: 'Horas Extras', desc: 'Evolução, custo e ranking por área' },
+  { to: '/overtime', label: 'Horas Extras', desc: 'Evolução, custo e ranking por diretoria' },
   { to: '/diversity', label: 'Diversidade', desc: 'Gênero, raça, gerações e liderança' },
   { to: '/training', label: 'Treinamentos', desc: 'Horas, participação e ROI' },
   { to: '/performance', label: 'Desempenho', desc: 'Nine box, potenciais e talentos críticos' },

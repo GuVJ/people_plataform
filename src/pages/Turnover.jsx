@@ -18,7 +18,7 @@ export default function Turnover() {
   const last12Cost = last12.reduce((s, t) => s + t.cost, 0);
 
   const exportRows = metrics.turnoverByArea.map((a) => ({
-    Área: a.area, Desligamentos: a.count, 'Taxa (%)': a.rate.toFixed(2), 'Custo estimado': a.cost.toFixed(2),
+    Diretoria: a.area, Desligamentos: a.count, 'Taxa (%)': a.rate.toFixed(2), 'Custo estimado': a.cost.toFixed(2),
   }));
 
   return (
@@ -56,7 +56,7 @@ export default function Turnover() {
       </div>
 
       <div className="grid grid-cols-2">
-        <SectionCard title="Turnover por área" subtitle="Taxa nos últimos 12 meses">
+        <SectionCard title="Turnover por diretoria" subtitle="Taxa nos últimos 12 meses">
           <BarChart data={metrics.turnoverByArea} valueKey="rate" labelKey="area" formatValue={(v) => formatPercent(v)} />
         </SectionCard>
         <SectionCard title="Comparativo histórico" subtitle="Taxa média mensal">
@@ -66,7 +66,7 @@ export default function Turnover() {
           />
           <p className="text-secondary" style={{ fontSize: 12, marginTop: 12 }}>
             {metrics.turnoverHistoryYoY[1].rate > metrics.turnoverHistoryYoY[0].rate
-              ? 'A taxa de turnover dos últimos 12 meses está acima da média do período anterior — recomenda-se investigar as áreas com maior contribuição.'
+              ? 'A taxa de turnover dos últimos 12 meses está acima da média do período anterior — recomenda-se investigar as diretorias com maior contribuição.'
               : 'A taxa de turnover dos últimos 12 meses está estável ou abaixo da média do período anterior.'}
           </p>
         </SectionCard>

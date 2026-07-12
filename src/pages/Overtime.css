@@ -1,0 +1,43 @@
+.overtime-type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.overtime-type-item {
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.overtime-type-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.overtime-type-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+
+.overtime-type-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.overtime-type-value {
+  font-size: 11.5px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.overtime-type-desc {
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+  line-height: 1.5;
+}

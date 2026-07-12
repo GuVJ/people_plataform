@@ -149,6 +149,7 @@ function finalizeEmployee(rng, referenceDate, months, area, roleLevel, kind, man
   const employee = {
     ...base,
     area: area.name,
+    vp: area.vp,
     roleLevel: roleLevel.level,
     isLeadership,
     managerId: manager?.id ?? null,

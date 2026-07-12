@@ -18,7 +18,7 @@ export const TABLES = [
       { name: 'pcd', type: 'boolean' },
       { name: 'pcd_tipo', type: 'text', description: 'Física / Visual / Auditiva / Intelectual / Múltipla (se pcd = true)' },
       { name: 'unidade', type: 'text', description: 'Cidade/unidade de trabalho' },
-      { name: 'area', type: 'text', description: 'Área/departamento' },
+      { name: 'area', type: 'text', description: 'Diretoria/departamento' },
       { name: 'cargo', type: 'text', description: 'Nível do cargo (trilha IC ou liderança)' },
       { name: 'gestor_id', type: 'integer', key: 'FK', references: 'funcionarios.id', description: 'Auto-relacionamento — gestor direto' },
       { name: 'salario', type: 'numeric' },

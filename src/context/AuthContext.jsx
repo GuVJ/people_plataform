@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from 'react';
 // Swap this provider for a Clerk-backed one when wiring real auth; the `role` shape stays the same.
 export const ROLES = [
   { id: 'rh', label: 'RH', description: 'Visão operacional completa de todos os indicadores' },
-  { id: 'gestor', label: 'Gestor', description: 'Visão focada no time e área sob gestão' },
+  { id: 'gestor', label: 'Gestor', description: 'Visão focada no time e diretoria sob gestão' },
   { id: 'diretor', label: 'Diretor', description: 'Visão executiva com foco em custo e risco' },
   { id: 'ceo', label: 'CEO', description: 'Visão estratégica e resumida para o board' },
 ];

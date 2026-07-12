@@ -1,13 +1,34 @@
+// "Diretoria" é o rótulo usado na interface (antigo "Área"). O campo interno do dado
+// continua sendo `area` para não quebrar o resto do código. Cada diretoria reporta a uma
+// Vice-presidência (vp), permitindo o filtro por VP no organograma.
 export const AREAS = [
-  { name: 'Comercial', baseHeadcount: 320, baseSalary: 6200, turnoverBias: 1.35, overtimeBias: 1.2 },
-  { name: 'Tecnologia', baseHeadcount: 260, baseSalary: 10800, turnoverBias: 0.85, overtimeBias: 0.7 },
-  { name: 'Operações', baseHeadcount: 410, baseSalary: 4800, turnoverBias: 1.5, overtimeBias: 1.6 },
-  { name: 'Financeiro', baseHeadcount: 140, baseSalary: 7600, turnoverBias: 0.7, overtimeBias: 1.4 },
-  { name: 'Marketing', baseHeadcount: 95, baseSalary: 7200, turnoverBias: 1.0, overtimeBias: 0.9 },
-  { name: 'Recursos Humanos', baseHeadcount: 70, baseSalary: 6800, turnoverBias: 0.6, overtimeBias: 0.8 },
-  { name: 'Atendimento ao Cliente', baseHeadcount: 230, baseSalary: 3600, turnoverBias: 1.8, overtimeBias: 1.1 },
-  { name: 'Jurídico', baseHeadcount: 45, baseSalary: 11200, turnoverBias: 0.4, overtimeBias: 0.6 },
-  { name: 'Produto & Design', baseHeadcount: 85, baseSalary: 9600, turnoverBias: 0.75, overtimeBias: 0.65 },
+  { name: 'Comercial', vp: 'VP Comercial & Marketing', baseHeadcount: 320, baseSalary: 6200, turnoverBias: 1.35, overtimeBias: 1.2 },
+  { name: 'Tecnologia', vp: 'VP de Tecnologia & Produto', baseHeadcount: 260, baseSalary: 10800, turnoverBias: 0.85, overtimeBias: 0.7 },
+  { name: 'Operações', vp: 'VP de Operações', baseHeadcount: 410, baseSalary: 4800, turnoverBias: 1.5, overtimeBias: 1.6 },
+  { name: 'Financeiro', vp: 'VP Corporativo', baseHeadcount: 140, baseSalary: 7600, turnoverBias: 0.7, overtimeBias: 1.4 },
+  { name: 'Marketing', vp: 'VP Comercial & Marketing', baseHeadcount: 95, baseSalary: 7200, turnoverBias: 1.0, overtimeBias: 0.9 },
+  { name: 'Recursos Humanos', vp: 'VP Corporativo', baseHeadcount: 70, baseSalary: 6800, turnoverBias: 0.6, overtimeBias: 0.8 },
+  { name: 'Atendimento ao Cliente', vp: 'VP de Operações', baseHeadcount: 230, baseSalary: 3600, turnoverBias: 1.8, overtimeBias: 1.1 },
+  { name: 'Jurídico', vp: 'VP Corporativo', baseHeadcount: 45, baseSalary: 11200, turnoverBias: 0.4, overtimeBias: 0.6 },
+  { name: 'Produto & Design', vp: 'VP de Tecnologia & Produto', baseHeadcount: 85, baseSalary: 9600, turnoverBias: 0.75, overtimeBias: 0.65 },
+];
+
+// Vice-presidências, na ordem de exibição. Derivadas do mapa acima.
+export const VPS = ['VP de Tecnologia & Produto', 'VP Comercial & Marketing', 'VP de Operações', 'VP Corporativo'];
+
+export const AREA_TO_VP = Object.fromEntries(AREAS.map((a) => [a.name, a.vp]));
+
+// Composição do custo de hora extra por tipo (referências da CLT). `share` é a fração do
+// custo total de HE atribuída a cada tipo — usada para decompor o custo mensal já calculado.
+export const OVERTIME_COST_TYPES = [
+  { key: 'he50', label: 'Hora extra 50%', share: 0.38, description: 'Horas extras em dias úteis, com adicional de 50% sobre a hora normal. É o tipo mais frequente.' },
+  { key: 'noturno', label: 'Adicional noturno', share: 0.13, description: 'Trabalho entre 22h e 5h, adicional de 20%. Acumula com a hora extra quando a HE é noturna.' },
+  { key: 'feriado', label: 'Feriado / HE 100%', share: 0.12, description: 'Trabalho em domingos e feriados sem folga compensatória, com adicional de 100%.' },
+  { key: 'bancoHoras', label: 'Banco de horas', share: 0.10, description: 'Saldo de horas não compensado no prazo, pago com adicional de 50%.' },
+  { key: 'sobreaviso', label: 'Sobreaviso', share: 0.10, description: 'Colaborador de prontidão em casa aguardando chamado, remunerado a 1/3 da hora normal.' },
+  { key: 'acionamento', label: 'Acionamento do sobreaviso', share: 0.07, description: 'Quando quem está em sobreaviso é efetivamente acionado, as horas trabalhadas viram hora extra.' },
+  { key: 'prontidao', label: 'Prontidão', share: 0.05, description: 'Colaborador aguardando ordens no próprio local de trabalho, remunerado a 2/3 da hora normal.' },
+  { key: 'dsr', label: 'DSR sobre horas extras', share: 0.05, description: 'Reflexo das horas extras no descanso semanal remunerado — infla a folha de forma indireta.' },
 ];
 
 export const ROLE_LEVELS = [
@@ -54,7 +75,7 @@ export const TERMINATION_REASONS_VOLUNTARY = [
 ];
 
 export const TERMINATION_REASONS_INVOLUNTARY = [
-  'Baixa performance', 'Redução de quadro', 'Reestruturação de área', 'Corte de custos', 'Fim de contrato/experiência',
+  'Baixa performance', 'Redução de quadro', 'Reestruturação de diretoria', 'Corte de custos', 'Fim de contrato/experiência',
 ];
 
 export const ABSENCE_REASONS = [

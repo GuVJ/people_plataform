@@ -13,7 +13,7 @@ export const TEMPLATE_COLUMNS = [
   { header: 'Data de Nascimento', field: 'dataNascimento' },
   { header: 'PCD (Sim/Não)', field: 'pcd' },
   { header: 'Tipo de PCD', field: 'pcdTipo' },
-  { header: 'Área', field: 'area' },
+  { header: 'Diretoria', field: 'area' },
   { header: 'Cargo', field: 'cargo' },
   { header: 'Unidade', field: 'unidade' },
   { header: 'Gestor', field: 'gestorNome' },
@@ -25,12 +25,12 @@ export const TEMPLATE_COLUMNS = [
 const EXAMPLE_ROWS = [
   {
     'Nome': 'Maria Fernanda Silva', 'Gênero': 'Feminino', 'Raça/Etnia': 'Parda', 'Data de Nascimento': '1995-04-12',
-    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Área': 'Comercial', 'Cargo': 'Analista Pleno', 'Unidade': 'São Paulo - SP',
+    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Comercial', 'Cargo': 'Analista Pleno', 'Unidade': 'São Paulo - SP',
     'Gestor': 'Ricardo Souza Melo', 'Salário': 6500, 'Data de Admissão': '2026-07-01', 'Benefícios': 'Vale Refeição; Vale Transporte; Plano de Saúde',
   },
   {
     'Nome': 'Pedro Henrique Costa', 'Gênero': 'Masculino', 'Raça/Etnia': 'Branca', 'Data de Nascimento': '1990-11-03',
-    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Área': 'Tecnologia', 'Cargo': 'Analista Sênior', 'Unidade': 'Remoto',
+    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Tecnologia', 'Cargo': 'Analista Sênior', 'Unidade': 'Remoto',
     'Gestor': '', 'Salário': 11200, 'Data de Admissão': '2026-07-05', 'Benefícios': 'Vale Refeição; Plano de Saúde; Gympass',
   },
 ];
@@ -42,7 +42,7 @@ const INSTRUCTIONS = [
   { Campo: 'Data de Nascimento', 'Valores aceitos': 'AAAA-MM-DD (ex: 1995-04-12)' },
   { Campo: 'PCD (Sim/Não)', 'Valores aceitos': 'Sim | Não' },
   { Campo: 'Tipo de PCD', 'Valores aceitos': 'Texto livre — preencher apenas se PCD = Sim' },
-  { Campo: 'Área', 'Valores aceitos': AREA_NAMES.join(' | ') },
+  { Campo: 'Diretoria', 'Valores aceitos': AREA_NAMES.join(' | ') },
   { Campo: 'Cargo', 'Valores aceitos': ROLE_NAMES.join(' | ') },
   { Campo: 'Unidade', 'Valores aceitos': UNITS.join(' | ') },
   { Campo: 'Gestor', 'Valores aceitos': 'Nome completo de um gestor já cadastrado no sistema (opcional)' },

@@ -31,7 +31,7 @@ export default function Performance() {
   const { metrics } = useData();
 
   const exportRows = metrics.criticalTalents.map((t) => ({
-    Nome: t.name, Área: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
+    Nome: t.name, Diretoria: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
   }));
 
   return (
@@ -73,7 +73,7 @@ export default function Performance() {
         <Table
           columns={[
             { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
-            { key: 'area', label: 'Área' },
+            { key: 'area', label: 'Diretoria' },
             { key: 'roleLevel', label: 'Cargo' },
             { key: 'managerName', label: 'Gestor' },
             { key: 'engagementScore', label: 'Engajamento', align: 'right', render: (r) => formatPercent(r.engagementScore) },

@@ -186,7 +186,7 @@ export default function EmployeeProfile() {
                 reference={benchmark.salary.reference}
                 diffPct={benchmark.salary.diffPct}
                 format={(v) => formatCurrency(v, { compact: true })}
-                referenceLabel="mediana da área"
+                referenceLabel="mediana da diretoria"
                 higherIsBetter={null}
               />
               <ComparisonBar
@@ -207,7 +207,7 @@ export default function EmployeeProfile() {
                   reference={benchmark.performance.reference}
                   diffPct={benchmark.performance.diffPct}
                   format={(v) => formatNumber(v, 1)}
-                  referenceLabel="média da área"
+                  referenceLabel="média da diretoria"
                   higherIsBetter
                 />
               )}
@@ -217,7 +217,7 @@ export default function EmployeeProfile() {
                 reference={benchmark.tenure.reference}
                 diffPct={benchmark.tenure.diffPct}
                 format={(v) => `${formatNumber(v, 1)} anos`}
-                referenceLabel="média da área"
+                referenceLabel="média da diretoria"
                 higherIsBetter={null}
               />
             </div>

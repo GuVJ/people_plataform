@@ -19,7 +19,7 @@ export function generateInsights(metrics, forecasts) {
       id: 'turnover-trend',
       type: turnDelta > 0 ? 'danger' : 'success',
       title: `Turnover ${trendWord(turnDelta)} ${formatPercent(Math.abs(turnDelta))} em relação ao mês anterior`,
-      text: `A taxa de turnover mensal foi de ${formatPercent(turn.totalRate)} contra ${formatPercent(turnPrev.totalRate)} no mês anterior, puxada principalmente pela área ${topArea?.area ?? '—'}.`,
+      text: `A taxa de turnover mensal foi de ${formatPercent(turn.totalRate)} contra ${formatPercent(turnPrev.totalRate)} no mês anterior, puxada principalmente pela diretoria ${topArea?.area ?? '—'}.`,
       metric: 'turnover',
     });
   }
@@ -45,8 +45,8 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'overload-area',
       type: 'warning',
-      title: `A área ${overloadArea.area} apresenta o maior risco de sobrecarga`,
-      text: `Responde por ${formatCurrency(overloadArea.cost, { compact: true })} em horas extras nos últimos 24 meses — o maior volume entre todas as áreas monitoradas.`,
+      title: `A diretoria ${overloadArea.area} apresenta o maior risco de sobrecarga`,
+      text: `Responde por ${formatCurrency(overloadArea.cost, { compact: true })} em horas extras nos últimos 24 meses — o maior volume entre todas as diretorias monitoradas.`,
       metric: 'horasExtras',
     });
   }

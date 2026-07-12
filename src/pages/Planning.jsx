@@ -10,17 +10,17 @@ const REPLACEMENT_COST_FACTOR = 0.6;
 export default function Planning() {
   const { metrics } = useData();
   const [headcountDelta, setHeadcountDelta] = useState(0);
-  const [area, setArea] = useState('Todas as áreas');
+  const [area, setArea] = useState('Todas as diretorias');
   const [turnoverChangePct, setTurnoverChangePct] = useState(0);
 
-  const areaOptions = ['Todas as áreas', ...metrics.headcountByArea.map((a) => a.area)];
+  const areaOptions = ['Todas as diretorias', ...metrics.headcountByArea.map((a) => a.area)];
 
   const impact = useMemo(() => {
     const baseHeadcount = metrics.activeNow.length;
     const basePayroll = metrics.payrollSeries.at(-1).total;
     const baseAvgSalary = basePayroll / (baseHeadcount || 1);
 
-    const areaEmployees = area === 'Todas as áreas' ? metrics.activeNow : metrics.activeNow.filter((e) => e.area === area);
+    const areaEmployees = area === 'Todas as diretorias' ? metrics.activeNow : metrics.activeNow.filter((e) => e.area === area);
     const areaAvgSalary = areaEmployees.length ? areaEmployees.reduce((s, e) => s + e.salary, 0) / areaEmployees.length : baseAvgSalary;
 
     const newHeadcount = Math.max(0, baseHeadcount + headcountDelta);
@@ -58,7 +58,7 @@ export default function Planning() {
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
         <SectionCard title="Cenário de contratação/redução">
-          <label className="planning-label">Área de referência (usada para calcular salário médio)</label>
+          <label className="planning-label">Diretoria de referência (usada para calcular salário médio)</label>
           <select className="select" value={area} onChange={(e) => setArea(e.target.value)}>
             {areaOptions.map((a) => <option key={a} value={a}>{a}</option>)}
           </select>

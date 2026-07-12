@@ -21,7 +21,7 @@ function useToggleSet(initial = []) {
   return [set, toggle, setSet];
 }
 
-export default function OrgVizTree({ company, areas }) {
+export default function OrgVizTree({ company, areas, forceExpand = false }) {
   const [expandedAreas, toggleArea, setExpandedAreas] = useToggleSet([areas[0]?.name]);
   const [expandedManagers, toggleManager, setExpandedManagers] = useToggleSet([]);
   const [zoom, setZoom] = useState(1);
@@ -54,12 +54,12 @@ export default function OrgVizTree({ company, areas }) {
             <li>
               <div className="orgviz-node orgviz-node-company">
                 <span className="orgviz-node-title">Empresa</span>
-                <span className="orgviz-node-sub">{formatNumber(company.headcount)} colaboradores · {company.areaCount} áreas</span>
+                <span className="orgviz-node-sub">{formatNumber(company.headcount)} colaboradores · {company.areaCount} diretorias</span>
               </div>
 
               <ul>
                 {areas.map((area) => {
-                  const isOpen = expandedAreas.has(area.name);
+                  const isOpen = forceExpand || expandedAreas.has(area.name);
                   return (
                     <li key={area.name}>
                       <button
@@ -75,7 +75,7 @@ export default function OrgVizTree({ company, areas }) {
                       {isOpen && (
                         <ul>
                           {area.managers.map((m) => {
-                            const mOpen = expandedManagers.has(m.id);
+                            const mOpen = forceExpand || expandedManagers.has(m.id);
                             return (
                               <li key={m.id}>
                                 <div className={`orgviz-node orgviz-node-manager${mOpen ? ' open' : ''}`} onClick={() => m.reports.length > 0 && toggleManager(m.id)}>

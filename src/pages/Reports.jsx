@@ -10,9 +10,9 @@ function buildReportDefinitions(metrics) {
     {
       id: 'colaboradores',
       title: 'Colaboradores ativos',
-      description: 'Quadro completo com área, cargo, gestor, salário e admissão',
+      description: 'Quadro completo com diretoria, cargo, gestor, salário e admissão',
       rows: () => metrics.activeNow.map((e) => ({
-        Nome: e.name, Área: e.area, Cargo: e.roleLevel, Gestor: e.managerName, Unidade: e.unit,
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Gestor: e.managerName, Unidade: e.unit,
         Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Salário: e.salary, Gênero: e.gender, Raça: e.race,
       })),
     },
@@ -25,10 +25,10 @@ function buildReportDefinitions(metrics) {
     },
     {
       id: 'turnover-area',
-      title: 'Turnover por área',
+      title: 'Turnover por diretoria',
       description: 'Taxa, volume e custo de rotatividade nos últimos 12 meses',
       rows: () => metrics.turnoverByArea.map((a) => ({
-        Área: a.area, Desligamentos: a.count, 'Taxa (%)': a.rate.toFixed(2), 'Custo estimado (R$)': a.cost.toFixed(2),
+        Diretoria: a.area, Desligamentos: a.count, 'Taxa (%)': a.rate.toFixed(2), 'Custo estimado (R$)': a.cost.toFixed(2),
       })),
     },
     {
@@ -39,16 +39,16 @@ function buildReportDefinitions(metrics) {
     },
     {
       id: 'horas-extras',
-      title: 'Horas extras por área',
-      description: 'Custo acumulado de horas extras por área nos últimos 24 meses',
-      rows: () => metrics.overtimeByArea.map((a) => ({ Área: a.area, 'Custo estimado (R$)': a.cost.toFixed(2) })),
+      title: 'Horas extras por diretoria',
+      description: 'Custo acumulado de horas extras por diretoria nos últimos 24 meses',
+      rows: () => metrics.overtimeByArea.map((a) => ({ Diretoria: a.area, 'Custo estimado (R$)': a.cost.toFixed(2) })),
     },
     {
       id: 'talentos',
       title: 'Talentos críticos',
       description: 'Colaboradores com alto desempenho e alto potencial (nine box)',
       rows: () => metrics.criticalTalents.map((t) => ({
-        Nome: t.name, Área: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
+        Nome: t.name, Diretoria: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
       })),
     },
   ];
@@ -104,7 +104,7 @@ export default function Reports() {
       return {
         ...r,
         rows: () => employees.filter((e) => e.status === 'Desligado' && e.terminationDate >= metrics.months.at(-12)).map((e) => ({
-          Nome: e.name, Área: e.area, Cargo: e.roleLevel, Tipo: e.terminationType, Motivo: e.terminationReason,
+          Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Tipo: e.terminationType, Motivo: e.terminationReason,
           Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Desligamento: e.terminationDate.toLocaleDateString('pt-BR'),
           'Custo estimado (R$)': (e.salary * 12 * 0.6).toFixed(2),
         })),

@@ -6,8 +6,6 @@ import './TopBar.css';
 
 const DASHBOARD_LINKS = [
   { to: '/workforce', label: 'Workforce' },
-  { to: '/organograma', label: 'Organograma' },
-  { to: '/gestor', label: 'Visão do Gestor' },
   { to: '/turnover', label: 'Turnover' },
   { to: '/recruitment', label: 'Recrutamento' },
   { to: '/absenteeism', label: 'Absenteísmo' },
@@ -18,6 +16,8 @@ const DASHBOARD_LINKS = [
 ];
 
 const PRIMARY_LINKS = [
+  { to: '/organograma', label: 'Organograma' },
+  { to: '/gestor', label: 'Visão do Gestor' },
   { to: '/copilot', label: 'Copiloto IA' },
   { to: '/predictions', label: 'Preditivo' },
   { to: '/planning', label: 'Planejamento' },

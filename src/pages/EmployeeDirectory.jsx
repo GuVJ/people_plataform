@@ -61,7 +61,7 @@ export default function EmployeeDirectory() {
             onChange={(e) => updateFilter(setQuery)(e.target.value)}
           />
           <select className="directory-input" value={area} onChange={(e) => updateFilter(setArea)(e.target.value)}>
-            <option value="Todas">Todas as áreas</option>
+            <option value="Todas">Todas as diretorias</option>
             {AREAS.map((a) => <option key={a.name} value={a.name}>{a.name}</option>)}
           </select>
           <select className="directory-input" value={status} onChange={(e) => updateFilter(setStatus)(e.target.value)}>
@@ -77,7 +77,7 @@ export default function EmployeeDirectory() {
             <thead>
               <tr>
                 <th>Nome</th>
-                <th>Área</th>
+                <th>Diretoria</th>
                 <th>Cargo</th>
                 <th>Gestor</th>
                 <th>Tempo de casa</th>

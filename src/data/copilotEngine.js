@@ -3,7 +3,7 @@ import { diffInYears } from '../utils/dates.js';
 
 const SUGGESTED_PROMPTS = [
   'Por que o turnover aumentou?',
-  'Quais áreas apresentam maior risco?',
+  'Quais diretorias apresentam maior risco?',
   'Qual gestor possui maior absenteísmo?',
   'Resuma os indicadores do mês',
   'Crie um relatório executivo',
@@ -24,8 +24,8 @@ function has(text, ...keywords) {
 function wantsBreakdown(q) {
   return has(
     q,
-    'por area', 'por área', 'por gestor', 'por unidade', 'por regiao', 'por região',
-    'distribui', 'ranking', 'quais area', 'quais área', 'cada area', 'cada área',
+    'por area', 'por diretoria', 'por gestor', 'por unidade', 'por regiao', 'por região',
+    'distribui', 'ranking', 'quais area', 'quais diretoria', 'cada area', 'cada diretoria',
     'comparar', 'comparaç', 'onde estao', 'onde estão', 'top ', 'maiores', 'menores', 'motivo',
   );
 }
@@ -79,12 +79,12 @@ export function answerQuestion(question, ctx) {
     const topArea = [...metrics.turnoverByArea].sort((a, b) => b.rate - a.rate)[0];
     const last12Cost = metrics.terminationsSeries.slice(-12).reduce((s, t) => s + t.cost, 0);
     return {
-      text: `O turnover do último mês fechado foi de ${formatPercent(turn.totalRate)}, contra ${formatPercent(turnPrev.totalRate)} no mês anterior (${turn.totalRate >= turnPrev.totalRate ? 'alta' : 'queda'} de ${formatNumber(Math.abs(turn.totalRate - turnPrev.totalRate), 2)} p.p.). A área com maior taxa nos últimos 12 meses é **${topArea.area}**, com ${formatPercent(topArea.rate)}.`,
-      chart: { type: 'bar', title: 'Turnover por área (12 meses)', data: metrics.turnoverByArea.slice(0, 6), valueKey: 'rate', labelKey: 'area', formatValue: (v) => formatPercent(v) },
+      text: `O turnover do último mês fechado foi de ${formatPercent(turn.totalRate)}, contra ${formatPercent(turnPrev.totalRate)} no mês anterior (${turn.totalRate >= turnPrev.totalRate ? 'alta' : 'queda'} de ${formatNumber(Math.abs(turn.totalRate - turnPrev.totalRate), 2)} p.p.). A diretoria com maior taxa nos últimos 12 meses é **${topArea.area}**, com ${formatPercent(topArea.rate)}.`,
+      chart: { type: 'bar', title: 'Turnover por diretoria (12 meses)', data: metrics.turnoverByArea.slice(0, 6), valueKey: 'rate', labelKey: 'area', formatValue: (v) => formatPercent(v) },
       financialImpact: `Custo estimado do turnover nos últimos 12 meses: ${formatCurrency(last12Cost, { compact: true })} (reposição, ramp-up e perda de produtividade).`,
       recommendations: [
-        `Priorizar ação de retenção em ${topArea.area}, a área com maior taxa de saída.`,
-        'Revisar motivos de desligamento voluntário mais recorrentes com os gestores da área.',
+        `Priorizar ação de retenção em ${topArea.area}, a diretoria com maior taxa de saída.`,
+        'Revisar motivos de desligamento voluntário mais recorrentes com os gestores da diretoria.',
         'Acompanhar o forecast de turnover dos próximos 3 meses para antecipar picos.',
       ],
     };
@@ -101,11 +101,11 @@ export function answerQuestion(question, ctx) {
       .sort((a, b) => b.avgScore - a.avgScore);
     const top = ranked[0];
     return {
-      text: `Analisando o modelo de risco de saída por colaborador, a área **${top.area}** apresenta o maior risco médio (score ${formatNumber(top.avgScore, 0)}/100), com ${top.highCount} colaboradores classificados como "Alto" ou "Muito Alto" risco.`,
-      chart: { type: 'bar', title: 'Score médio de risco por área', data: ranked.slice(0, 6), valueKey: 'avgScore', labelKey: 'area', formatValue: (v) => formatNumber(v, 0) },
+      text: `Analisando o modelo de risco de saída por colaborador, a diretoria **${top.area}** apresenta o maior risco médio (score ${formatNumber(top.avgScore, 0)}/100), com ${top.highCount} colaboradores classificados como "Alto" ou "Muito Alto" risco.`,
+      chart: { type: 'bar', title: 'Score médio de risco por diretoria', data: ranked.slice(0, 6), valueKey: 'avgScore', labelKey: 'area', formatValue: (v) => formatNumber(v, 0) },
       recommendations: [
         `Priorizar conversas 1:1 e planos de desenvolvimento individual em ${top.area}.`,
-        'Revisar equidade salarial frente à mediana da área para colaboradores de alto risco.',
+        'Revisar equidade salarial frente à mediana da diretoria para colaboradores de alto risco.',
         'Monitorar engajamento e horas extras recorrentes como sinais de alerta antecipado.',
       ],
     };
@@ -118,7 +118,7 @@ export function answerQuestion(question, ctx) {
       chart: { type: 'bar', title: 'Absenteísmo por gestor (dias)', data: metrics.absenteeismByManager, valueKey: 'days', labelKey: 'manager', formatValue: (v) => formatNumber(v) },
       recommendations: [
         'Investigar causas específicas do time — atestados recorrentes podem indicar sobrecarga ou clima organizacional.',
-        'Comparar com o índice médio da unidade para verificar se é um caso isolado ou padrão de área.',
+        'Comparar com o índice médio da unidade para verificar se é um caso isolado ou padrão de diretoria.',
       ],
     };
   }
@@ -153,7 +153,7 @@ export function answerQuestion(question, ctx) {
 
   if (has(q, 'grafico', 'explique esse')) {
     return {
-      text: 'Os gráficos deste painel usam sempre a mesma leitura: o eixo de valor representa a métrica selecionada (ex.: taxa, dias, horas ou custo) e as barras/linhas comparam períodos ou recortes (área, gestor, unidade). Cores mais intensas em mapas de calor indicam valores mais altos. Se quiser, pergunte sobre um indicador específico (ex.: "explique o turnover da área Comercial") que eu detalho os números por trás dele.',
+      text: 'Os gráficos deste painel usam sempre a mesma leitura: o eixo de valor representa a métrica selecionada (ex.: taxa, dias, horas ou custo) e as barras/linhas comparam períodos ou recortes (diretoria, gestor, unidade). Cores mais intensas em mapas de calor indicam valores mais altos. Se quiser, pergunte sobre um indicador específico (ex.: "explique o turnover da diretoria Comercial") que eu detalho os números por trás dele.',
     };
   }
 
@@ -170,7 +170,7 @@ export function answerQuestion(question, ctx) {
     const breakdown = wantsBreakdown(q);
     return {
       text: `O headcount ativo atual é de ${formatNumber(metrics.activeNow.length)} colaboradores${breakdown ? `, distribuídos principalmente em ${metrics.headcountByArea[0].area} (${formatNumber(metrics.headcountByArea[0].count)}) e ${metrics.headcountByArea[1].area} (${formatNumber(metrics.headcountByArea[1].count)})` : ''}.`,
-      chart: breakdown ? { type: 'bar', title: 'Headcount por área', data: metrics.headcountByArea, valueKey: 'count', labelKey: 'area', formatValue: (v) => formatNumber(v) } : undefined,
+      chart: breakdown ? { type: 'bar', title: 'Headcount por diretoria', data: metrics.headcountByArea, valueKey: 'count', labelKey: 'area', formatValue: (v) => formatNumber(v) } : undefined,
     };
   }
 
@@ -178,8 +178,8 @@ export function answerQuestion(question, ctx) {
     const last12 = metrics.overtimeSeries.slice(-12).reduce((s, o) => s + o.cost, 0);
     const breakdown = wantsBreakdown(q);
     return {
-      text: `O custo de horas extras nos últimos 12 meses somou ${formatCurrency(last12, { compact: true })}${breakdown ? `, com a área ${metrics.overtimeByArea[0]?.area} concentrando o maior volume` : ''}.`,
-      chart: breakdown ? { type: 'bar', title: 'Custo de horas extras por área', data: metrics.overtimeByArea, valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) } : undefined,
+      text: `O custo de horas extras nos últimos 12 meses somou ${formatCurrency(last12, { compact: true })}${breakdown ? `, com a diretoria ${metrics.overtimeByArea[0]?.area} concentrando o maior volume` : ''}.`,
+      chart: breakdown ? { type: 'bar', title: 'Custo de horas extras por diretoria', data: metrics.overtimeByArea, valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) } : undefined,
     };
   }
 

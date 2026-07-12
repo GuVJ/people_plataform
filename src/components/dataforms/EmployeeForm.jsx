@@ -71,7 +71,7 @@ export default function EmployeeForm() {
         <Field label="Tipo de PCD" hint="Preencher apenas se PCD = Sim">
           <input className="dform-input" value={form.pcdTipo} onChange={(e) => set('pcdTipo', e.target.value)} disabled={form.pcd !== 'Sim'} />
         </Field>
-        <Field label="Área" required>
+        <Field label="Diretoria" required>
           <select className="dform-select" value={form.area} onChange={(e) => set('area', e.target.value)}>
             <option value="">Selecione…</option>
             {AREAS.map((a) => <option key={a.name} value={a.name}>{a.name}</option>)}
@@ -132,7 +132,7 @@ export default function EmployeeForm() {
             columns={[
               { key: 'id', label: 'Matrícula' },
               { key: 'name', label: 'Nome' },
-              { key: 'area', label: 'Área' },
+              { key: 'area', label: 'Diretoria' },
               { key: 'roleLevel', label: 'Cargo' },
               { key: 'salary', label: 'Salário', align: 'right', render: (r) => formatCurrency(r.salary) },
             ]}

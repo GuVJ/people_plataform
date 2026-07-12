@@ -10,7 +10,7 @@ export default function Workforce() {
   const history = metrics.headcountSeries.slice(-12).map((s) => ({ month: s.month, label: s.label, y: s.total }));
 
   const exportRows = metrics.activeNow.map((e) => ({
-    Nome: e.name, Área: e.area, Cargo: e.roleLevel, Unidade: e.unit,
+    Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Unidade: e.unit,
     Salário: e.salary, Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Gestor: e.managerName,
   }));
 
@@ -33,7 +33,7 @@ export default function Workforce() {
           <div className="stat-big">{formatCurrency(metrics.payrollSeries[metrics.payrollSeries.length - 1].total, { compact: true })}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>custo mensal com salários</p>
         </SectionCard>
-        <SectionCard title="Áreas monitoradas" className="workforce-stat">
+        <SectionCard title="Diretorias monitoradas" className="workforce-stat">
           <div className="stat-big">{metrics.headcountByArea.length}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>unidades de negócio</p>
         </SectionCard>
@@ -47,7 +47,7 @@ export default function Workforce() {
         <SectionCard title="Evolução de headcount" subtitle="Últimos 12 meses" span={1}>
           <LineChart history={history} formatValue={(v) => formatNumber(v, 0)} />
         </SectionCard>
-        <SectionCard title="Distribuição por área">
+        <SectionCard title="Distribuição por diretoria">
           <BarChart data={metrics.headcountByArea} valueKey="count" labelKey="area" formatValue={(v) => formatNumber(v)} />
         </SectionCard>
       </div>

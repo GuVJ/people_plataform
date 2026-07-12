@@ -1,4 +1,4 @@
-import { AREAS, ROLE_LEVELS, LEADERSHIP_LEVELS, UNITS, GENDERS, RACES, BENEFITS } from './constants.js';
+import { AREAS, AREA_TO_VP, ROLE_LEVELS, LEADERSHIP_LEVELS, UNITS, GENDERS, RACES, BENEFITS } from './constants.js';
 import { resolveGeneration } from './generateEmployees.js';
 import { diffInYears } from '../utils/dates.js';
 
@@ -85,7 +85,7 @@ export function createEmployeeFromInput(rawInput, { employees, referenceDate }) 
   if (!birthDate) errors.push('Data de nascimento inválida ou ausente.');
 
   const areaName = matchEnum(rawInput.area, AREA_NAMES);
-  if (!areaName) errors.push(`Área inválida: "${rawInput.area ?? ''}" (use ${AREA_NAMES.join(', ')}).`);
+  if (!areaName) errors.push(`Diretoria inválida: "${rawInput.area ?? ''}" (use ${AREA_NAMES.join(', ')}).`);
 
   const roleLevelName = matchEnum(rawInput.cargo, ROLE_NAMES);
   if (!roleLevelName) errors.push(`Cargo inválido: "${rawInput.cargo ?? ''}" (use ${ROLE_NAMES.join(', ')}).`);
@@ -118,6 +118,7 @@ export function createEmployeeFromInput(rawInput, { employees, referenceDate }) 
     pcdType: pcd ? (String(rawInput.pcdTipo ?? '').trim() || 'Não especificado') : null,
     unit: unidade,
     area: areaName,
+    vp: AREA_TO_VP[areaName] ?? null,
     roleLevel: roleLevelName,
     isLeadership,
     managerId,

@@ -1,6 +1,6 @@
 import './profile.css';
 
-export default function ComparisonBar({ label, value, reference, diffPct, format, referenceLabel = 'média da área', higherIsBetter = null }) {
+export default function ComparisonBar({ label, value, reference, diffPct, format, referenceLabel = 'média da diretoria', higherIsBetter = null }) {
   const max = Math.max(value, reference, 0.0001) * 1.2;
   const valuePct = Math.min(100, (value / max) * 100);
   const refPct = Math.min(100, (reference / max) * 100);

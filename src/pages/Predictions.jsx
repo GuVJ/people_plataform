@@ -23,7 +23,7 @@ export default function Predictions() {
   const topRisk = risk.slice(0, 15);
 
   const exportRows = risk.map((r) => ({
-    Nome: r.name, Área: r.area, Cargo: r.roleLevel, Gestor: r.managerName, Score: r.score, Nível: r.level,
+    Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, Gestor: r.managerName, Score: r.score, Nível: r.level,
   }));
 
   return (
@@ -75,7 +75,7 @@ export default function Predictions() {
         <Table
           columns={[
             { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
-            { key: 'area', label: 'Área' },
+            { key: 'area', label: 'Diretoria' },
             { key: 'managerName', label: 'Gestor' },
             { key: 'score', label: 'Score', align: 'right' },
             { key: 'level', label: 'Nível', render: (r) => <RiskBadge level={r.level} /> },
