@@ -127,7 +127,7 @@ export default function ManagerView() {
                 { key: 'engagementScore', label: 'Engajamento', align: 'right', render: (r) => formatPercent(r.engagementScore) },
                 { key: 'recentAbsenceDays', label: 'Faltas (3m)', align: 'right' },
                 { key: 'recentOvertimeHours', label: 'H. extras (3m)', align: 'right' },
-                { key: 'risk', label: 'Risco', render: (r) => (r.risk ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.risk.level]}`}>{r.risk.level}</span> : '—') },
+                { key: 'risk', label: 'Risco', sortAccessor: (r) => r.risk?.score ?? -1, render: (r) => (r.risk ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.risk.level]}`}>{r.risk.level}</span> : '—') },
               ]}
               rows={view.roster}
             />

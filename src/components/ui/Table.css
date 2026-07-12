@@ -17,6 +17,47 @@
   white-space: nowrap;
 }
 
+.data-table th.th-sortable {
+  padding: 0;
+}
+
+.data-table th.th-sortable.active {
+  color: var(--color-primary);
+}
+
+.th-sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  background: none;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.th-sort-btn:hover {
+  color: var(--color-text);
+}
+
+.data-table th.th-sortable.active .th-sort-btn:hover {
+  color: var(--color-primary);
+}
+
+.th-sort-ind {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.th-sort-ind.active {
+  color: var(--color-primary);
+}
+
 .data-table td {
   padding: 10px 12px;
   border-bottom: 1px solid var(--color-border);

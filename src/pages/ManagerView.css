@@ -43,29 +43,35 @@
 .manager-ninebox {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  max-width: 460px;
+  gap: 10px;
+  width: 100%;
 }
 
 .manager-ninebox-cell {
-  aspect-ratio: 1.6;
-  border-radius: var(--radius-sm);
+  aspect-ratio: 2.2;
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 5px;
   transition: background 0.4s var(--ease-out);
 }
 
 .manager-ninebox-count {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .manager-ninebox-caption {
-  font-size: 9px;
+  font-size: 12px;
   text-align: center;
   opacity: 0.85;
-  padding: 0 4px;
+  padding: 0 6px;
+}
+
+@media (max-width: 640px) {
+  .manager-ninebox-cell { aspect-ratio: 1.5; }
+  .manager-ninebox-count { font-size: 22px; }
 }
