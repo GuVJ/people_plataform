@@ -18,7 +18,6 @@ const DASHBOARD_LINKS = [
 const PRIMARY_LINKS = [
   { to: '/organograma', label: 'Organograma' },
   { to: '/gestor', label: 'Visão do Gestor' },
-  { to: '/executivo', label: 'Visão Executiva' },
   { to: '/copilot', label: 'Copiloto IA' },
   { to: '/predictions', label: 'Preditivo' },
   { to: '/planning', label: 'Planejamento' },
@@ -74,12 +73,27 @@ export default function TopBar() {
   const { theme, toggleTheme, privacyMode, togglePrivacy } = usePreferences();
   const { user, roleId, setRoleId, roles } = useAuth();
   const [dashboardsOpen, setDashboardsOpen] = useState(false);
+  const [dashMenuPos, setDashMenuPos] = useState(null);
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dashRef = useRef(null);
+  const dashBtnRef = useRef(null);
   const roleRef = useRef(null);
   useClickOutside(dashRef, () => setDashboardsOpen(false));
   useClickOutside(roleRef, () => setRoleMenuOpen(false));
+
+  // The nav scrolls horizontally (overflow-x: auto), which forces overflow-y to auto too and
+  // would clip an absolutely-positioned dropdown. Render the menu as position: fixed, anchored
+  // to the button's on-screen rect, so it escapes the nav's clipping.
+  function toggleDashboards() {
+    setDashboardsOpen((open) => {
+      if (!open && dashBtnRef.current) {
+        const r = dashBtnRef.current.getBoundingClientRect();
+        setDashMenuPos({ left: r.left, top: r.bottom + 8 });
+      }
+      return !open;
+    });
+  }
 
   return (
     <header className="topbar">
@@ -100,20 +114,21 @@ export default function TopBar() {
 
         <nav className="topbar-nav">
           <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            Início
+            Overview
           </NavLink>
 
           <div className="topbar-dropdown" ref={dashRef}>
             <button
+              ref={dashBtnRef}
               type="button"
               className={`topbar-link topbar-link-btn${dashboardsOpen ? ' active' : ''}`}
-              onClick={() => setDashboardsOpen((o) => !o)}
+              onClick={toggleDashboards}
             >
               Dashboards
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
             </button>
-            {dashboardsOpen && (
-              <div className="topbar-dropdown-menu fade-in">
+            {dashboardsOpen && dashMenuPos && (
+              <div className="topbar-dropdown-menu topbar-dropdown-menu-fixed fade-in" style={{ left: dashMenuPos.left, top: dashMenuPos.top }}>
                 {DASHBOARD_LINKS.map((link) => (
                   <NavLink key={link.to} to={link.to} className="topbar-dropdown-item" onClick={() => setDashboardsOpen(false)}>
                     {link.label}
@@ -174,7 +189,7 @@ export default function TopBar() {
 
       {mobileMenuOpen && (
         <div className="topbar-mobile-menu fade-in">
-          <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Início</NavLink>
+          <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Overview</NavLink>
           <div className="topbar-mobile-section">Dashboards</div>
           {DASHBOARD_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className="topbar-mobile-link topbar-mobile-link-sub" onClick={() => setMobileMenuOpen(false)}>

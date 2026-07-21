@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import { useBudget } from '../context/BudgetContext.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import InsightCard from '../components/insights/InsightCard.jsx';
 import ExecutiveSummaryTable from '../components/summary/ExecutiveSummaryTable.jsx';
@@ -24,7 +23,6 @@ const QUICK_LINKS = [
 export default function Home() {
   const { metrics, insights } = useData();
   const { targets } = useBudget();
-  const { user } = useAuth();
 
   const summaryRows = useMemo(() => buildExecutiveSummary(metrics, targets), [metrics, targets]);
   const period = metrics.labels[metrics.labels.length - 1];
@@ -33,7 +31,7 @@ export default function Home() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Boa tarde, {user.name.split(' ')[0]}</h1>
+          <h1>Overview</h1>
           <p className="page-subtitle">
             Resumo executivo · {formatNumber(metrics.activeNow.length)} colaboradores ativos · atualizado com base no fechamento de {period}
           </p>

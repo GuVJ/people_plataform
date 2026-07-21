@@ -111,6 +111,12 @@
   gap: 2px;
 }
 
+.topbar-dropdown-menu-fixed {
+  position: fixed;
+  top: auto;
+  z-index: 200;
+}
+
 .topbar-dropdown-menu-right {
   left: auto;
   right: 0;

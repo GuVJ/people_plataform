@@ -24,7 +24,6 @@ import OrgChart from './pages/OrgChart.jsx';
 import EmployeeProfile from './pages/EmployeeProfile.jsx';
 import EmployeeDirectory from './pages/EmployeeDirectory.jsx';
 import ManagerView from './pages/ManagerView.jsx';
-import ExecutiveView from './pages/ExecutiveView.jsx';
 import Budget from './pages/Budget.jsx';
 import BudgetEdit from './pages/BudgetEdit.jsx';
 
@@ -55,7 +54,6 @@ function App() {
                   <Route path="/dados" element={<Dados />} />
                   <Route path="/organograma" element={<OrgChart />} />
                   <Route path="/gestor" element={<ManagerView />} />
-                  <Route path="/executivo" element={<ExecutiveView />} />
                   <Route path="/funcionario/:id" element={<EmployeeProfile />} />
                   <Route path="/orcamento" element={<Budget />} />
                   <Route path="/orcamento/metas" element={<BudgetEdit />} />
