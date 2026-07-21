@@ -1,0 +1,59 @@
+.cost-bridge {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cost-bridge-row {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .cost-bridge-row { grid-template-columns: 130px 1fr auto; gap: 8px; }
+}
+
+.cost-bridge-label {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cost-bridge-track {
+  position: relative;
+  height: 22px;
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.cost-bridge-bar {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 5px;
+  min-width: 2px;
+  transition: left 0.5s var(--ease-out), width 0.5s var(--ease-out);
+}
+
+.cost-bridge-bar.base { background: var(--color-navy); }
+.cost-bridge-bar.total { background: var(--color-primary); }
+.cost-bridge-bar.up { background: var(--color-danger); }
+.cost-bridge-bar.down { background: var(--color-success); }
+
+.cost-bridge-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  min-width: 80px;
+  text-align: right;
+}
+
+.cost-bridge-value.base { color: var(--color-text); }
+.cost-bridge-value.total { color: var(--color-primary); }
+.cost-bridge-value.up { color: var(--color-danger); }
+.cost-bridge-value.down { color: var(--color-success); }
