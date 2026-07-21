@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useData } from '../context/DataContext.jsx';
-import { usePreferences } from '../context/PreferencesContext.jsx';
+import { useBudget } from '../context/BudgetContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
-import KpiCard from '../components/ui/KpiCard.jsx';
+import SectionCard from '../components/ui/SectionCard.jsx';
 import InsightCard from '../components/insights/InsightCard.jsx';
-import { sparklineForKpi } from '../utils/kpiSeries.js';
+import ExecutiveSummaryTable from '../components/summary/ExecutiveSummaryTable.jsx';
+import { buildExecutiveSummary } from '../data/executiveSummary.js';
 import { formatNumber } from '../utils/format.js';
 import './Home.css';
 
@@ -21,8 +23,11 @@ const QUICK_LINKS = [
 
 export default function Home() {
   const { metrics, insights } = useData();
-  const { privacyMode } = usePreferences();
+  const { targets } = useBudget();
   const { user } = useAuth();
+
+  const summaryRows = useMemo(() => buildExecutiveSummary(metrics, targets), [metrics, targets]);
+  const period = metrics.labels[metrics.labels.length - 1];
 
   return (
     <div className="page fade-in">
@@ -30,16 +35,17 @@ export default function Home() {
         <div>
           <h1>Boa tarde, {user.name.split(' ')[0]}</h1>
           <p className="page-subtitle">
-            Resumo executivo · {formatNumber(metrics.activeNow.length)} colaboradores ativos · atualizado com base no fechamento de {metrics.labels[metrics.labels.length - 1]}
+            Resumo executivo · {formatNumber(metrics.activeNow.length)} colaboradores ativos · atualizado com base no fechamento de {period}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-4 kpi-grid">
-        {metrics.kpis.map((kpi) => (
-          <KpiCard key={kpi.key} kpi={kpi} sparklineValues={sparklineForKpi(metrics, kpi.key)} privacyMode={privacyMode && (kpi.key === 'custoPessoal' || kpi.key === 'horasExtras')} />
-        ))}
-      </div>
+      <SectionCard
+        title="Resumo executivo do mês"
+        subtitle={`Mês atual (${period}) vs. mês anterior · barra de meta onde há orçamento definido`}
+      >
+        <ExecutiveSummaryTable rows={summaryRows} />
+      </SectionCard>
 
       <div className="section-title" style={{ marginTop: 28 }}>
         <span>Insights automáticos</span>

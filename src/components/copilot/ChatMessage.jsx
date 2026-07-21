@@ -3,6 +3,7 @@ import MiniMarkdown from './MiniMarkdown.jsx';
 import BarChart from '../ui/BarChart.jsx';
 import Table from '../ui/Table.jsx';
 import EmployeeCard from './EmployeeCard.jsx';
+import ExecutiveSummaryTable from '../summary/ExecutiveSummaryTable.jsx';
 import './ChatMessage.css';
 
 export default function ChatMessage({ message }) {
@@ -24,7 +25,7 @@ export default function ChatMessage({ message }) {
     );
   }
 
-  const { text, chart, table, recommendations, financialImpact, source, employeeCard } = message.content;
+  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
@@ -49,6 +50,12 @@ export default function ChatMessage({ message }) {
         {table && (
           <div className="chat-table">
             <Table columns={table.columns} rows={table.rows} />
+          </div>
+        )}
+
+        {execSummary && (
+          <div className="chat-table">
+            <ExecutiveSummaryTable rows={execSummary} />
           </div>
         )}
 

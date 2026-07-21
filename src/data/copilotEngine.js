@@ -1,5 +1,6 @@
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import { diffInYears } from '../utils/dates.js';
+import { buildExecutiveSummary } from './executiveSummary.js';
 
 const SUGGESTED_PROMPTS = [
   'Por que o turnover aumentou?',
@@ -48,7 +49,7 @@ function findEmployeeMention(q, activeNow) {
 }
 
 export function answerQuestion(question, ctx) {
-  const { metrics, forecasts, insights, risk } = ctx;
+  const { metrics, forecasts, insights, risk, targets } = ctx;
   const q = normalize(question);
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
@@ -124,13 +125,9 @@ export function answerQuestion(question, ctx) {
   }
 
   if (has(q, 'resum', 'indicadores do mes', 'como estamos')) {
-    const rows = metrics.kpis.map((k) => ({ Indicador: k.label, Valor: k.value, Variação: k.delta }));
     return {
-      text: `Resumo executivo do período fechado em ${metrics.labels[metrics.labels.length - 1]}: headcount de ${formatNumber(metrics.activeNow.length)} colaboradores, turnover de ${formatPercent(last(metrics.turnoverSeries).totalRate)} e absenteísmo de ${formatPercent(last(metrics.absenteeismSeries).rate)}. A folha de pagamento soma ${formatCurrency(last(metrics.payrollSeries).total, { compact: true })}/mês.`,
-      table: {
-        columns: [{ key: 'Indicador', label: 'Indicador' }, { key: 'ValorFmt', label: 'Valor' }],
-        rows: metrics.kpis.map((k) => ({ Indicador: k.label, ValorFmt: formatKpiValue(k) })),
-      },
+      text: `Resumo executivo do período fechado em ${metrics.labels[metrics.labels.length - 1]}: headcount de ${formatNumber(metrics.activeNow.length)} colaboradores, turnover de ${formatPercent(last(metrics.turnoverSeries).totalRate)} e absenteísmo de ${formatPercent(last(metrics.absenteeismSeries).rate)}. A folha de pagamento soma ${formatCurrency(last(metrics.payrollSeries).total, { compact: true })}/mês. A tabela abaixo compara cada indicador com o mês anterior e com a meta, quando há orçamento definido.`,
+      execSummary: buildExecutiveSummary(metrics, targets),
       recommendations: insights.slice(0, 3).map((i) => i.title),
     };
   }
@@ -201,14 +198,6 @@ export function answerQuestion(question, ctx) {
   return {
     text: `Não encontrei uma métrica específica para essa pergunta ainda. Tente perguntar sobre: turnover, absenteísmo, headcount, custo de pessoal, horas extras, diversidade, treinamentos ou risco de saída — eu respondo com base nos dados atuais da plataforma.`,
   };
-}
-
-function formatKpiValue(kpi) {
-  if (kpi.format === 'currency') return formatCurrency(kpi.value, { compact: true });
-  if (kpi.format === 'percent') return formatPercent(kpi.value);
-  if (kpi.format === 'days') return `${formatNumber(kpi.value, 0)} dias`;
-  if (kpi.format === 'years') return `${formatNumber(kpi.value, 1)} anos`;
-  return formatNumber(kpi.value);
 }
 
 export { SUGGESTED_PROMPTS };

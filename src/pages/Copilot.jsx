@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext.jsx';
+import { useBudget } from '../context/BudgetContext.jsx';
 import ChatMessage from '../components/copilot/ChatMessage.jsx';
 import { answerQuestion, SUGGESTED_PROMPTS } from '../data/copilotEngine.js';
 import { buildCopilotContext } from '../data/copilotContext.js';
@@ -15,6 +16,7 @@ const INITIAL_MESSAGE = {
 
 export default function Copilot() {
   const { metrics, forecasts, insights, risk } = useData();
+  const { targets } = useBudget();
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
@@ -31,7 +33,7 @@ export default function Copilot() {
     setInput('');
     setThinking(true);
 
-    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk });
+    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets });
     let answer = { ...localAnswer, source: 'local' };
 
     // Employee lookups are a deterministic card, not a generative summary — skip the Gemini
