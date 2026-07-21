@@ -40,10 +40,7 @@ export default function Home() {
         </div>
       </div>
 
-      <SectionCard
-        title="Resumo executivo do mês"
-        subtitle={`Mês atual (${period}) vs. mês anterior · barra de meta onde há orçamento definido`}
-      >
+      <SectionCard title="Resumo executivo do mês">
         <ExecutiveSummaryTable rows={summaryRows} />
       </SectionCard>
 

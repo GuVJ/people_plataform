@@ -4,13 +4,22 @@ import './ExecutiveSummaryTable.css';
 
 const ARROW = { up: '↑', down: '↓', flat: '=' };
 
-function deltaLabel(row) {
-  const mag = Math.abs(row.delta);
-  return row.isPP ? `${formatNumber(mag, 1)} p.p.` : `${formatNumber(mag, 1)}%`;
+function deltaLabel({ delta, isPP }) {
+  const mag = Math.abs(delta);
+  return isPP ? `${formatNumber(mag, 1)} p.p.` : `${formatNumber(mag, 1)}%`;
+}
+
+function VariationChip({ item, compact = false }) {
+  const tone = item.direction === 'flat' ? 'flat' : item.good ? 'good' : 'bad';
+  return (
+    <span className={`exec-variation exec-${tone}${compact ? ' exec-variation-sm' : ''}`}>
+      <span className="exec-arrow">{ARROW[item.direction]}</span>
+      {item.direction !== 'flat' && deltaLabel(item)}
+    </span>
+  );
 }
 
 function MetaBar({ target, format }) {
-  // Scale so both the current fill and the target marker fit with headroom.
   const scale = Math.max(target.value, target.value * (target.ratio || 1), 1) * 1.15;
   const fillPct = Math.min(100, (target.value * target.ratio / scale) * 100);
   const markerPct = Math.min(100, (target.value / scale) * 100);
@@ -40,6 +49,7 @@ export default function ExecutiveSummaryTable({ rows }) {
             <th className="num">Mês anterior</th>
             <th className="num">Mês atual</th>
             <th className="num">Variação</th>
+            <th className="num">Acum. ano (YTD)</th>
             <th>Meta</th>
           </tr>
         </thead>
@@ -49,11 +59,18 @@ export default function ExecutiveSummaryTable({ rows }) {
               <td className="exec-label">{row.label}</td>
               <td className="num exec-prev">{row.previous !== null ? formatByType(row.previous, row.format) : '—'}</td>
               <td className="num exec-current">{formatByType(row.current, row.format)}</td>
+              <td className="num"><VariationChip item={row} /></td>
               <td className="num">
-                <span className={`exec-variation exec-${row.direction === 'flat' ? 'flat' : row.good ? 'good' : 'bad'}`}>
-                  <span className="exec-arrow">{ARROW[row.direction]}</span>
-                  {row.direction !== 'flat' && deltaLabel(row)}
-                </span>
+                {row.ytd ? (
+                  <div className="exec-ytd">
+                    <span className="exec-ytd-value">{formatByType(row.ytd.current, row.ytd.format)}</span>
+                    <span className="exec-ytd-yoy">
+                      <VariationChip item={row.ytd} compact /> <span className="exec-ytd-caption">vs. ano anterior</span>
+                    </span>
+                  </div>
+                ) : (
+                  <span className="exec-no-meta">—</span>
+                )}
               </td>
               <td className="exec-meta-cell">
                 {row.target ? <MetaBar target={row.target} format={row.format} /> : <span className="exec-no-meta">—</span>}

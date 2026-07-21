@@ -6,7 +6,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
-  min-width: 640px;
+  min-width: 780px;
 }
 
 .exec-table th {
@@ -73,6 +73,35 @@
 .exec-good { color: var(--color-success); background: var(--color-success-bg); }
 .exec-bad { color: var(--color-danger); background: var(--color-danger-bg); }
 .exec-flat { color: var(--color-text-tertiary); background: var(--color-surface-subtle); }
+
+.exec-variation-sm {
+  font-size: 11px;
+  padding: 2px 7px;
+}
+
+.exec-ytd {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.exec-ytd-value {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.exec-ytd-yoy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.exec-ytd-caption {
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
 
 .exec-meta-cell {
   min-width: 190px;
