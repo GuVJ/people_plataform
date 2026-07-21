@@ -1,29 +1,60 @@
-.severance-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
+.severance-scenario-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
-.severance-tab {
-  padding: 7px 14px;
-  border-radius: var(--radius-pill);
+@media (max-width: 560px) {
+  .severance-scenario-cards { grid-template-columns: 1fr; }
+}
+
+.severance-scenario-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.severance-scenario-card:hover {
+  border-color: var(--color-primary);
+}
+
+.severance-scenario-card.active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.severance-scenario-name {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-secondary);
 }
 
-.severance-tab:hover {
-  border-color: var(--color-primary);
+.severance-scenario-card.active .severance-scenario-name {
   color: var(--color-primary);
 }
 
-.severance-tab.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #fff;
+.severance-scenario-total {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.severance-scenario-hint {
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+}
+
+.severance-scenario-card.active .severance-scenario-hint {
+  color: var(--color-primary);
 }
 
 .severance-list {
