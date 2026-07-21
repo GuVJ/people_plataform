@@ -1,0 +1,36 @@
+.mydash-card-link {
+  display: block;
+  color: inherit;
+}
+
+.mydash-priority-cell {
+  position: relative;
+}
+
+.mydash-rank {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+}
+
+.mydash-empty {
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mydash-priority .kpi-card {
+  border-color: var(--color-primary-lighter);
+}

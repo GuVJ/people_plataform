@@ -3,6 +3,8 @@ import { PreferencesProvider } from './context/PreferencesContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { DataProvider } from './context/DataContext.jsx';
 import { BudgetProvider } from './context/BudgetContext.jsx';
+import { FavoritesProvider } from './context/FavoritesContext.jsx';
+import { TriggersProvider } from './context/TriggersContext.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
 
 import Home from './pages/Home.jsx';
@@ -26,6 +28,9 @@ import EmployeeDirectory from './pages/EmployeeDirectory.jsx';
 import ManagerView from './pages/ManagerView.jsx';
 import Budget from './pages/Budget.jsx';
 import BudgetEdit from './pages/BudgetEdit.jsx';
+import Settings from './pages/Settings.jsx';
+import MyDashboard from './pages/MyDashboard.jsx';
+import Triggers from './pages/Triggers.jsx';
 
 function App() {
   return (
@@ -33,6 +38,8 @@ function App() {
       <AuthProvider>
         <DataProvider>
           <BudgetProvider>
+            <FavoritesProvider>
+            <TriggersProvider>
             <BrowserRouter>
               <Routes>
                 <Route element={<AppLayout />}>
@@ -57,9 +64,14 @@ function App() {
                   <Route path="/funcionario/:id" element={<EmployeeProfile />} />
                   <Route path="/orcamento" element={<Budget />} />
                   <Route path="/orcamento/metas" element={<BudgetEdit />} />
+                  <Route path="/meu-painel" element={<MyDashboard />} />
+                  <Route path="/configuracoes" element={<Settings />} />
+                  <Route path="/gatilhos" element={<Triggers />} />
                 </Route>
               </Routes>
             </BrowserRouter>
+            </TriggersProvider>
+            </FavoritesProvider>
           </BudgetProvider>
         </DataProvider>
       </AuthProvider>

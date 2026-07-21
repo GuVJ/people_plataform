@@ -22,6 +22,7 @@ const PRIMARY_LINKS = [
   { to: '/predictions', label: 'Preditivo' },
   { to: '/planning', label: 'Planejamento' },
   { to: '/orcamento', label: 'Orçamento' },
+  { to: '/gatilhos', label: 'Gatilhos' },
   { to: '/benchmark', label: 'Benchmark' },
   { to: '/reports', label: 'Relatórios' },
   { to: '/funcionarios', label: 'Funcionários' },
@@ -116,6 +117,9 @@ export default function TopBar() {
           <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
             Overview
           </NavLink>
+          <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+            Meu Painel
+          </NavLink>
 
           <div className="topbar-dropdown" ref={dashRef}>
             <button
@@ -146,6 +150,12 @@ export default function TopBar() {
         </nav>
 
         <div className="topbar-actions">
+          <NavLink to="/configuracoes" className="topbar-icon-btn" title="Configurações" aria-label="Configurações">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </NavLink>
           <button type="button" className="topbar-icon-btn" title="Modo privacidade" aria-label="Alternar modo privacidade" onClick={togglePrivacy} data-active={privacyMode}>
             <IconEye off={privacyMode} />
           </button>
@@ -190,6 +200,8 @@ export default function TopBar() {
       {mobileMenuOpen && (
         <div className="topbar-mobile-menu fade-in">
           <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Overview</NavLink>
+          <NavLink to="/meu-painel" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Meu Painel</NavLink>
+          <NavLink to="/configuracoes" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Configurações</NavLink>
           <div className="topbar-mobile-section">Dashboards</div>
           {DASHBOARD_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className="topbar-mobile-link topbar-mobile-link-sub" onClick={() => setMobileMenuOpen(false)}>

@@ -1,0 +1,118 @@
+.settings-fav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-fav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-subtle);
+}
+
+.settings-fav-rank {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.settings-fav-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.settings-fav-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.settings-fav-desc {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.settings-fav-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.settings-move {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.settings-move:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.settings-move:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.settings-star {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--color-text-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+.settings-star:hover {
+  color: var(--color-warning);
+}
+
+.settings-star.active {
+  color: var(--color-warning);
+}
+
+.settings-all-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.settings-theme-row:last-child {
+  border-bottom: none;
+}
+
+.settings-theme-link {
+  font-size: 11.5px;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
