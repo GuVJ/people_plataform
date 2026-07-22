@@ -159,6 +159,13 @@
 .trg-aud.lideranca { background: rgba(37, 99, 235, 0.12); color: var(--color-primary); }
 .trg-aud.gestor { background: rgba(13, 148, 136, 0.14); color: var(--chart-3); }
 
+.trg-hint-warn {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+}
+
 @media (max-width: 860px) {
   .trg-layout, .trg-digest { grid-template-columns: 1fr; }
   .trg-form { position: static; }

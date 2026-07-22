@@ -307,6 +307,9 @@ export default function Triggers() {
           <p className="trg-hint">
             <strong>Liderança</strong> recebe o painel completo (com custo e metas). <strong>Gestão</strong> recebe a versão operacional do time. Em produção, um cron semanal envia a todos automaticamente.
           </p>
+          <p className="trg-hint trg-hint-warn">
+            Com o remetente de teste do Resend, o e-mail só é entregue no endereço dono da conta Resend. Para testar, adicione o <strong>seu próprio e-mail</strong> à lista. Para enviar a qualquer destinatário, verifique um domínio em resend.com/domains.
+          </p>
         </form>
 
         <div className="trg-list-wrap">
