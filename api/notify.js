@@ -19,7 +19,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  const from = process.env.ALERT_FROM_EMAIL || 'People Analytics Copilot <alertas@peopleplataform.vercel.app>';
+  // onboarding@resend.dev é o remetente de teste do Resend — funciona sem domínio verificado,
+  // mas só entrega para o e-mail dono da conta Resend. Para produção, defina ALERT_FROM_EMAIL
+  // com um endereço de um domínio verificado no Resend.
+  const from = process.env.ALERT_FROM_EMAIL || 'People Analytics Copilot <onboarding@resend.dev>';
 
   try {
     const response = await fetch('https://api.resend.com/emails', {
