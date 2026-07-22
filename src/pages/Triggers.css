@@ -140,8 +140,27 @@
   padding: 28px 26px;
 }
 
+.trg-digest {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.trg-aud {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.trg-aud.lideranca { background: rgba(37, 99, 235, 0.12); color: var(--color-primary); }
+.trg-aud.gestor { background: rgba(13, 148, 136, 0.14); color: var(--chart-3); }
+
 @media (max-width: 860px) {
-  .trg-layout { grid-template-columns: 1fr; }
+  .trg-layout, .trg-digest { grid-template-columns: 1fr; }
   .trg-form { position: static; }
   .trg-item { flex-direction: column; align-items: flex-start; }
 }

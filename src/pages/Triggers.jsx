@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
+import { useBudget } from '../context/BudgetContext.jsx';
 import { useTriggers } from '../context/TriggersContext.jsx';
 import { THEMES, THEME_BY_KEY } from '../data/themes.js';
+import { buildExecutiveSummary } from '../data/executiveSummary.js';
 import { formatByType } from '../components/ui/formatValue.js';
 import './Triggers.css';
 
@@ -11,6 +13,37 @@ const CONDITIONS = [
   { value: 'below', label: 'cair abaixo de' },
   { value: 'change', label: 'variar mais de (em módulo)' },
 ];
+
+// Versões do Resumo Executivo por público. Liderança recebe o painel completo (inclui custo e
+// metas); a versão de Gestão foca nos indicadores operacionais do dia a dia do time.
+const AUDIENCES = {
+  lideranca: {
+    label: 'Liderança · CEO / Diretoria',
+    title: 'Resumo Executivo — Liderança',
+    intro: 'Visão consolidada dos indicadores de pessoas, com variação mensal, acumulado do ano e metas.',
+    keys: null,
+  },
+  gestor: {
+    label: 'Gestão · Gestores de time',
+    title: 'Resumo Executivo — Gestão',
+    intro: 'Indicadores operacionais do time para acompanhamento na rotina de gestão.',
+    keys: ['headcount', 'turnover', 'absenteismo', 'horasExtras', 'admissoes', 'desligamentos'],
+  },
+};
+
+function buildDigestRows(summary, keys) {
+  const filtered = keys ? summary.filter((r) => keys.includes(r.key)) : summary;
+  return filtered.map((r) => {
+    const value = formatByType(r.current, r.format);
+    const unit = r.isPP ? ' p.p.' : '%';
+    const arrow = r.direction === 'flat' ? '→' : r.direction === 'up' ? '↑' : '↓';
+    const variation = r.direction === 'flat' ? '→ estável' : `${arrow} ${Math.abs(r.delta).toFixed(1)}${unit}`;
+    let extra = '';
+    if (r.ytd) extra = `Acum. ${formatByType(r.ytd.current, r.format)}`;
+    else if (r.target) extra = `Meta ${formatByType(r.target.value, r.format)} ${r.target.ok ? '✓' : '✗'}`;
+    return { label: r.label, value, variation, variationGood: r.good, extra };
+  });
+}
 
 function kpiForTheme(metrics, themeKey) {
   const theme = THEME_BY_KEY[themeKey];
@@ -44,7 +77,8 @@ function evaluate(trigger, kpi) {
 
 export default function Triggers() {
   const { metrics } = useData();
-  const { triggers, addTrigger, removeTrigger, toggleTrigger } = useTriggers();
+  const { targets } = useBudget();
+  const { triggers, addTrigger, removeTrigger, toggleTrigger, subscriptions, addSubscription, removeSubscription } = useTriggers();
 
   const [themeKey, setThemeKey] = useState(THEMES[0].key);
   const [condition, setCondition] = useState('change');
@@ -52,6 +86,55 @@ export default function Triggers() {
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(null);
   const [feedback, setFeedback] = useState(null);
+
+  const [subName, setSubName] = useState('');
+  const [subEmail, setSubEmail] = useState('');
+  const [subAudience, setSubAudience] = useState('lideranca');
+
+  const summary = useMemo(() => buildExecutiveSummary(metrics, targets), [metrics, targets]);
+
+  function handleAddSub(e) {
+    e.preventDefault();
+    if (!subEmail.trim()) {
+      setFeedback({ type: 'error', text: 'Informe um e-mail para adicionar à lista de envio.' });
+      return;
+    }
+    addSubscription({ name: subName.trim() || subEmail.trim(), email: subEmail.trim(), audience: subAudience });
+    setSubName('');
+    setSubEmail('');
+    setFeedback({ type: 'success', text: 'Destinatário adicionado à lista de envio do Resumo Executivo.' });
+  }
+
+  async function handleSendDigest(sub) {
+    const cfg = AUDIENCES[sub.audience];
+    const rows = buildDigestRows(summary, cfg.keys);
+    const dateStr = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    setSending(sub.id);
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: sub.email,
+          subject: `[${cfg.title}] ${dateStr}`,
+          digest: { title: cfg.title, audienceLabel: cfg.label, generatedAt: dateStr, intro: cfg.intro, rows, link: window.location.origin },
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setFeedback({ type: 'success', text: `Resumo executivo enviado para ${sub.email}.` });
+      } else if (res.status === 503) {
+        setFeedback({ type: 'info', text: 'Envio de e-mail ainda não configurado no servidor (RESEND_API_KEY).' });
+      } else {
+        setFeedback({ type: 'error', text: data.error || 'Não foi possível enviar o resumo.' });
+      }
+    } catch {
+      setFeedback({ type: 'error', text: 'Falha de rede ao chamar o serviço de e-mail.' });
+    } finally {
+      setSending(null);
+    }
+  }
 
   const evaluated = useMemo(
     () => triggers.map((t) => ({ trigger: t, kpi: kpiForTheme(metrics, t.themeKey), ...evaluate(t, kpiForTheme(metrics, t.themeKey)) })),
@@ -192,6 +275,65 @@ export default function Triggers() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="section-title" style={{ marginTop: 30 }}>
+        <span>Envio do Resumo Executivo</span>
+        <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>lista de destinatários com versão por público</span>
+      </div>
+
+      <div className="trg-digest">
+        <form className="card trg-form" onSubmit={handleAddSub}>
+          <h3>Adicionar destinatário</h3>
+          <label className="trg-field">
+            <span>Nome / cargo</span>
+            <input type="text" placeholder="Ex: Diretoria Comercial" value={subName} onChange={(e) => setSubName(e.target.value)} />
+          </label>
+          <label className="trg-field">
+            <span>E-mail</span>
+            <input type="email" placeholder="pessoa@empresa.com" value={subEmail} onChange={(e) => setSubEmail(e.target.value)} />
+          </label>
+          <label className="trg-field">
+            <span>Versão do resumo</span>
+            <select value={subAudience} onChange={(e) => setSubAudience(e.target.value)}>
+              <option value="lideranca">{AUDIENCES.lideranca.label}</option>
+              <option value="gestor">{AUDIENCES.gestor.label}</option>
+            </select>
+          </label>
+          <button type="submit" className="btn btn-primary">Adicionar à lista</button>
+          <p className="trg-hint">
+            <strong>Liderança</strong> recebe o painel completo (com custo e metas). <strong>Gestão</strong> recebe a versão operacional do time. Em produção, um cron semanal envia a todos automaticamente.
+          </p>
+        </form>
+
+        <div className="trg-list-wrap">
+          {subscriptions.length === 0 ? (
+            <div className="card trg-empty">
+              <h3>Lista de envio vazia</h3>
+              <p className="text-secondary" style={{ fontSize: 13.5, marginTop: 6 }}>Adicione destinatários ao lado para enviar o Resumo Executivo.</p>
+            </div>
+          ) : (
+            <div className="trg-list">
+              {subscriptions.map((sub) => (
+                <div className="card trg-item" key={sub.id}>
+                  <div className="trg-item-main">
+                    <div className="trg-item-head">
+                      <span className={`trg-aud ${sub.audience}`}>{sub.audience === 'lideranca' ? 'Liderança' : 'Gestão'}</span>
+                      <span className="trg-item-title">{sub.name}</span>
+                    </div>
+                    <p className="trg-item-detail">{sub.email} · {AUDIENCES[sub.audience].title}</p>
+                  </div>
+                  <div className="trg-item-actions">
+                    <button className="btn btn-sm" onClick={() => handleSendDigest(sub)} disabled={sending === sub.id}>
+                      {sending === sub.id ? 'Enviando…' : 'Enviar agora'}
+                    </button>
+                    <button className="btn btn-sm trg-del" onClick={() => removeSubscription(sub.id)}>Remover</button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

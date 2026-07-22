@@ -1,25 +1,51 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 
 const STORAGE_KEY = 'pac-triggers';
+const SUBS_KEY = 'pac-exec-subscriptions';
 const TriggersContext = createContext(null);
 
-function load() {
+function loadKey(key, fallback) {
   try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    return Array.isArray(raw) ? raw : [];
+    const raw = JSON.parse(localStorage.getItem(key) || 'null');
+    return Array.isArray(raw) ? raw : fallback;
   } catch {
-    return [];
+    return fallback;
   }
 }
 
+// Lista de envio inicial do Resumo Executivo (exemplos editáveis pelo usuário).
+const DEFAULT_SUBS = [
+  { id: 'sub_ceo', name: 'CEO', email: 'ceo@empresa.com', audience: 'lideranca' },
+  { id: 'sub_dir', name: 'Diretoria', email: 'diretoria@empresa.com', audience: 'lideranca' },
+  { id: 'sub_gestor', name: 'Gestores', email: 'gestor@empresa.com', audience: 'gestor' },
+];
+
 let idSeed = 1;
-function nextId() {
-  return `trg_${Date.now().toString(36)}_${idSeed++}`;
+function nextId(prefix = 'trg') {
+  return `${prefix}_${Date.now().toString(36)}_${idSeed++}`;
 }
 
 // Each trigger: { id, themeKey, condition: 'above'|'below'|'change', threshold, email, enabled }
+// Each subscription: { id, name, email, audience: 'lideranca'|'gestor' }
 export function TriggersProvider({ children }) {
-  const [triggers, setTriggers] = useState(load);
+  const [triggers, setTriggers] = useState(() => loadKey(STORAGE_KEY, []));
+  const [subscriptions, setSubscriptions] = useState(() => loadKey(SUBS_KEY, DEFAULT_SUBS));
+
+  const addSubscription = useCallback((sub) => {
+    setSubscriptions((prev) => {
+      const next = [...prev, { ...sub, id: nextId('sub') }];
+      localStorage.setItem(SUBS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const removeSubscription = useCallback((id) => {
+    setSubscriptions((prev) => {
+      const next = prev.filter((s) => s.id !== id);
+      localStorage.setItem(SUBS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const save = useCallback((next) => {
     setTriggers(next);
@@ -51,7 +77,10 @@ export function TriggersProvider({ children }) {
   }, []);
 
   return (
-    <TriggersContext.Provider value={{ triggers, addTrigger, removeTrigger, toggleTrigger, setTriggers: save }}>
+    <TriggersContext.Provider value={{
+      triggers, addTrigger, removeTrigger, toggleTrigger, setTriggers: save,
+      subscriptions, addSubscription, removeSubscription,
+    }}>
       {children}
     </TriggersContext.Provider>
   );

@@ -74,6 +74,73 @@ function buildAlertEmail(a) {
 </body></html>`;
 }
 
+// Monta o e-mail do Resumo Executivo — cabeçalho + tabela de indicadores (Indicador, Atual,
+// Variação, Acum./Meta), com a variação colorida por good/bad.
+function buildDigestEmail(d) {
+  const title = esc(d.title || 'Resumo Executivo');
+  const audience = esc(d.audienceLabel || '');
+  const generatedAt = esc(d.generatedAt || '');
+  const intro = esc(d.intro || '');
+  const link = d.link && /^https?:\/\//.test(d.link) ? d.link : 'https://peopleplataform.vercel.app/';
+  const rows = Array.isArray(d.rows) ? d.rows : [];
+
+  const rowsHtml = rows.map((r, i) => {
+    const varColor = r.variationGood === true ? '#067647' : r.variationGood === false ? '#B42318' : '#5B6684';
+    const bg = i % 2 ? '#F7F9FC' : '#FFFFFF';
+    return `<tr>
+      <td style="padding:11px 14px;border-top:1px solid #EDF0F6;font-size:13px;color:#111830;font-weight:600;background:${bg};">${esc(r.label)}</td>
+      <td style="padding:11px 14px;border-top:1px solid #EDF0F6;font-size:13px;color:#111830;text-align:right;font-variant-numeric:tabular-nums;background:${bg};">${esc(r.value)}</td>
+      <td style="padding:11px 14px;border-top:1px solid #EDF0F6;font-size:13px;color:${varColor};text-align:right;font-weight:600;white-space:nowrap;background:${bg};">${esc(r.variation || '—')}</td>
+      <td style="padding:11px 14px;border-top:1px solid #EDF0F6;font-size:12px;color:#5B6684;text-align:right;background:${bg};">${esc(r.extra || '')}</td>
+    </tr>`;
+  }).join('');
+
+  return `<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"></head>
+<body style="margin:0;padding:0;background:#EEF2F9;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#EEF2F9;">${title} — ${audience} ${generatedAt}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2F9;padding:28px 12px;">
+<tr><td align="center">
+<table role="presentation" width="640" cellpadding="0" cellspacing="0" style="width:640px;max-width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;border:1px solid #E3E7F1;font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <tr><td style="background:${BRAND};padding:20px 28px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-size:16px;font-weight:700;color:#FFFFFF;">People Analytics <span style="color:#BFD4FE;font-weight:600;">Copilot</span></td>
+      <td align="right" style="font-size:11px;color:#BFD4FE;text-transform:uppercase;letter-spacing:.12em;font-weight:600;">Resumo Executivo</td>
+    </tr></table>
+  </td></tr>
+
+  <tr><td style="padding:24px 28px 6px;">
+    <div style="font-size:12px;color:#8A93A9;text-transform:uppercase;letter-spacing:.12em;font-weight:600;">${audience}${generatedAt ? ' · ' + generatedAt : ''}</div>
+    <div style="font-size:22px;font-weight:700;color:#111830;letter-spacing:-.01em;margin-top:6px;">${title}</div>
+    ${intro ? `<p style="font-size:13.5px;color:#5B6684;line-height:1.6;margin:10px 0 0;">${intro}</p>` : ''}
+  </td></tr>
+
+  <tr><td style="padding:16px 28px 4px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #EDF0F6;border-radius:12px;overflow:hidden;">
+      <tr>
+        <th style="padding:9px 14px;text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A93A9;background:#F1F5FB;">Indicador</th>
+        <th style="padding:9px 14px;text-align:right;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A93A9;background:#F1F5FB;">Mês atual</th>
+        <th style="padding:9px 14px;text-align:right;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A93A9;background:#F1F5FB;">Variação</th>
+        <th style="padding:9px 14px;text-align:right;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#8A93A9;background:#F1F5FB;">Acum./Meta</th>
+      </tr>
+      ${rowsHtml}
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:20px 28px 26px;">
+    <a href="${esc(link)}" style="display:inline-block;background:${BRAND};color:#FFFFFF;text-decoration:none;font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px;">Abrir o painel completo &rarr;</a>
+  </td></tr>
+
+  <tr><td style="background:#F7F9FC;border-top:1px solid #E3E7F1;padding:16px 28px;font-size:11.5px;color:#8A93A9;line-height:1.6;">
+    Enviado pelo <strong style="color:#5B6684;">People Analytics Copilot</strong>. Projeto de portfólio — dados 100% fictícios.
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -86,7 +153,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { to, subject, message, alert } = req.body ?? {};
+  const { to, subject, message, alert, digest } = req.body ?? {};
   if (!to || !subject) {
     res.status(400).json({ error: 'Campos "to" e "subject" são obrigatórios.' });
     return;
@@ -97,9 +164,11 @@ export default async function handler(req, res) {
   // com um endereço de um domínio verificado no Resend.
   const from = process.env.ALERT_FROM_EMAIL || 'People Analytics Copilot <onboarding@resend.dev>';
 
-  const html = alert
-    ? buildAlertEmail(alert)
-    : `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;line-height:1.6;color:#0f172a">${(message || '').replace(/\n/g, '<br>')}</div>`;
+  const html = digest
+    ? buildDigestEmail(digest)
+    : alert
+      ? buildAlertEmail(alert)
+      : `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:14px;line-height:1.6;color:#0f172a">${(message || '').replace(/\n/g, '<br>')}</div>`;
 
   try {
     const response = await fetch('https://api.resend.com/emails', {
@@ -121,4 +190,4 @@ export default async function handler(req, res) {
   }
 }
 
-export { buildAlertEmail };
+export { buildAlertEmail, buildDigestEmail };

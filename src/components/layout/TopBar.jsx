@@ -10,6 +10,8 @@ const DASHBOARD_LINKS = [
   { to: '/recruitment', label: 'Recrutamento' },
   { to: '/absenteeism', label: 'Absenteísmo' },
   { to: '/overtime', label: 'Horas Extras' },
+  { to: '/atestados', label: 'Atestados' },
+  { to: '/seguranca', label: 'Segurança do Trabalho' },
   { to: '/diversity', label: 'Diversidade' },
   { to: '/training', label: 'Treinamentos' },
   { to: '/performance', label: 'Desempenho' },

@@ -31,6 +31,8 @@ import BudgetEdit from './pages/BudgetEdit.jsx';
 import Settings from './pages/Settings.jsx';
 import MyDashboard from './pages/MyDashboard.jsx';
 import Triggers from './pages/Triggers.jsx';
+import MedicalLeave from './pages/MedicalLeave.jsx';
+import Safety from './pages/Safety.jsx';
 
 function App() {
   return (
@@ -64,6 +66,8 @@ function App() {
                   <Route path="/funcionario/:id" element={<EmployeeProfile />} />
                   <Route path="/orcamento" element={<Budget />} />
                   <Route path="/orcamento/metas" element={<BudgetEdit />} />
+                  <Route path="/atestados" element={<MedicalLeave />} />
+                  <Route path="/seguranca" element={<Safety />} />
                   <Route path="/meu-painel" element={<MyDashboard />} />
                   <Route path="/configuracoes" element={<Settings />} />
                   <Route path="/gatilhos" element={<Triggers />} />
