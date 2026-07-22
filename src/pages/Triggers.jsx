@@ -72,6 +72,10 @@ export default function Triggers() {
   async function handleTest(entry) {
     const { trigger, kpi, currentText, detailText } = entry;
     const theme = THEME_BY_KEY[trigger.themeKey];
+    const cond = CONDITIONS.find((c) => c.value === trigger.condition);
+    const thresholdText = trigger.condition === 'change'
+      ? `${trigger.threshold}${kpi?.format === 'percent' ? ' p.p.' : '%'}`
+      : formatByType(trigger.threshold, kpi?.format);
     setSending(trigger.id);
     setFeedback(null);
     try {
@@ -81,7 +85,15 @@ export default function Triggers() {
         body: JSON.stringify({
           to: trigger.email,
           subject: `[Alerta] ${theme?.label ?? trigger.themeKey} — ${currentText}`,
-          message: `O indicador "${theme?.label}" está em ${currentText}.\n${detailText}\n\nEnviado pelo People Analytics Copilot.`,
+          alert: {
+            indicator: theme?.label ?? trigger.themeKey,
+            value: currentText,
+            detail: detailText,
+            rule: `${cond?.label ?? ''} ${thresholdText}`.trim(),
+            fired: entry.fired,
+            statusLabel: trigger.enabled ? (entry.fired ? 'Disparado' : 'Dentro do limite') : 'Pausado',
+            link: `${window.location.origin}/meu-painel`,
+          },
         }),
       });
       const data = await res.json().catch(() => ({}));
