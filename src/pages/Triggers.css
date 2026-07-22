@@ -166,6 +166,36 @@
   border-radius: var(--radius-md);
 }
 
+.trg-sub-emailrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.trg-sub-email {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  min-width: 210px;
+  font-family: inherit;
+}
+
+.trg-sub-email:hover {
+  border-color: var(--color-border-strong);
+}
+
+.trg-sub-email:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
 @media (max-width: 860px) {
   .trg-layout, .trg-digest { grid-template-columns: 1fr; }
   .trg-form { position: static; }

@@ -78,7 +78,7 @@ function evaluate(trigger, kpi) {
 export default function Triggers() {
   const { metrics } = useData();
   const { targets } = useBudget();
-  const { triggers, addTrigger, removeTrigger, toggleTrigger, subscriptions, addSubscription, removeSubscription } = useTriggers();
+  const { triggers, addTrigger, removeTrigger, toggleTrigger, subscriptions, addSubscription, removeSubscription, updateSubscription } = useTriggers();
 
   const [themeKey, setThemeKey] = useState(THEMES[0].key);
   const [condition, setCondition] = useState('change');
@@ -103,6 +103,16 @@ export default function Triggers() {
     setSubName('');
     setSubEmail('');
     setFeedback({ type: 'success', text: 'Destinatário adicionado à lista de envio do Resumo Executivo.' });
+  }
+
+  function applyEmailToAll() {
+    const target = subEmail.trim();
+    if (!target) {
+      setFeedback({ type: 'error', text: 'Digite o e-mail no campo acima antes de aplicar a todos.' });
+      return;
+    }
+    subscriptions.forEach((s) => updateSubscription(s.id, { email: target }));
+    setFeedback({ type: 'success', text: `Todos os destinatários agora enviam para ${target}.` });
   }
 
   async function handleSendDigest(sub) {
@@ -304,6 +314,7 @@ export default function Triggers() {
             </select>
           </label>
           <button type="submit" className="btn btn-primary">Adicionar à lista</button>
+          <button type="button" className="btn btn-sm" onClick={applyEmailToAll}>Usar este e-mail em todos</button>
           <p className="trg-hint">
             <strong>Liderança</strong> recebe o painel completo (com custo e metas). <strong>Gestão</strong> recebe a versão operacional do time. Em produção, um cron semanal envia a todos automaticamente.
           </p>
@@ -327,7 +338,16 @@ export default function Triggers() {
                       <span className={`trg-aud ${sub.audience}`}>{sub.audience === 'lideranca' ? 'Liderança' : 'Gestão'}</span>
                       <span className="trg-item-title">{sub.name}</span>
                     </div>
-                    <p className="trg-item-detail">{sub.email} · {AUDIENCES[sub.audience].title}</p>
+                    <div className="trg-sub-emailrow">
+                      <input
+                        className="trg-sub-email"
+                        type="email"
+                        value={sub.email}
+                        onChange={(e) => updateSubscription(sub.id, { email: e.target.value })}
+                        aria-label="E-mail do destinatário"
+                      />
+                      <span className="trg-item-detail">· {AUDIENCES[sub.audience].title}</span>
+                    </div>
                   </div>
                   <div className="trg-item-actions">
                     <button className="btn btn-sm" onClick={() => handleSendDigest(sub)} disabled={sending === sub.id}>

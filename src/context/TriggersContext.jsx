@@ -47,6 +47,14 @@ export function TriggersProvider({ children }) {
     });
   }, []);
 
+  const updateSubscription = useCallback((id, patch) => {
+    setSubscriptions((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, ...patch } : s));
+      localStorage.setItem(SUBS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const save = useCallback((next) => {
     setTriggers(next);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -79,7 +87,7 @@ export function TriggersProvider({ children }) {
   return (
     <TriggersContext.Provider value={{
       triggers, addTrigger, removeTrigger, toggleTrigger, setTriggers: save,
-      subscriptions, addSubscription, removeSubscription,
+      subscriptions, addSubscription, removeSubscription, updateSubscription,
     }}>
       {children}
     </TriggersContext.Provider>
