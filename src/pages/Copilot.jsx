@@ -10,12 +10,12 @@ import './Copilot.css';
 const INITIAL_MESSAGE = {
   role: 'assistant',
   content: {
-    text: 'Olá! Sou o Copiloto de People Analytics. Posso responder perguntas sobre turnover, absenteísmo, headcount, custo de pessoal, horas extras, diversidade, treinamentos e risco de saída — sempre com base nos dados atuais da plataforma. O que você quer entender hoje?',
+    text: 'Olá! Sou o Copiloto de People Analytics. Pergunte livremente — posso cruzar indicadores e correlacionar dados (ex.: relação entre horas extras e turnover), além de responder sobre absenteísmo, atestados e saúde mental, segurança do trabalho, custo de pessoal, diversidade, treinamentos e risco de saída. Tudo com base nos dados atuais da plataforma. O que você quer entender hoje?',
   },
 };
 
 export default function Copilot() {
-  const { metrics, forecasts, insights, risk } = useData();
+  const { metrics, forecasts, insights, risk, medical, safety } = useData();
   const { targets } = useBudget();
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -33,14 +33,14 @@ export default function Copilot() {
     setInput('');
     setThinking(true);
 
-    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets });
+    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety });
     let answer = { ...localAnswer, source: 'local' };
 
     // Employee lookups are a deterministic card, not a generative summary — skip the Gemini
     // round-trip entirely so the profile always shows up instantly and doesn't get reworded.
     if (!localAnswer.employeeCard) {
       try {
-        const context = buildCopilotContext({ metrics, insights, risk });
+        const context = buildCopilotContext({ metrics, insights, risk, medical, safety });
         const geminiText = await askGemini(q, context);
         answer = { ...localAnswer, text: geminiText, source: 'gemini' };
       } catch {

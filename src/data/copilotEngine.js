@@ -3,11 +3,11 @@ import { diffInYears } from '../utils/dates.js';
 import { buildExecutiveSummary } from './executiveSummary.js';
 
 const SUGGESTED_PROMPTS = [
-  'Por que o turnover aumentou?',
+  'Qual a relação entre horas extras e turnover?',
   'Quais diretorias apresentam maior risco?',
-  'Qual gestor possui maior absenteísmo?',
+  'Como está a saúde mental nos atestados?',
   'Resuma os indicadores do mês',
-  'Crie um relatório executivo',
+  'Como está a segurança do trabalho?',
   'Quanto custa o turnover hoje?',
 ];
 
@@ -49,7 +49,7 @@ function findEmployeeMention(q, activeNow) {
 }
 
 export function answerQuestion(question, ctx) {
-  const { metrics, forecasts, insights, risk, targets } = ctx;
+  const { metrics, forecasts, insights, risk, targets, medical, safety } = ctx;
   const q = normalize(question);
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
@@ -71,6 +71,51 @@ export function answerQuestion(question, ctx) {
         engagementScore: mentionedEmployee.engagementScore,
         risk: riskEntry ? { score: riskEntry.score, level: riskEntry.level } : null,
       },
+    };
+  }
+
+  // Correlação turnover × horas extras — cruza as duas métricas por diretoria.
+  if (has(q, 'relacao', 'relaç', 'correlac', 'correlaç', 'relacion') && has(q, 'turnover', 'rotativ') && has(q, 'hora extra', 'horas extras')) {
+    const otByArea = new Map(metrics.overtimeByArea.map((a) => [a.area, a.cost]));
+    const rows = [...metrics.turnoverByArea]
+      .map((a) => ({ area: a.area, rate: a.rate, otCost: otByArea.get(a.area) ?? 0 }))
+      .sort((x, y) => y.rate - x.rate);
+    const top = rows[0];
+    return {
+      text: `Cruzando as duas métricas por diretoria, **${top.area}** tem o maior turnover (${formatPercent(top.rate)}) e um custo de horas extras de ${formatCurrency(top.otCost, { compact: true })} no período. Em geral, diretorias com mais horas extras (sobrecarga) tendem a mostrar turnover mais alto — é uma associação observada nos dados, não causalidade comprovada.`,
+      chart: { type: 'bar', title: 'Turnover por diretoria (12 meses)', data: rows.slice(0, 6), valueKey: 'rate', labelKey: 'area', formatValue: (v) => formatPercent(v) },
+      recommendations: [
+        `Investigar carga de trabalho e horas extras em ${top.area}, onde turnover e HE aparecem altos juntos.`,
+        'Definir um teto de horas extras por equipe e acompanhá-lo como sinal antecipado de risco de saída.',
+      ],
+    };
+  }
+
+  if (has(q, 'atestado', 'cid', 'afastamento', 'saude mental', 'licenca medica')) {
+    if (!medical) return { text: 'Os dados de atestados estão disponíveis no dashboard de Atestados.' };
+    const k = medical.kpis;
+    const topG = medical.groups[0];
+    return {
+      text: `No último mês foram **${formatNumber(k.atestadosMes)} atestados**, somando ${formatNumber(k.diasMes)} dias perdidos. A saúde mental (CID F) responde por **${formatPercent(k.pctMental)}** dos atestados e ${formatNumber(k.inss15)} afastamentos passaram de 15 dias (encaminhados ao INSS). O grupo de maior volume é **${topG.label}**.`,
+      chart: { type: 'bar', title: 'Atestados por grupo de CID (12 meses)', data: medical.groups.slice(0, 6), valueKey: 'count', labelKey: 'label', formatValue: (v) => formatNumber(v) },
+      recommendations: [
+        'Acompanhar a tendência de saúde mental (CID F), em alta na série mensal.',
+        'Identificar as diretorias de maior concentração no mapa do dashboard de Atestados.',
+      ],
+    };
+  }
+
+  if (has(q, 'seguranca', 'acidente', 'paralisac', 'paralisaç', 'inspec', 'sst', ' epi')) {
+    if (!safety) return { text: 'Os dados de segurança estão disponíveis no dashboard de Segurança do Trabalho.' };
+    const k = safety.kpis;
+    const topR = safety.stoppagesByReason[0];
+    return {
+      text: `Estamos há **${formatNumber(k.daysWithoutAccident)} dias sem acidente** com afastamento. A taxa de frequência (TF) é ${formatNumber(k.tf, 1)} e a de gravidade (TG) ${formatNumber(k.tg)}. Foram **${formatNumber(k.paralisacoes12)} paralisações** em 12 meses, sendo o principal motivo "${topR?.label}". A conformidade das inspeções está em ${formatPercent(k.conformidade)}.`,
+      chart: { type: 'bar', title: 'Paralisações por motivo (12 meses)', data: safety.stoppagesByReason, valueKey: 'value', labelKey: 'label', formatValue: (v) => formatNumber(v) },
+      recommendations: [
+        `Priorizar o controle de "${topR?.label}", principal causa de paralisação.`,
+        'Reforçar inspeções nas diretorias de maior concentração de acidentes.',
+      ],
     };
   }
 
