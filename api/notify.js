@@ -85,7 +85,7 @@ function buildDigestEmail(d) {
   const rows = Array.isArray(d.rows) ? d.rows : [];
 
   const rowsHtml = rows.map((r, i) => {
-    const varColor = r.variationGood === true ? '#067647' : r.variationGood === false ? '#B42318' : '#5B6684';
+    const varColor = '#111830'; // variação sem cor (neutra) — a seta já indica a direção
     const bg = i % 2 ? '#F7F9FC' : '#FFFFFF';
     return `<tr>
       <td style="padding:11px 14px;border-top:1px solid #EDF0F6;font-size:13px;color:#111830;font-weight:600;background:${bg};">${esc(r.label)}</td>
