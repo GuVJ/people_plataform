@@ -111,7 +111,7 @@ export default function TopBar() {
             </svg>
           </span>
           <span className="topbar-brand-text">
-            People Analytics <strong>Copilot</strong>
+            People Analytics <strong>Plataform</strong>
           </span>
         </NavLink>
 

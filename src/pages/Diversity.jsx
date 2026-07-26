@@ -3,10 +3,12 @@ import SectionCard from '../components/ui/SectionCard.jsx';
 import DonutChart from '../components/ui/DonutChart.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 
 export default function Diversity() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const { diversity } = metrics;
 
   const genderComparison = diversity.gender.map((g) => {
@@ -25,6 +27,8 @@ export default function Diversity() {
         </div>
         <ExportButton filename="diversidade_raca" sheetName="Diversidade" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Mulheres no quadro">

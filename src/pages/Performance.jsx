@@ -4,6 +4,8 @@ import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import Table from '../components/ui/Table.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 import { PRIMARY_RGB } from '../utils/colors.js';
 import './Performance.css';
@@ -28,7 +30,7 @@ function NineBox({ grid }) {
 }
 
 export default function Performance() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
 
   const exportRows = metrics.criticalTalents.map((t) => ({
     Nome: t.name, Diretoria: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
@@ -43,6 +45,8 @@ export default function Performance() {
         </div>
         <ExportButton filename="talentos_criticos" sheetName="Talentos" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Alto desempenho">

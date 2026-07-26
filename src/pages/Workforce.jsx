@@ -1,12 +1,15 @@
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatCurrency } from '../utils/format.js';
 
 export default function Workforce() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const history = metrics.headcountSeries.slice(-12).map((s) => ({ month: s.month, label: s.label, y: s.total }));
 
   const exportRows = metrics.activeNow.map((e) => ({
@@ -23,6 +26,8 @@ export default function Workforce() {
         </div>
         <ExportButton filename="workforce_colaboradores" sheetName="Colaboradores" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Headcount ativo" className="workforce-stat">
@@ -47,8 +52,8 @@ export default function Workforce() {
         <SectionCard title="Evolução de headcount" subtitle="Últimos 12 meses" span={1}>
           <LineChart history={history} formatValue={(v) => formatNumber(v, 0)} />
         </SectionCard>
-        <SectionCard title="Distribuição por diretoria">
-          <BarChart data={metrics.headcountByArea} valueKey="count" labelKey="area" formatValue={(v) => formatNumber(v)} />
+        <SectionCard title="Headcount por diretoria" subtitle="Matriz mês a mês (12 meses)">
+          <HeatmapTable rows={metrics.headcountByAreaMonthly.rows} cols={metrics.headcountByAreaMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
       </div>
 

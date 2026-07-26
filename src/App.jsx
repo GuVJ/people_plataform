@@ -5,6 +5,7 @@ import { DataProvider } from './context/DataContext.jsx';
 import { BudgetProvider } from './context/BudgetContext.jsx';
 import { FavoritesProvider } from './context/FavoritesContext.jsx';
 import { TriggersProvider } from './context/TriggersContext.jsx';
+import { FilterProvider } from './context/FilterContext.jsx';
 import AppLayout from './components/layout/AppLayout.jsx';
 
 import Home from './pages/Home.jsx';
@@ -42,6 +43,7 @@ function App() {
           <BudgetProvider>
             <FavoritesProvider>
             <TriggersProvider>
+            <FilterProvider>
             <BrowserRouter>
               <Routes>
                 <Route element={<AppLayout />}>
@@ -74,6 +76,7 @@ function App() {
                 </Route>
               </Routes>
             </BrowserRouter>
+            </FilterProvider>
             </TriggersProvider>
             </FavoritesProvider>
           </BudgetProvider>

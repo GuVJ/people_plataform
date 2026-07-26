@@ -2,6 +2,8 @@ import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent, formatCurrency } from '../utils/format.js';
 import './Training.css';
 
@@ -21,7 +23,7 @@ function ProgressRow({ label, value, target, formatValue = (v) => formatPercent(
 }
 
 export default function Training() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const { training, benchmark } = metrics;
 
   const exportRows = training.topTrainings.map((t) => ({ Treinamento: t.name, Participantes: t.count }));
@@ -35,6 +37,8 @@ export default function Training() {
         </div>
         <ExportButton filename="treinamentos_participacao" sheetName="Treinamentos" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Horas treinadas (ano)">

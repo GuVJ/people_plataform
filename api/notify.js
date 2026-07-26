@@ -34,7 +34,7 @@ function buildAlertEmail(a) {
   <tr><td style="background:${BRAND};padding:18px 28px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
       <td style="font-size:16px;font-weight:700;color:#FFFFFF;letter-spacing:-.01em;">
-        People Analytics <span style="color:#BFD4FE;font-weight:600;">Copilot</span>
+        People Analytics <span style="color:#BFD4FE;font-weight:600;">Plataform</span>
       </td>
       <td align="right" style="font-size:11px;color:#BFD4FE;text-transform:uppercase;letter-spacing:.12em;font-weight:600;">Alerta</td>
     </tr></table>
@@ -105,7 +105,7 @@ function buildDigestEmail(d) {
 
   <tr><td style="background:${BRAND};padding:20px 28px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-      <td style="font-size:16px;font-weight:700;color:#FFFFFF;">People Analytics <span style="color:#BFD4FE;font-weight:600;">Copilot</span></td>
+      <td style="font-size:16px;font-weight:700;color:#FFFFFF;">People Analytics <span style="color:#BFD4FE;font-weight:600;">Plataform</span></td>
       <td align="right" style="font-size:11px;color:#BFD4FE;text-transform:uppercase;letter-spacing:.12em;font-weight:600;">Resumo Executivo</td>
     </tr></table>
   </td></tr>

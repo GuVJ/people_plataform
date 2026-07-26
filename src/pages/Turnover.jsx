@@ -1,8 +1,11 @@
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import StackedBarChart from '../components/ui/StackedBarChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent, formatCurrency } from '../utils/format.js';
 
 const SERIES = [
@@ -11,7 +14,7 @@ const SERIES = [
 ];
 
 export default function Turnover() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const last12 = metrics.terminationsSeries.slice(-12);
   const chartData = last12.map((t) => ({ label: t.label, total: t.total, values: { voluntary: t.voluntary, involuntary: t.involuntary } }));
   const lastTurnover = metrics.turnoverSeries[metrics.turnoverSeries.length - 1];
@@ -30,6 +33,8 @@ export default function Turnover() {
         </div>
         <ExportButton filename="turnover_por_area" sheetName="Turnover" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Turnover total (mês)">
@@ -56,8 +61,8 @@ export default function Turnover() {
       </div>
 
       <div className="grid grid-cols-2">
-        <SectionCard title="Turnover por diretoria" subtitle="Taxa nos últimos 12 meses">
-          <BarChart data={metrics.turnoverByArea} valueKey="rate" labelKey="area" formatValue={(v) => formatPercent(v)} />
+        <SectionCard title="Desligamentos por diretoria" subtitle="Matriz mês a mês (12 meses)">
+          <HeatmapTable rows={metrics.terminationsByAreaMonthly.rows} cols={metrics.terminationsByAreaMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
         <SectionCard title="Comparativo histórico" subtitle="Taxa média mensal">
           <BarChart

@@ -3,10 +3,12 @@ import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 
 export default function Recruitment() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const { recruitment } = metrics;
   const deltaDays = recruitment.avgTimeToHireDaysCurrent - recruitment.avgTimeToHireDaysPrevious;
   const timeToHireHistory = recruitment.timeToHireSeries.map((s) => ({ label: s.label, y: s.days }));
@@ -27,6 +29,8 @@ export default function Recruitment() {
         </div>
         <ExportButton filename="recrutamento_funil" sheetName="Funil" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Contratações (6 meses)">

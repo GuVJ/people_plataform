@@ -171,6 +171,69 @@ export function deriveMetrics(employees, months, referenceDate) {
   const overtimeByArea = [...overtimeByAreaMap.entries()].map(([area, cost]) => ({ area, cost })).sort((a, b) => b.cost - a.cost);
   const overtimeByManager = [...overtimeByManagerMap.entries()].map(([manager, hours]) => ({ manager, hours })).sort((a, b) => b.hours - a.hours).slice(0, 8);
 
+  // ---- Matrizes mensais (categoria × mês) para os mapas de calor ----
+  // Últimos 12 meses como colunas; cada linha é uma categoria (diretoria ou motivo).
+  const mLast = months.slice(-12);
+  const mEndsLast = monthEnds.slice(-12);
+  const monthCols = mLast.map((m) => ({ key: monthKeyOf(m), label: monthLabel(m) }));
+  const monthKeysLast = mLast.map((m) => monthKeyOf(m));
+
+  const rowsFromMap = (map) => [...map.entries()].map(([label, byMonth]) => {
+    const values = {};
+    let total = 0;
+    for (const key of monthKeysLast) {
+      const v = byMonth.get(key) ?? 0;
+      if (v) { values[key] = v; total += v; }
+    }
+    return { label, values, total };
+  }).sort((a, b) => b.total - a.total);
+
+  const bump = (map, label, key, amount) => {
+    if (!map.has(label)) map.set(label, new Map());
+    const inner = map.get(label);
+    inner.set(key, (inner.get(key) ?? 0) + amount);
+  };
+
+  // Headcount ativo por diretoria × mês.
+  const hcMatrixMap = new Map();
+  mEndsLast.forEach((end, i) => {
+    for (const e of employees) {
+      if (isActiveAt(e, end)) bump(hcMatrixMap, e.area, monthKeysLast[i], 1);
+    }
+  });
+
+  // Desligamentos por diretoria × mês.
+  const termMatrixMap = new Map();
+  mLast.forEach((m, i) => {
+    const end = mEndsLast[i];
+    for (const e of employees) {
+      if (e.terminationDate && e.terminationDate >= m && e.terminationDate <= end) bump(termMatrixMap, e.area, monthKeysLast[i], 1);
+    }
+  });
+
+  // Dias de absenteísmo por motivo × mês.
+  const absMatrixMap = new Map();
+  for (const e of activeNow) {
+    for (const key of monthKeysLast) {
+      const rec = e.monthlyAbsence.get(key);
+      if (rec) bump(absMatrixMap, rec.reason, key, rec.days);
+    }
+  }
+
+  // Custo de horas extras por diretoria × mês.
+  const otMatrixMap = new Map();
+  for (const e of activeNow) {
+    for (const key of monthKeysLast) {
+      const h = e.monthlyOvertime.get(key);
+      if (h) bump(otMatrixMap, e.area, key, h * (e.salary / HOURLY_DIVISOR) * 1.5);
+    }
+  }
+
+  const headcountByAreaMonthly = { cols: monthCols, rows: rowsFromMap(hcMatrixMap) };
+  const terminationsByAreaMonthly = { cols: monthCols, rows: rowsFromMap(termMatrixMap) };
+  const absenteeismByReasonMonthly = { cols: monthCols, rows: rowsFromMap(absMatrixMap) };
+  const overtimeByAreaMonthly = { cols: monthCols, rows: rowsFromMap(otMatrixMap) };
+
   // ---- Training ----
   const hoursTotal = sum(activeNow, (e) => e.trainingHoursYear);
   const hoursPerEmployee = hoursTotal / (activeNow.length || 1);
@@ -212,6 +275,7 @@ export function deriveMetrics(employees, months, referenceDate) {
     diversity,
     absenteeismByReason, absenteeismByManager, absenteeismByUnit,
     overtimeByArea, overtimeByManager,
+    headcountByAreaMonthly, terminationsByAreaMonthly, absenteeismByReasonMonthly, overtimeByAreaMonthly,
     training, performanceDistribution, nineBoxGrid, criticalTalents, promotionsCount,
     recruitment,
     kpis,

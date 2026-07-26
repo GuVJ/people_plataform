@@ -1,12 +1,15 @@
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 
 export default function Absenteeism() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const series = metrics.absenteeismSeries;
   const last = series[series.length - 1];
   const prev = series[series.length - 2];
@@ -24,6 +27,8 @@ export default function Absenteeism() {
         </div>
         <ExportButton filename="absenteismo_por_gestor" sheetName="Absenteísmo" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Índice de absenteísmo (mês)">
@@ -50,8 +55,8 @@ export default function Absenteeism() {
         <SectionCard title="Tendência de absenteísmo" subtitle="Últimos 12 meses">
           <LineChart history={history} formatValue={(v) => formatPercent(v)} />
         </SectionCard>
-        <SectionCard title="Motivos de ausência" subtitle="Últimos 24 meses">
-          <BarChart data={metrics.absenteeismByReason} valueKey="days" labelKey="reason" color="var(--chart-5)" formatValue={(v) => formatNumber(v)} />
+        <SectionCard title="Motivos de ausência" subtitle="Dias perdidos, mês a mês (12 meses)">
+          <HeatmapTable rows={metrics.absenteeismByReasonMonthly.rows} cols={metrics.absenteeismByReasonMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
       </div>
 

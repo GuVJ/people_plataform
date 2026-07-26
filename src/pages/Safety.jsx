@@ -5,10 +5,12 @@ import BarChart from '../components/ui/BarChart.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 
 export default function Safety() {
-  const { safety } = useData();
+  const { safety } = useDashboardData();
   const k = safety.kpis;
 
   const incidentSeries = [
@@ -27,6 +29,8 @@ export default function Safety() {
         </div>
         <ExportButton filename="seguranca_paralisacoes" sheetName="Paralisações" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Dias sem acidente">
@@ -84,8 +88,8 @@ export default function Safety() {
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Motivos das paralisações" subtitle="Interdições por risco (12 meses)">
-          <BarChart data={safety.stoppagesByReason} valueKey="value" labelKey="label" formatValue={(v) => formatNumber(v)} />
+        <SectionCard title="Motivos das paralisações" subtitle="Matriz mês a mês (12 meses)">
+          <HeatmapTable rows={safety.stoppagesByReasonMonthly.rows} cols={safety.stoppagesByReasonMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
         <SectionCard title="Intervenções preventivas" subtitle="Ações de SST no período">
           <BarChart data={safety.interventions} valueKey="value" labelKey="label" formatValue={(v) => formatNumber(v)} />

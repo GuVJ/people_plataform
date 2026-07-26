@@ -100,6 +100,20 @@ export function buildSafety(employees, months, referenceDate) {
     return { key: r.key, label: r.label, color: r.color, value: count };
   }).sort((a, b) => b.value - a.value);
 
+  // Paralisações por motivo × mês (matriz mensal para o mapa de calor).
+  const totalStoppageW = STOPPAGE_REASONS.reduce((s, x) => s + x.weight, 0);
+  const stoppageMatrixCols = stoppageSeries.map((s, i) => ({ key: `m${i}`, label: s.label }));
+  const stoppageMatrixRows = STOPPAGE_REASONS.map((r) => {
+    const values = {};
+    let total = 0;
+    stoppageSeries.forEach((s, i) => {
+      const v = Math.round(s.y * (r.weight / totalStoppageW) * (0.85 + rng() * 0.3));
+      if (v) { values[`m${i}`] = v; total += v; }
+    });
+    return { label: r.label, values, total };
+  }).sort((a, b) => b.total - a.total);
+  const stoppagesByReasonMonthly = { cols: stoppageMatrixCols, rows: stoppageMatrixRows };
+
   // Intervenções preventivas (volumes anuais).
   const interventionBase = { dds: 240, treino: 96, correcao: 180, loto: 320, epi: 540 };
   const interventions = INTERVENTIONS.map((it) => ({
@@ -149,6 +163,7 @@ export function buildSafety(employees, months, referenceDate) {
     incidentSeries,
     stoppageSeries,
     stoppagesByReason,
+    stoppagesByReasonMonthly,
     interventions,
     heatmap: { rows: heatRows, cols: heatCols },
     kpis: {

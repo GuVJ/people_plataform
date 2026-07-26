@@ -2,14 +2,17 @@ import { useMemo } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { OVERTIME_COST_TYPES } from '../data/constants.js';
 import { formatNumber, formatCurrency, formatPercent } from '../utils/format.js';
 import './Overtime.css';
 
 export default function Overtime() {
-  const { metrics } = useData();
+  const { metrics } = useDashboardData();
   const series = metrics.overtimeSeries;
   const last = series[series.length - 1];
   const prev = series[series.length - 2];
@@ -47,6 +50,8 @@ export default function Overtime() {
         </div>
         <ExportButton filename="horas_extras_por_tipo" sheetName="Horas Extras" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Custo de horas extras (mês)">
@@ -95,8 +100,8 @@ export default function Overtime() {
         <SectionCard title="Evolução do custo de horas extras" subtitle="Últimos 12 meses">
           <LineChart history={history} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
-        <SectionCard title="Ranking de diretorias" subtitle="Custo acumulado (24 meses)">
-          <BarChart data={metrics.overtimeByArea} valueKey="cost" labelKey="area" formatValue={(v) => formatCurrency(v, { compact: true })} />
+        <SectionCard title="Custo de horas extras por diretoria" subtitle="Matriz mês a mês (12 meses)">
+          <HeatmapTable rows={metrics.overtimeByAreaMonthly.rows} cols={metrics.overtimeByAreaMonthly.cols} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
       </div>
 

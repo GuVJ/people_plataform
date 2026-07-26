@@ -7,12 +7,14 @@ import DonutChart from '../components/ui/DonutChart.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import Table from '../components/ui/Table.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
+import DashboardFilters from '../components/ui/DashboardFilters.jsx';
+import { useDashboardData } from '../hooks/useDashboardData.js';
 import { CID_GROUPS } from '../data/medicalLeave.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
 import './MedicalLeave.css';
 
 export default function MedicalLeave() {
-  const { medical } = useData();
+  const { medical } = useDashboardData();
   const k = medical.kpis;
 
   const stackSeries = CID_GROUPS.map((g) => ({ key: g.key, label: g.label, color: g.color }));
@@ -40,6 +42,8 @@ export default function MedicalLeave() {
         </div>
         <ExportButton filename="atestados_por_cid" sheetName="Atestados" rows={exportRows} />
       </div>
+
+      <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         <SectionCard title="Atestados no mês">
