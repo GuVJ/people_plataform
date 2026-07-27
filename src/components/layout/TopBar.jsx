@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './TopBar.css';
 
@@ -27,15 +27,21 @@ const PRIMARY_LINKS = [
   { to: '/dados', label: 'Dados' },
 ];
 
-const ALL_LINKS = [
-  { to: '/', label: 'Overview', end: true },
-  { to: '/meu-painel', label: 'Meu Painel' },
-  ...DASHBOARD_LINKS,
-  ...PRIMARY_LINKS,
-];
+function useClickOutside(ref, onOutside) {
+  useEffect(() => {
+    function handler(e) {
+      if (ref.current && !ref.current.contains(e.target)) onOutside();
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [ref, onOutside]);
+}
 
 export default function TopBar() {
+  const [dashboardsOpen, setDashboardsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const dashRef = useRef(null);
+  useClickOutside(dashRef, () => setDashboardsOpen(false));
 
   return (
     <header className="topbar">
@@ -55,8 +61,35 @@ export default function TopBar() {
         </NavLink>
 
         <nav className="topbar-nav">
-          {ALL_LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+          <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+            Overview
+          </NavLink>
+          <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+            Meu Painel
+          </NavLink>
+
+          <div className="topbar-dropdown" ref={dashRef}>
+            <button
+              type="button"
+              className={`topbar-link topbar-link-btn${dashboardsOpen ? ' active' : ''}`}
+              onClick={() => setDashboardsOpen((o) => !o)}
+            >
+              Dashboards
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
+            </button>
+            {dashboardsOpen && (
+              <div className="topbar-dropdown-menu fade-in">
+                {DASHBOARD_LINKS.map((link) => (
+                  <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-dropdown-item${isActive ? ' active' : ''}`} onClick={() => setDashboardsOpen(false)}>
+                    {link.label}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {PRIMARY_LINKS.map((link) => (
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
               {link.label}
             </NavLink>
           ))}
