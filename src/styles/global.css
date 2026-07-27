@@ -111,6 +111,12 @@ input, select, textarea {
   gap: 16px;
 }
 
+/* Sem isto, um filho com conteúdo largo (tabela/heatmap) expande a coluna 1fr
+   além do container (min-width: auto padrão) e estoura a página no mobile. */
+.grid > * {
+  min-width: 0;
+}
+
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }

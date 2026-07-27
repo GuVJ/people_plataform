@@ -162,5 +162,10 @@
 }
 
 @media (max-width: 720px) {
-  .dash-filter { max-width: none; flex: 1 1 45%; }
+  .dash-filters { align-items: stretch; }
+  .dash-filters-label { width: 100%; margin-bottom: 2px; }
+  .fsel { flex: 1 1 100%; }
+  .fsel-btn { width: 100%; min-width: 0; max-width: none; }
+  .fsel-menu { max-width: none; right: 0; }
+  .dash-filters-clear { width: 100%; }
 }
