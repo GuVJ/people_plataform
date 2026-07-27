@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MiniMarkdown from './MiniMarkdown.jsx';
 import BarChart from '../ui/BarChart.jsx';
 import Table from '../ui/Table.jsx';
+import ExportButton from '../ui/ExportButton.jsx';
 import EmployeeCard from './EmployeeCard.jsx';
 import ExecutiveSummaryTable from '../summary/ExecutiveSummaryTable.jsx';
 import './ChatMessage.css';
@@ -49,7 +50,16 @@ export default function ChatMessage({ message }) {
 
         {table && (
           <div className="chat-table">
+            {table.title && <p className="chat-chart-title">{table.title}</p>}
             <Table columns={table.columns} rows={table.rows} />
+            <div className="chat-table-download">
+              <ExportButton
+                filename={table.filename || 'tabela_copiloto'}
+                sheetName={table.sheetName || 'Tabela'}
+                rows={table.rows.map((r) => Object.fromEntries(table.columns.map((c) => [c.label, c.render ? c.render(r) : r[c.key]])))}
+                label="Baixar Excel"
+              />
+            </div>
           </div>
         )}
 

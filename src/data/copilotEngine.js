@@ -8,7 +8,7 @@ const SUGGESTED_PROMPTS = [
   'Como está a saúde mental nos atestados?',
   'Resuma os indicadores do mês',
   'Como está a segurança do trabalho?',
-  'Quanto custa o turnover hoje?',
+  'Monte uma tabela de turnover por diretoria',
 ];
 
 function normalize(text) {
@@ -17,6 +17,118 @@ function normalize(text) {
 
 function has(text, ...keywords) {
   return keywords.some((k) => text.includes(k));
+}
+
+// O usuário pediu explicitamente uma tabela / lista / planilha (com opção de baixar).
+function wantsTable(q) {
+  return has(q, 'tabela', 'em tabela', 'lista', 'listar', 'planilha', 'baixar', 'download', 'exportar', 'excel', 'csv');
+}
+
+function kpiValue(k) {
+  if (k.format === 'currency') return formatCurrency(k.value, { compact: true });
+  if (k.format === 'percent') return formatPercent(k.value);
+  if (k.format === 'days') return `${formatNumber(k.value, 0)} dias`;
+  if (k.format === 'years') return `${formatNumber(k.value, 1)} anos`;
+  return formatNumber(k.value);
+}
+
+function tableAnswer(filename, sheetName, title, columns, rows) {
+  return {
+    text: `Aqui está a tabela de **${title.toLowerCase()}**. Você pode baixá-la em Excel no botão abaixo.`,
+    table: { title, columns, rows, filename, sheetName },
+  };
+}
+
+// Monta a tabela mais adequada ao que foi pedido, com colunas formatadas + dados para download.
+function buildTable(q, ctx) {
+  const { metrics, risk, medical, safety } = ctx;
+  const pct = (v) => formatPercent(v);
+  const num = (v) => formatNumber(v);
+  const cur = (v) => formatCurrency(v, { compact: true });
+
+  if (has(q, 'turnover', 'rotativ', 'deslig')) {
+    return tableAnswer('turnover_por_diretoria', 'Turnover', 'Turnover por diretoria (12 meses)',
+      [
+        { key: 'area', label: 'Diretoria' },
+        { key: 'count', label: 'Desligamentos', align: 'right', render: (r) => num(r.count) },
+        { key: 'rate', label: 'Taxa', align: 'right', render: (r) => pct(r.rate) },
+        { key: 'cost', label: 'Custo estimado', align: 'right', render: (r) => cur(r.cost) },
+      ], metrics.turnoverByArea);
+  }
+  if (has(q, 'atestado', 'cid', 'saude mental') && medical) {
+    return tableAnswer('atestados_por_cid', 'Atestados', 'Atestados por grupo de CID (12 meses)',
+      [
+        { key: 'label', label: 'Grupo CID' },
+        { key: 'code', label: 'Faixa' },
+        { key: 'count', label: 'Atestados', align: 'right', render: (r) => num(r.count) },
+        { key: 'days', label: 'Dias perdidos', align: 'right', render: (r) => num(r.days) },
+      ], medical.groups);
+  }
+  if (has(q, 'seguranca', 'paralisac', 'paralisaç', 'acidente', 'inspec') && safety) {
+    return tableAnswer('seguranca_paralisacoes', 'Segurança', 'Paralisações por motivo (12 meses)',
+      [
+        { key: 'label', label: 'Motivo' },
+        { key: 'value', label: 'Paralisações', align: 'right', render: (r) => num(r.value) },
+      ], safety.stoppagesByReason);
+  }
+  if (has(q, 'absent', 'falta')) {
+    if (has(q, 'gestor')) {
+      return tableAnswer('absenteismo_por_gestor', 'Absenteísmo', 'Absenteísmo por gestor (dias)',
+        [
+          { key: 'manager', label: 'Gestor' },
+          { key: 'days', label: 'Dias perdidos', align: 'right', render: (r) => num(r.days) },
+        ], metrics.absenteeismByManager);
+    }
+    return tableAnswer('absenteismo_por_motivo', 'Absenteísmo', 'Absenteísmo por motivo (dias)',
+      [
+        { key: 'reason', label: 'Motivo' },
+        { key: 'days', label: 'Dias perdidos', align: 'right', render: (r) => num(r.days) },
+      ], metrics.absenteeismByReason);
+  }
+  if (has(q, 'hora extra')) {
+    return tableAnswer('horas_extras_por_diretoria', 'Horas Extras', 'Custo de horas extras por diretoria',
+      [
+        { key: 'area', label: 'Diretoria' },
+        { key: 'cost', label: 'Custo estimado', align: 'right', render: (r) => cur(r.cost) },
+      ], metrics.overtimeByArea);
+  }
+  if (has(q, 'risco')) {
+    return tableAnswer('risco_de_saida', 'Risco', 'Colaboradores com maior risco de saída',
+      [
+        { key: 'area', label: 'Diretoria' },
+        { key: 'managerName', label: 'Gestor' },
+        { key: 'score', label: 'Score', align: 'right', render: (r) => num(r.score) },
+        { key: 'level', label: 'Nível' },
+      ], risk.slice(0, 15));
+  }
+  if (has(q, 'diversidade', 'genero', 'raca')) {
+    return tableAnswer('diversidade_genero', 'Diversidade', 'Distribuição por gênero',
+      [
+        { key: 'label', label: 'Gênero' },
+        { key: 'count', label: 'Pessoas', align: 'right', render: (r) => num(r.count) },
+        { key: 'pct', label: '%', align: 'right', render: (r) => pct(r.pct) },
+      ], metrics.diversity.gender);
+  }
+  if (has(q, 'cargo', 'nivel')) {
+    return tableAnswer('headcount_por_cargo', 'Cargos', 'Headcount por cargo',
+      [
+        { key: 'role', label: 'Cargo' },
+        { key: 'count', label: 'Pessoas', align: 'right', render: (r) => num(r.count) },
+      ], metrics.headcountByRole);
+  }
+  if (has(q, 'headcount', 'quadro', 'diretoria', 'area', 'colaboradores')) {
+    return tableAnswer('headcount_por_diretoria', 'Headcount', 'Headcount por diretoria',
+      [
+        { key: 'area', label: 'Diretoria' },
+        { key: 'count', label: 'Pessoas', align: 'right', render: (r) => num(r.count) },
+      ], metrics.headcountByArea);
+  }
+  // Padrão: painel de indicadores do mês.
+  return tableAnswer('indicadores_do_mes', 'Indicadores', 'Indicadores do mês',
+    [
+      { key: 'label', label: 'Indicador' },
+      { key: 'valor', label: 'Valor', align: 'right' },
+    ], metrics.kpis.map((k) => ({ label: k.label, valor: kpiValue(k) })));
 }
 
 // A chart earns its place only when the question actually asks for a breakdown/ranking/
@@ -72,6 +184,11 @@ export function answerQuestion(question, ctx) {
         risk: riskEntry ? { score: riskEntry.score, level: riskEntry.level } : null,
       },
     };
+  }
+
+  // Pedido explícito de tabela / lista / planilha (com download em Excel).
+  if (wantsTable(q)) {
+    return buildTable(q, ctx);
   }
 
   // Correlação turnover × horas extras — cruza as duas métricas por diretoria.
