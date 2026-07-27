@@ -1,7 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { usePreferences } from '../../context/PreferencesContext.jsx';
-import { useAuth } from '../../context/AuthContext.jsx';
 import './TopBar.css';
 
 const DASHBOARD_LINKS = [
@@ -21,82 +19,23 @@ const PRIMARY_LINKS = [
   { to: '/organograma', label: 'Organograma' },
   { to: '/gestor', label: 'Visão do Gestor' },
   { to: '/copilot', label: 'Copiloto IA' },
-  { to: '/predictions', label: 'Preditivo' },
   { to: '/planning', label: 'Planejamento' },
   { to: '/orcamento', label: 'Orçamento' },
   { to: '/gatilhos', label: 'Gatilhos' },
-  { to: '/benchmark', label: 'Benchmark' },
   { to: '/reports', label: 'Relatórios' },
   { to: '/funcionarios', label: 'Funcionários' },
   { to: '/dados', label: 'Dados' },
 ];
 
-function useClickOutside(ref, onOutside) {
-  useEffect(() => {
-    function handler(e) {
-      if (ref.current && !ref.current.contains(e.target)) onOutside();
-    }
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [ref, onOutside]);
-}
-
-function IconSun() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-    </svg>
-  );
-}
-
-function IconMoon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function IconEye({ off }) {
-  return off ? (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.6 21.6 0 0 1 5.06-6.06M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-      <path d="M1 1l22 22" />
-    </svg>
-  ) : (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
+const ALL_LINKS = [
+  { to: '/', label: 'Overview', end: true },
+  { to: '/meu-painel', label: 'Meu Painel' },
+  ...DASHBOARD_LINKS,
+  ...PRIMARY_LINKS,
+];
 
 export default function TopBar() {
-  const { theme, toggleTheme, privacyMode, togglePrivacy } = usePreferences();
-  const { user, roleId, setRoleId, roles } = useAuth();
-  const [dashboardsOpen, setDashboardsOpen] = useState(false);
-  const [dashMenuPos, setDashMenuPos] = useState(null);
-  const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const dashRef = useRef(null);
-  const dashBtnRef = useRef(null);
-  const roleRef = useRef(null);
-  useClickOutside(dashRef, () => setDashboardsOpen(false));
-  useClickOutside(roleRef, () => setRoleMenuOpen(false));
-
-  // The nav scrolls horizontally (overflow-x: auto), which forces overflow-y to auto too and
-  // would clip an absolutely-positioned dropdown. Render the menu as position: fixed, anchored
-  // to the button's on-screen rect, so it escapes the nav's clipping.
-  function toggleDashboards() {
-    setDashboardsOpen((open) => {
-      if (!open && dashBtnRef.current) {
-        const r = dashBtnRef.current.getBoundingClientRect();
-        setDashMenuPos({ left: r.left, top: r.bottom + 8 });
-      }
-      return !open;
-    });
-  }
 
   return (
     <header className="topbar">
@@ -116,36 +55,8 @@ export default function TopBar() {
         </NavLink>
 
         <nav className="topbar-nav">
-          <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            Overview
-          </NavLink>
-          <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            Meu Painel
-          </NavLink>
-
-          <div className="topbar-dropdown" ref={dashRef}>
-            <button
-              ref={dashBtnRef}
-              type="button"
-              className={`topbar-link topbar-link-btn${dashboardsOpen ? ' active' : ''}`}
-              onClick={toggleDashboards}
-            >
-              Dashboards
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
-            </button>
-            {dashboardsOpen && dashMenuPos && (
-              <div className="topbar-dropdown-menu topbar-dropdown-menu-fixed fade-in" style={{ left: dashMenuPos.left, top: dashMenuPos.top }}>
-                {DASHBOARD_LINKS.map((link) => (
-                  <NavLink key={link.to} to={link.to} className="topbar-dropdown-item" onClick={() => setDashboardsOpen(false)}>
-                    {link.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {PRIMARY_LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+          {ALL_LINKS.map((link) => (
+            <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
               {link.label}
             </NavLink>
           ))}
@@ -158,36 +69,6 @@ export default function TopBar() {
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
             </svg>
           </NavLink>
-          <button type="button" className="topbar-icon-btn" title="Modo privacidade" aria-label="Alternar modo privacidade" onClick={togglePrivacy} data-active={privacyMode}>
-            <IconEye off={privacyMode} />
-          </button>
-          <button type="button" className="topbar-icon-btn" title="Alternar tema" aria-label="Alternar tema" onClick={toggleTheme}>
-            {theme === 'dark' ? <IconSun /> : <IconMoon />}
-          </button>
-
-          <div className="topbar-dropdown" ref={roleRef}>
-            <button type="button" className="topbar-role-badge" onClick={() => setRoleMenuOpen((o) => !o)}>
-              {user.role.label}
-            </button>
-            {roleMenuOpen && (
-              <div className="topbar-dropdown-menu topbar-dropdown-menu-right fade-in">
-                <div className="topbar-dropdown-label">Visualizar como</div>
-                {roles.map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    className={`topbar-dropdown-item topbar-dropdown-item-btn${r.id === roleId ? ' active' : ''}`}
-                    onClick={() => { setRoleId(r.id); setRoleMenuOpen(false); }}
-                  >
-                    <span>{r.label}</span>
-                    <span className="topbar-dropdown-desc">{r.description}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="topbar-avatar" title={user.name}>{user.initials}</div>
 
           <button type="button" className="topbar-mobile-toggle" aria-label="Abrir menu" onClick={() => setMobileMenuOpen((o) => !o)}>
             {mobileMenuOpen ? (
