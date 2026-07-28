@@ -127,7 +127,7 @@ export default function Reports() {
       <div className="page-header">
         <div>
           <h1>Relatórios</h1>
-          <p className="page-subtitle">Exporte recortes prontos em Excel ou gere resumos executivos por público</p>
+          <p className="page-subtitle">Exporte recortes prontos em Excel</p>
         </div>
         <button type="button" className="btn btn-primary" onClick={handleExportAll} disabled={busyAll}>
           {busyAll ? 'Gerando…' : 'Exportar tudo (.xlsx)'}
@@ -146,21 +146,6 @@ export default function Reports() {
             </SectionCard>
           );
         })}
-      </div>
-
-      <div className="section-title"><span>Resumos executivos (gerados por IA)</span></div>
-      <div className="grid grid-cols-3">
-        {SUMMARY_AUDIENCES.map((audience) => (
-          <SectionCard key={audience.id} title={audience.label} subtitle={`Foco: ${audience.focus}`}>
-            <button
-              type="button"
-              className="btn btn-sm"
-              onClick={() => openPrintableSummary(audience.label, buildSummaryText(audience, metrics, insights))}
-            >
-              Gerar resumo (PDF/impressão)
-            </button>
-          </SectionCard>
-        ))}
       </div>
     </div>
   );
