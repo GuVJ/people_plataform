@@ -34,6 +34,27 @@
 /* No mobile as sugestões rolam de lado (uma linha), para não empurrar o campo
    de perguntar para baixo quando há muitas perguntas. */
 @media (max-width: 720px) {
+  /* Chat em altura fixa que preenche a tela: a página não rola, só a área de mensagens. */
+  .copilot-page {
+    height: calc(100vh - var(--topbar-height));
+    height: calc(100dvh - var(--topbar-height));
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 12px;
+    overflow: hidden;
+  }
+  .copilot-page .page-header {
+    margin-bottom: 12px;
+  }
+  .copilot-page .page-subtitle {
+    display: none;
+  }
+  .copilot-layout {
+    height: auto;
+    min-height: 0;
+    flex: 1;
+  }
+
   .copilot-suggestions {
     flex-wrap: nowrap;
     overflow-x: auto;

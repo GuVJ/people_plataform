@@ -10,7 +10,7 @@ import './Copilot.css';
 const INITIAL_MESSAGE = {
   role: 'assistant',
   content: {
-    text: 'Olá! Sou a Íris, a inteligência de People Analytics da plataforma. Pergunte livremente — posso cruzar indicadores e correlacionar dados (ex.: relação entre horas extras e turnover), além de responder sobre absenteísmo, atestados e saúde mental, segurança do trabalho, custo de pessoal, diversidade, treinamentos e risco de saída. Também monto tabelas para você baixar. Tudo com base nos dados atuais da plataforma. O que você quer entender hoje?',
+    text: 'Olá! Sou a Íris, a inteligência de People Analytics. Pergunte sobre qualquer indicador de RH — posso cruzar dados, correlacionar e montar tabelas para baixar.',
   },
 };
 
