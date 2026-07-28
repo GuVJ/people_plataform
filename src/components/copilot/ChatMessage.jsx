@@ -26,7 +26,7 @@ export default function ChatMessage({ message }) {
     );
   }
 
-  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard } = message.content;
+  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard, initial } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
@@ -85,9 +85,11 @@ export default function ChatMessage({ message }) {
           </div>
         )}
 
-        <button type="button" className="chat-copy-btn" onClick={handleCopy}>
-          {copied ? 'Copiado ✓' : 'Copiar resposta'}
-        </button>
+        {!initial && (
+          <button type="button" className="chat-copy-btn" onClick={handleCopy}>
+            {copied ? 'Copiado ✓' : 'Copiar resposta'}
+          </button>
+        )}
       </div>
     </div>
   );

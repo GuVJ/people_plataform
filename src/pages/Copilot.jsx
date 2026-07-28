@@ -10,6 +10,7 @@ import './Copilot.css';
 const INITIAL_MESSAGE = {
   role: 'assistant',
   content: {
+    initial: true,
     text: 'Olá! Sou a Íris, a inteligência de People Analytics. Pergunte sobre qualquer indicador de RH — posso cruzar dados, correlacionar e montar tabelas para baixar.',
   },
 };
