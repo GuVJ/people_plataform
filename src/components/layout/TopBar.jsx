@@ -18,7 +18,7 @@ const DASHBOARD_LINKS = [
 const PRIMARY_LINKS = [
   { to: '/organograma', label: 'Organograma' },
   { to: '/gestor', label: 'Visão do Gestor' },
-  { to: '/copilot', label: 'Copiloto IA' },
+  { to: '/copilot', label: 'Íris IA' },
   { to: '/planning', label: 'Planejamento' },
   { to: '/orcamento', label: 'Orçamento' },
   { to: '/gatilhos', label: 'Gatilhos' },

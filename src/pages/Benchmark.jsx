@@ -70,7 +70,7 @@ export default function Benchmark() {
       </SectionCard>
 
       <div style={{ marginTop: 16 }}>
-        <SectionCard title="Leitura do Copiloto">
+        <SectionCard title="Leitura da Íris">
           <p className="text-secondary" style={{ fontSize: 13, lineHeight: 1.6 }}>
             A empresa está {rows.filter((r) => r.isGood).length} de {rows.length} indicadores em posição favorável frente ao benchmark setorial.
             {' '}Os pontos de maior atenção são: {rows.filter((r) => !r.isGood).map((r) => r.indicator).join(', ') || 'nenhum no momento'}.

@@ -44,7 +44,7 @@ export default function Home() {
 
       <div className="section-title" style={{ marginTop: 28 }}>
         <span>Insights automáticos</span>
-        <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>Gerados pelo Copiloto a partir dos dados do período</span>
+        <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>Gerados pela Íris a partir dos dados do período</span>
       </div>
       <div className="grid grid-cols-3">
         {insights.map((insight) => <InsightCard key={insight.id} insight={insight} />)}

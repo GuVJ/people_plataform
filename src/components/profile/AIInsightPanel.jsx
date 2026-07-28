@@ -25,7 +25,7 @@ export default function AIInsightPanel({ question, context, localText, cacheKey 
     <div className="card ai-insight-panel fade-in">
       <div className="ai-insight-header">
         <span className="ai-insight-icon">✦</span>
-        <span className="ai-insight-title">Análise do Copiloto</span>
+        <span className="ai-insight-title">Análise da Íris</span>
         <span className={`badge ${state.source === 'gemini' ? 'badge-info' : 'badge-neutral'} ai-insight-badge`}>
           {loading ? 'Gerando…' : state.source === 'gemini' ? '✦ Gemini' : '⚙ Motor local'}
         </span>

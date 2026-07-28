@@ -109,7 +109,7 @@ export default function Overtime() {
         <SectionCard title="Ranking de gestores" subtitle="Horas acumuladas do time (24 meses) — top 8">
           <BarChart data={metrics.overtimeByManager} valueKey="hours" labelKey="manager" color="var(--color-navy)" formatValue={(v) => `${formatNumber(v)}h`} />
         </SectionCard>
-        <SectionCard title="Leitura do Copiloto">
+        <SectionCard title="Leitura da Íris">
           <p className="text-secondary" style={{ fontSize: 13, lineHeight: 1.6 }}>
             A diretoria <strong>{metrics.overtimeByArea[0]?.area}</strong> concentra o maior custo de horas extras do período,
             respondendo por {formatCurrency(metrics.overtimeByArea[0]?.cost ?? 0, { compact: true })} nos últimos 24 meses.

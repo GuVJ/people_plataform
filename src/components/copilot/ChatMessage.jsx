@@ -54,7 +54,7 @@ export default function ChatMessage({ message }) {
             <Table columns={table.columns} rows={table.rows} />
             <div className="chat-table-download">
               <ExportButton
-                filename={table.filename || 'tabela_copiloto'}
+                filename={table.filename || 'tabela_iris'}
                 sheetName={table.sheetName || 'Tabela'}
                 rows={table.rows.map((r) => Object.fromEntries(table.columns.map((c) => [c.label, c.render ? c.render(r) : r[c.key]])))}
                 label="Baixar Excel"

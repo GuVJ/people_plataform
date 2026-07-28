@@ -31,6 +31,21 @@
   color: var(--color-text-secondary);
 }
 
+/* No mobile as sugestões rolam de lado (uma linha), para não empurrar o campo
+   de perguntar para baixo quando há muitas perguntas. */
+@media (max-width: 720px) {
+  .copilot-suggestions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .copilot-suggestions::-webkit-scrollbar { display: none; }
+  .copilot-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
 .copilot-chip:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);

@@ -10,7 +10,7 @@ import './Copilot.css';
 const INITIAL_MESSAGE = {
   role: 'assistant',
   content: {
-    text: 'Olá! Sou o Copiloto de People Analytics. Pergunte livremente — posso cruzar indicadores e correlacionar dados (ex.: relação entre horas extras e turnover), além de responder sobre absenteísmo, atestados e saúde mental, segurança do trabalho, custo de pessoal, diversidade, treinamentos e risco de saída. Tudo com base nos dados atuais da plataforma. O que você quer entender hoje?',
+    text: 'Olá! Sou a Íris, a inteligência de People Analytics da plataforma. Pergunte livremente — posso cruzar indicadores e correlacionar dados (ex.: relação entre horas extras e turnover), além de responder sobre absenteísmo, atestados e saúde mental, segurança do trabalho, custo de pessoal, diversidade, treinamentos e risco de saída. Também monto tabelas para você baixar. Tudo com base nos dados atuais da plataforma. O que você quer entender hoje?',
   },
 };
 
@@ -56,7 +56,7 @@ export default function Copilot() {
     <div className="page copilot-page fade-in">
       <div className="page-header">
         <div>
-          <h1>Copiloto de People Analytics</h1>
+          <h1>Íris · Inteligência de People Analytics</h1>
           <p className="page-subtitle">Pergunte em linguagem natural sobre qualquer indicador de RH</p>
         </div>
       </div>
