@@ -30,6 +30,7 @@ import ManagerView from './pages/ManagerView.jsx';
 import Budget from './pages/Budget.jsx';
 import BudgetEdit from './pages/BudgetEdit.jsx';
 import Settings from './pages/Settings.jsx';
+import RulesAI from './pages/RulesAI.jsx';
 import MyDashboard from './pages/MyDashboard.jsx';
 import Triggers from './pages/Triggers.jsx';
 import MedicalLeave from './pages/MedicalLeave.jsx';
@@ -90,6 +91,7 @@ function App() {
                   <Route path="/aso" element={<Aso />} />
                   <Route path="/meu-painel" element={<MyDashboard />} />
                   <Route path="/configuracoes" element={<Settings />} />
+                  <Route path="/configuracoes/ia" element={<RulesAI />} />
                   <Route path="/gatilhos" element={<Triggers />} />
                 </Route>
               </Routes>
