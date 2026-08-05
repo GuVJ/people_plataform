@@ -1,5 +1,6 @@
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import { diffInYears } from '../utils/dates.js';
+import { AREAS } from './constants.js';
 import { buildExecutiveSummary } from './executiveSummary.js';
 
 const SUGGESTED_PROMPTS = [
@@ -39,12 +40,83 @@ function tableAnswer(filename, sheetName, title, columns, rows) {
   };
 }
 
+function findArea(q) {
+  const found = AREAS.find((a) => q.includes(normalize(a.name)));
+  return found ? found.name : null;
+}
+
 // Monta a tabela mais adequada ao que foi pedido, com colunas formatadas + dados para download.
 function buildTable(q, ctx) {
-  const { metrics, risk, medical, safety } = ctx;
+  const { metrics, risk, medical, safety, hr } = ctx;
   const pct = (v) => formatPercent(v);
   const num = (v) => formatNumber(v);
   const cur = (v) => formatCurrency(v, { compact: true });
+
+  // Lista de colaboradores (nome a nome), opcionalmente filtrada por diretoria citada.
+  if (has(q, 'funcionario', 'colaborador', 'pessoas', 'nomes', 'quem sao', 'quem são', 'quadro de pessoas')) {
+    const area = findArea(q);
+    let emps = metrics.activeNow;
+    if (area) emps = emps.filter((e) => e.area === area);
+    const columns = [
+      { key: 'name', label: 'Nome' },
+      { key: 'area', label: 'Diretoria' },
+      { key: 'roleLevel', label: 'Cargo' },
+      { key: 'managerName', label: 'Gestor' },
+      { key: 'unit', label: 'Unidade' },
+      { key: 'salary', label: 'Salário', align: 'right', render: (r) => cur(r.salary) },
+      { key: 'admissao', label: 'Admissão' },
+    ];
+    const all = emps.map((e) => ({
+      name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName,
+      unit: e.unit, salary: e.salary, admissao: e.admissionDate.toLocaleDateString('pt-BR'),
+    }));
+    const display = all.slice(0, 50);
+    const exportRows = all.map((r) => ({
+      Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, Gestor: r.managerName,
+      Unidade: r.unit, Salário: r.salary, Admissão: r.admissao,
+    }));
+    return {
+      text: `Lista de colaboradores ativos${area ? ` da diretoria **${area}**` : ''} — **${num(all.length)}** no total.${all.length > 50 ? ' Mostrando os primeiros 50; baixe o Excel para a lista completa.' : ''}`,
+      table: { title: area ? `Colaboradores · ${area}` : 'Colaboradores ativos', columns, rows: display, exportRows, filename: 'funcionarios', sheetName: 'Funcionários' },
+    };
+  }
+
+  if (has(q, 'aso', 'exame ocupacional', 'exames') && hr) {
+    return tableAnswer('aso_por_tipo', 'ASO', 'ASO por tipo de exame',
+      [{ key: 'label', label: 'Tipo' }, { key: 'count', label: 'Exames/mês', align: 'right', render: (r) => num(r.count) }], hr.aso.byType);
+  }
+  if (has(q, ' epi', 'equipamento de prot') && hr) {
+    return tableAnswer('epi_consumo', 'EPI', 'Consumo de EPI por tipo',
+      [{ key: 'label', label: 'EPI' }, { key: 'value', label: 'Consumo/mês', align: 'right', render: (r) => num(r.value) }, { key: 'cost', label: 'Custo', align: 'right', render: (r) => cur(r.cost) }], hr.epi.consumo);
+  }
+  if (has(q, 'nr-', 'nr ', 'norma regulament', ' nrs') && hr) {
+    return tableAnswer('treinamentos_nrs', 'NRs', 'Cobertura de treinamentos de NRs',
+      [{ key: 'label', label: 'NR' }, { key: 'value', label: 'Cobertura (%)', align: 'right', render: (r) => `${num(r.value)}%` }], hr.nrs.cobertura);
+  }
+  if (has(q, 'pcd', 'deficien') && hr) {
+    return tableAnswer('pcd_por_diretoria', 'PCD', 'PCD por diretoria',
+      [{ key: 'area', label: 'Diretoria' }, { key: 'count', label: 'PCD', align: 'right', render: (r) => num(r.count) }, { key: 'pct', label: '%', align: 'right', render: (r) => pct(r.pct) }], hr.pcd.byArea);
+  }
+  if (has(q, 'aprendiz') && hr) {
+    return tableAnswer('jovem_aprendiz', 'Aprendizes', 'Jovem aprendiz por diretoria',
+      [{ key: 'area', label: 'Diretoria' }, { key: 'count', label: 'Aprendizes', align: 'right', render: (r) => num(r.count) }], hr.apprentices.byArea);
+  }
+  if (has(q, 'disciplinar', 'advertenc', 'suspensao', 'justa causa') && hr) {
+    return tableAnswer('medidas_disciplinares', 'Disciplinar', 'Medidas disciplinares por motivo',
+      [{ key: 'reason', label: 'Motivo' }, { key: 'count', label: 'Ocorrências', align: 'right', render: (r) => num(r.count) }], hr.disciplinary.byReason);
+  }
+  if (has(q, 'chamado', 'ticket', 'atendimento') && hr) {
+    return tableAnswer('chamados_rh', 'Chamados', 'Chamados de RH por categoria',
+      [{ key: 'label', label: 'Categoria' }, { key: 'value', label: 'Chamados', align: 'right', render: (r) => num(r.value) }], hr.tickets.byCategory);
+  }
+  if (has(q, 'trabalhista', 'reclamat', 'processo') && hr) {
+    return tableAnswer('trabalhista', 'Trabalhista', 'Processos trabalhistas por motivo',
+      [{ key: 'reason', label: 'Motivo' }, { key: 'count', label: 'Processos', align: 'right', render: (r) => num(r.count) }], hr.labor.byReason);
+  }
+  if (has(q, 'posicionamento', 'compa', 'faixa salarial') && hr) {
+    return tableAnswer('posicionamento_salarial', 'Posicionamento', 'Compa-ratio por diretoria',
+      [{ key: 'area', label: 'Diretoria' }, { key: 'compa', label: 'Compa-ratio', align: 'right', render: (r) => formatNumber(r.compa, 2) }], hr.positioning.byArea);
+  }
 
   if (has(q, 'turnover', 'rotativ', 'deslig')) {
     return tableAnswer('turnover_por_diretoria', 'Turnover', 'Turnover por diretoria (12 meses)',
@@ -123,6 +195,30 @@ function buildTable(q, ctx) {
         { key: 'count', label: 'Pessoas', align: 'right', render: (r) => num(r.count) },
       ], metrics.headcountByArea);
   }
+  // Lista de gestores com tamanho de time (pura, sem métrica associada).
+  if (has(q, 'gestor', 'lideranca', 'lider')) {
+    const teams = new Map();
+    for (const e of metrics.activeNow) {
+      if (e.managerName && e.managerName !== 'Diretoria' && e.managerName !== '—') {
+        teams.set(e.managerName, (teams.get(e.managerName) ?? 0) + 1);
+      }
+    }
+    const rows = [...teams.entries()].map(([manager, size]) => ({ manager, size })).sort((a, b) => b.size - a.size);
+    return tableAnswer('gestores_e_times', 'Gestores', 'Gestores e tamanho do time',
+      [{ key: 'manager', label: 'Gestor' }, { key: 'size', label: 'Time (pessoas)', align: 'right', render: (r) => num(r.size) }], rows);
+  }
+  if (has(q, 'unidade', 'regional', 'filial', 'escritorio')) {
+    const units = new Map();
+    for (const e of metrics.activeNow) units.set(e.unit, (units.get(e.unit) ?? 0) + 1);
+    const rows = [...units.entries()].map(([unit, count]) => ({ unit, count })).sort((a, b) => b.count - a.count);
+    return tableAnswer('headcount_por_unidade', 'Unidades', 'Headcount por unidade',
+      [{ key: 'unit', label: 'Unidade' }, { key: 'count', label: 'Pessoas', align: 'right', render: (r) => num(r.count) }], rows);
+  }
+  if (has(q, 'treinamento', 'capacita') && metrics.training?.topTrainings) {
+    return tableAnswer('treinamentos', 'Treinamentos', 'Treinamentos mais concluídos',
+      [{ key: 'name', label: 'Treinamento' }, { key: 'count', label: 'Concluíram', align: 'right', render: (r) => num(r.count) }], metrics.training.topTrainings);
+  }
+
   // Padrão: painel de indicadores do mês.
   return tableAnswer('indicadores_do_mes', 'Indicadores', 'Indicadores do mês',
     [
@@ -161,7 +257,7 @@ function findEmployeeMention(q, activeNow) {
 }
 
 export function answerQuestion(question, ctx) {
-  const { metrics, forecasts, insights, risk, targets, medical, safety } = ctx;
+  const { metrics, forecasts, insights, risk, targets, medical, safety, hr } = ctx;
   const q = normalize(question);
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];

@@ -16,7 +16,7 @@ const INITIAL_MESSAGE = {
 };
 
 export default function Copilot() {
-  const { metrics, forecasts, insights, risk, medical, safety } = useData();
+  const { metrics, forecasts, insights, risk, medical, safety, hr } = useData();
   const { targets } = useBudget();
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -34,12 +34,12 @@ export default function Copilot() {
     setInput('');
     setThinking(true);
 
-    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety });
+    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety, hr });
     let answer = { ...localAnswer, source: 'local' };
 
-    // Employee lookups are a deterministic card, not a generative summary — skip the Gemini
-    // round-trip entirely so the profile always shows up instantly and doesn't get reworded.
-    if (!localAnswer.employeeCard) {
+    // Cards de funcionário e tabelas são determinísticos — pulamos o Gemini para o dado sempre
+    // aparecer na hora e o texto não contradizer a tabela (ex.: "não tenho acesso à lista").
+    if (!localAnswer.employeeCard && !localAnswer.table) {
       try {
         const context = buildCopilotContext({ metrics, insights, risk, medical, safety });
         const geminiText = await askGemini(q, context);

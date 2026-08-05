@@ -56,7 +56,7 @@ export default function ChatMessage({ message }) {
               <ExportButton
                 filename={table.filename || 'tabela_iris'}
                 sheetName={table.sheetName || 'Tabela'}
-                rows={table.rows.map((r) => Object.fromEntries(table.columns.map((c) => [c.label, c.render ? c.render(r) : r[c.key]])))}
+                rows={table.exportRows || table.rows.map((r) => Object.fromEntries(table.columns.map((c) => [c.label, c.render ? c.render(r) : r[c.key]])))}
                 label="Baixar Excel"
               />
             </div>
