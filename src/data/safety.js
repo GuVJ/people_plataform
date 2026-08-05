@@ -146,6 +146,10 @@ export function buildSafety(employees, months, referenceDate) {
   const hht = activeCount * 220 * 8; // ~220 dias úteis/ano × 8h
   const tf = (accidentsLostTime12 * 1_000_000) / hht;
   const tg = (lostDays12 * 1_000_000) / hht;
+  // TRCF (Total Recordable Case Frequency) = todos os casos registráveis (com e sem afastamento).
+  // LTIF (Lost Time Injury Frequency) = acidentes com afastamento. Padrão base 1.000.000 HHT.
+  const trcf = ((accidentsLostTime12 + accidentsNoLostTime12) * 1_000_000) / hht;
+  const ltif = (accidentsLostTime12 * 1_000_000) / hht;
 
   // Dias sem acidente com afastamento (desde o último registro).
   const daysWithoutAccident = Math.round(gaussian(rng, 47, 12));
@@ -171,6 +175,8 @@ export function buildSafety(employees, months, referenceDate) {
       recordDays,
       tf: Math.round(tf * 10) / 10,
       tg: Math.round(tg),
+      trcf: Math.round(trcf * 10) / 10,
+      ltif: Math.round(ltif * 10) / 10,
       inspecoesMes: lastInsp.y,
       inspecoesMesDelta: lastInsp.y - prevInsp.y,
       conformidade: lastConf.y,

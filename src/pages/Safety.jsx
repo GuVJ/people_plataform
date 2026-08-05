@@ -45,6 +45,14 @@ export default function Safety() {
           <div className="stat-big">{formatNumber(k.tg)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>Dias perdidos por milhão de HHT</p>
         </SectionCard>
+        <SectionCard title="TRCF">
+          <div className="stat-big">{formatNumber(k.trcf, 1)}</div>
+          <p className="text-secondary" style={{ fontSize: 12 }}>Casos registráveis (c/ e s/ afast.) por milhão de HHT</p>
+        </SectionCard>
+        <SectionCard title="LTIF">
+          <div className="stat-big">{formatNumber(k.ltif, 1)}</div>
+          <p className="text-secondary" style={{ fontSize: 12 }}>Acidentes com afastamento por milhão de HHT</p>
+        </SectionCard>
         <SectionCard title="Conformidade das inspeções">
           <div className="stat-big">{formatPercent(k.conformidade)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>Itens conformes no último mês</p>

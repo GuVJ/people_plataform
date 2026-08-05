@@ -34,6 +34,15 @@ import MyDashboard from './pages/MyDashboard.jsx';
 import Triggers from './pages/Triggers.jsx';
 import MedicalLeave from './pages/MedicalLeave.jsx';
 import Safety from './pages/Safety.jsx';
+import SalaryPositioning from './pages/SalaryPositioning.jsx';
+import Pcd from './pages/Pcd.jsx';
+import Apprentices from './pages/Apprentices.jsx';
+import Disciplinary from './pages/Disciplinary.jsx';
+import Tickets from './pages/Tickets.jsx';
+import Labor from './pages/Labor.jsx';
+import Epi from './pages/Epi.jsx';
+import Nrs from './pages/Nrs.jsx';
+import Aso from './pages/Aso.jsx';
 
 function App() {
   return (
@@ -70,6 +79,15 @@ function App() {
                   <Route path="/orcamento/metas" element={<BudgetEdit />} />
                   <Route path="/atestados" element={<MedicalLeave />} />
                   <Route path="/seguranca" element={<Safety />} />
+                  <Route path="/posicionamento" element={<SalaryPositioning />} />
+                  <Route path="/pcd" element={<Pcd />} />
+                  <Route path="/aprendizes" element={<Apprentices />} />
+                  <Route path="/disciplinar" element={<Disciplinary />} />
+                  <Route path="/chamados" element={<Tickets />} />
+                  <Route path="/trabalhista" element={<Labor />} />
+                  <Route path="/epi" element={<Epi />} />
+                  <Route path="/nrs" element={<Nrs />} />
+                  <Route path="/aso" element={<Aso />} />
                   <Route path="/meu-painel" element={<MyDashboard />} />
                   <Route path="/configuracoes" element={<Settings />} />
                   <Route path="/gatilhos" element={<Triggers />} />

@@ -6,6 +6,7 @@ import { generateInsights } from '../data/insights.js';
 import { computeRiskForEmployees } from '../data/risk.js';
 import { buildMedicalLeave } from '../data/medicalLeave.js';
 import { buildSafety } from '../data/safety.js';
+import { buildHrExtras } from '../data/hrExtras.js';
 import { createEmployeeFromInput } from '../data/employeeFactory.js';
 import { monthKey as toMonthKey } from '../utils/dates.js';
 
@@ -26,7 +27,8 @@ function recompute(employees) {
   const risk = computeRiskForEmployees(metrics.activeNow, genMonths);
   const medical = buildMedicalLeave(employees, genMonths);
   const safety = buildSafety(employees, genMonths, genReferenceDate);
-  cachedBundle = { employees, metrics, forecasts, insights, risk, medical, safety };
+  const hr = buildHrExtras(metrics);
+  cachedBundle = { employees, metrics, forecasts, insights, risk, medical, safety, hr };
   return cachedBundle;
 }
 
