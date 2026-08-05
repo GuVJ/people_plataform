@@ -20,9 +20,15 @@ function has(text, ...keywords) {
   return keywords.some((k) => text.includes(k));
 }
 
-// O usuário pediu explicitamente uma tabela / lista / planilha (com opção de baixar).
+// Detecta intenção de listar/tabular (com opção de baixar) — inclusive quando o usuário não usa
+// a palavra "tabela" (ex.: "funcionários com maior banco de horas", "ranking de...", "top ...").
 function wantsTable(q) {
-  return has(q, 'tabela', 'em tabela', 'lista', 'listar', 'planilha', 'baixar', 'download', 'exportar', 'excel', 'csv');
+  return has(
+    q,
+    'tabela', 'em tabela', 'lista', 'listar', 'planilha', 'baixar', 'download', 'exportar', 'excel', 'csv',
+    'banco de horas', 'ranking', 'top ', 'quais funcionario', 'quais colaborador',
+    'funcionarios com', 'funcionários com', 'colaboradores com', 'quem tem mais', 'quem sao os', 'quem são os',
+  );
 }
 
 function kpiValue(k) {
@@ -51,6 +57,29 @@ function buildTable(q, ctx) {
   const pct = (v) => formatPercent(v);
   const num = (v) => formatNumber(v);
   const cur = (v) => formatCurrency(v, { compact: true });
+
+  // Ranking de colaboradores por banco de horas extras (soma do período).
+  if (has(q, 'banco de horas') || (has(q, 'hora extra', 'horas extras') && has(q, 'funcionario', 'colaborador', 'maior', 'ranking', 'quem', 'mais'))) {
+    const ranked = metrics.activeNow.map((e) => {
+      let h = 0;
+      for (const v of e.monthlyOvertime.values()) h += v;
+      return { name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName, hours: h };
+    }).sort((a, b) => b.hours - a.hours);
+    const top = ranked.slice(0, 30);
+    return {
+      text: `Colaboradores com maior banco de horas extras (soma do período). Mostrando o top 30 — baixe o Excel para todos.`,
+      table: {
+        title: 'Banco de horas por colaborador',
+        columns: [
+          { key: 'name', label: 'Nome' }, { key: 'area', label: 'Diretoria' }, { key: 'roleLevel', label: 'Cargo' },
+          { key: 'managerName', label: 'Gestor' }, { key: 'hours', label: 'Banco de horas (h)', align: 'right', render: (r) => num(r.hours) },
+        ],
+        rows: top,
+        exportRows: ranked.map((r) => ({ Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, Gestor: r.managerName, 'Banco de horas (h)': r.hours })),
+        filename: 'banco_de_horas', sheetName: 'Banco de horas',
+      },
+    };
+  }
 
   // Lista de colaboradores (nome a nome), opcionalmente filtrada por diretoria citada.
   if (has(q, 'funcionario', 'colaborador', 'pessoas', 'nomes', 'quem sao', 'quem são', 'quadro de pessoas')) {
