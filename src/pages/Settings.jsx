@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 import { THEMES, THEME_BY_KEY } from '../data/themes.js';
 import SectionCard from '../components/ui/SectionCard.jsx';
+import { AI_FRAMEWORKS, AI_PRINCIPLES } from '../data/aiRules.js';
 import './Settings.css';
+import './RulesAI.css';
 
 function StarIcon({ filled }) {
   return (
@@ -81,10 +83,33 @@ export default function Settings() {
       </div>
 
       <SectionCard title="Regras e governança da Íris" subtitle="Princípios de IA responsável alinhados aos frameworks de mercado (NIST AI RMF, ISO/IEC 42001, EU AI Act) e à LGPD">
-        <p className="text-secondary" style={{ fontSize: 13.5, marginBottom: 14 }}>
-          A página reúne, de forma estruturada, o que a Íris pode fazer, como decide as respostas e quais salvaguardas de privacidade, segurança e supervisão humana ela adota.
+        <div className="rules-frameworks" style={{ marginBottom: 16 }}>
+          {AI_FRAMEWORKS.map((f) => (
+            <div className="rules-fw" key={f.label}>
+              <span className="rules-fw-label">{f.label}</span>
+              <span className="rules-fw-desc">{f.desc}</span>
+            </div>
+          ))}
+        </div>
+        <div className="rules-grid">
+          {AI_PRINCIPLES.map((p, i) => (
+            <div className="rules-card card" key={p.title}>
+              <div className="rules-card-head">
+                <span className="rules-card-num">{String(i + 1).padStart(2, '0')}</span>
+                <span className="rules-card-tag">{p.tag}</span>
+              </div>
+              <h3 className="rules-card-title">{p.title}</h3>
+              <p className="rules-card-market">{p.market}</p>
+              <div className="rules-card-iris">
+                <span className="rules-card-iris-label">Na Íris</span>
+                <span>{p.iris}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p style={{ marginTop: 16 }}>
+          <Link to="/configuracoes/ia">Abrir em página cheia →</Link>
         </p>
-        <Link to="/configuracoes/ia" className="btn btn-primary">Ver regras e governança da IA →</Link>
       </SectionCard>
     </div>
   );

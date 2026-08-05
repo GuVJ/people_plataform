@@ -48,9 +48,24 @@ function useClickOutside(ref, onOutside) {
 
 export default function TopBar() {
   const [dashboardsOpen, setDashboardsOpen] = useState(false);
+  const [dashMenuPos, setDashMenuPos] = useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dashRef = useRef(null);
+  const dashBtnRef = useRef(null);
   useClickOutside(dashRef, () => setDashboardsOpen(false));
+
+  // A nav tem overflow-x: auto (rola os links), o que força overflow-y: auto e clipa um menu
+  // posicionado de forma absoluta. Renderizamos o menu como position: fixed, ancorado ao rect
+  // do botão, para escapar do clipping.
+  function toggleDashboards() {
+    setDashboardsOpen((open) => {
+      if (!open && dashBtnRef.current) {
+        const r = dashBtnRef.current.getBoundingClientRect();
+        setDashMenuPos({ left: r.left, top: r.bottom + 8 });
+      }
+      return !open;
+    });
+  }
 
   return (
     <header className="topbar">
@@ -79,15 +94,16 @@ export default function TopBar() {
 
           <div className="topbar-dropdown" ref={dashRef}>
             <button
+              ref={dashBtnRef}
               type="button"
               className={`topbar-link topbar-link-btn${dashboardsOpen ? ' active' : ''}`}
-              onClick={() => setDashboardsOpen((o) => !o)}
+              onClick={toggleDashboards}
             >
               Dashboards
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
             </button>
-            {dashboardsOpen && (
-              <div className="topbar-dropdown-menu fade-in">
+            {dashboardsOpen && dashMenuPos && (
+              <div className="topbar-dropdown-menu topbar-dropdown-menu-fixed fade-in" style={{ left: dashMenuPos.left, top: dashMenuPos.top }}>
                 {DASHBOARD_LINKS.map((link) => (
                   <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-dropdown-item${isActive ? ' active' : ''}`} onClick={() => setDashboardsOpen(false)}>
                     {link.label}

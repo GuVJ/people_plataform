@@ -115,6 +115,9 @@
   position: fixed;
   top: auto;
   z-index: 200;
+  max-height: calc(100vh - var(--topbar-height) - 24px);
+  max-height: calc(100dvh - var(--topbar-height) - 24px);
+  overflow-y: auto;
 }
 
 .topbar-dropdown-menu-right {
