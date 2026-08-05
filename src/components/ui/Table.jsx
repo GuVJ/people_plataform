@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Table.css';
 
 function compareValues(a, b) {
@@ -66,11 +67,14 @@ export default function Table({ columns, rows, rowKey = (r, i) => i }) {
         <tbody>
           {sortedRows.map((row, i) => (
             <tr key={rowKey(row, i)}>
-              {columns.map((c) => (
-                <td key={c.key} style={{ textAlign: c.align || 'left' }}>
-                  {c.render ? c.render(row) : row[c.key]}
-                </td>
-              ))}
+              {columns.map((c) => {
+                const content = c.render ? c.render(row) : row[c.key];
+                return (
+                  <td key={c.key} style={{ textAlign: c.align || 'left' }}>
+                    {c.href ? <Link className="table-link" to={c.href(row)}>{content}</Link> : content}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

@@ -2,6 +2,15 @@
   overflow-x: auto;
 }
 
+.table-link {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.table-link:hover {
+  text-decoration: underline;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;

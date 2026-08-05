@@ -63,15 +63,15 @@ function buildTable(q, ctx) {
     const ranked = metrics.activeNow.map((e) => {
       let h = 0;
       for (const v of e.monthlyOvertime.values()) h += v;
-      return { name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName, hours: h };
+      return { id: e.id, name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName, hours: h };
     }).sort((a, b) => b.hours - a.hours);
     const top = ranked.slice(0, 30);
     return {
-      text: `Colaboradores com maior banco de horas extras (soma do período). Mostrando o top 30 — baixe o Excel para todos.`,
+      text: `Colaboradores com maior banco de horas extras (soma do período). Mostrando o top 30 — baixe o Excel para todos. Clique no nome para abrir a ficha.`,
       table: {
         title: 'Banco de horas por colaborador',
         columns: [
-          { key: 'name', label: 'Nome' }, { key: 'area', label: 'Diretoria' }, { key: 'roleLevel', label: 'Cargo' },
+          { key: 'name', label: 'Nome', href: (r) => `/funcionario/${r.id}` }, { key: 'area', label: 'Diretoria' }, { key: 'roleLevel', label: 'Cargo' },
           { key: 'managerName', label: 'Gestor' }, { key: 'hours', label: 'Banco de horas (h)', align: 'right', render: (r) => num(r.hours) },
         ],
         rows: top,
@@ -87,7 +87,7 @@ function buildTable(q, ctx) {
     let emps = metrics.activeNow;
     if (area) emps = emps.filter((e) => e.area === area);
     const columns = [
-      { key: 'name', label: 'Nome' },
+      { key: 'name', label: 'Nome', href: (r) => `/funcionario/${r.id}` },
       { key: 'area', label: 'Diretoria' },
       { key: 'roleLevel', label: 'Cargo' },
       { key: 'managerName', label: 'Gestor' },
@@ -96,7 +96,7 @@ function buildTable(q, ctx) {
       { key: 'admissao', label: 'Admissão' },
     ];
     const all = emps.map((e) => ({
-      name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName,
+      id: e.id, name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName,
       unit: e.unit, salary: e.salary, admissao: e.admissionDate.toLocaleDateString('pt-BR'),
     }));
     const display = all.slice(0, 50);
@@ -105,7 +105,7 @@ function buildTable(q, ctx) {
       Unidade: r.unit, Salário: r.salary, Admissão: r.admissao,
     }));
     return {
-      text: `Lista de colaboradores ativos${area ? ` da diretoria **${area}**` : ''} — **${num(all.length)}** no total.${all.length > 50 ? ' Mostrando os primeiros 50; baixe o Excel para a lista completa.' : ''}`,
+      text: `Lista de colaboradores ativos${area ? ` da diretoria **${area}**` : ''} — **${num(all.length)}** no total.${all.length > 50 ? ' Mostrando os primeiros 50; baixe o Excel para a lista completa.' : ''} Clique no nome para abrir a ficha.`,
       table: { title: area ? `Colaboradores · ${area}` : 'Colaboradores ativos', columns, rows: display, exportRows, filename: 'funcionarios', sheetName: 'Funcionários' },
     };
   }
