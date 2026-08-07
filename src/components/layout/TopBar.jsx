@@ -33,7 +33,6 @@ const PRIMARY_LINKS = [
   { to: '/gatilhos', label: 'Gatilhos' },
   { to: '/reports', label: 'Relatórios' },
   { to: '/funcionarios', label: 'Funcionários' },
-  { to: '/dados', label: 'Dados' },
 ];
 
 function useClickOutside(ref, onOutside) {

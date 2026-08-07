@@ -22,7 +22,6 @@ import Predictions from './pages/Predictions.jsx';
 import Planning from './pages/Planning.jsx';
 import Benchmark from './pages/Benchmark.jsx';
 import Reports from './pages/Reports.jsx';
-import Dados from './pages/Dados.jsx';
 import OrgChart from './pages/OrgChart.jsx';
 import EmployeeProfile from './pages/EmployeeProfile.jsx';
 import EmployeeDirectory from './pages/EmployeeDirectory.jsx';
@@ -32,7 +31,6 @@ import BudgetEdit from './pages/BudgetEdit.jsx';
 import Settings from './pages/Settings.jsx';
 import RulesAI from './pages/RulesAI.jsx';
 import MyDashboard from './pages/MyDashboard.jsx';
-import Triggers from './pages/Triggers.jsx';
 import MedicalLeave from './pages/MedicalLeave.jsx';
 import Safety from './pages/Safety.jsx';
 import SalaryPositioning from './pages/SalaryPositioning.jsx';
@@ -44,6 +42,7 @@ import Labor from './pages/Labor.jsx';
 import Epi from './pages/Epi.jsx';
 import Nrs from './pages/Nrs.jsx';
 import Aso from './pages/Aso.jsx';
+import Locked from './pages/Locked.jsx';
 
 function App() {
   return (
@@ -72,7 +71,6 @@ function App() {
                   <Route path="/benchmark" element={<Benchmark />} />
                   <Route path="/reports" element={<Reports />} />
                   <Route path="/funcionarios" element={<EmployeeDirectory />} />
-                  <Route path="/dados" element={<Dados />} />
                   <Route path="/organograma" element={<OrgChart />} />
                   <Route path="/gestor" element={<ManagerView />} />
                   <Route path="/funcionario/:id" element={<EmployeeProfile />} />
@@ -92,7 +90,7 @@ function App() {
                   <Route path="/meu-painel" element={<MyDashboard />} />
                   <Route path="/configuracoes" element={<Settings />} />
                   <Route path="/configuracoes/ia" element={<RulesAI />} />
-                  <Route path="/gatilhos" element={<Triggers />} />
+                  <Route path="/gatilhos" element={<Locked title="Gatilhos & Alertas" note="O envio de alertas e o Resumo Executivo por e-mail estão travados por enquanto e voltam em breve." />} />
                 </Route>
               </Routes>
             </BrowserRouter>
