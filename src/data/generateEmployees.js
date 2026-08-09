@@ -42,7 +42,7 @@ export function resolveGeneration(birthYear) {
 function turnoverTrendMultiplier(monthIndex, area) {
   const progress = monthIndex / (HISTORY_MONTHS - 1);
   let multiplier = 0.82 + progress * 0.38;
-  if (area.name === 'Comercial' || area.name === 'Atendimento ao Cliente') {
+  if (area.name === 'Comercial & Vendas' || area.name === 'Pós-vendas & Assistência') {
     multiplier *= 1 + Math.max(0, progress - 0.55) * 1.6;
   }
   return multiplier;
@@ -72,7 +72,7 @@ function buildMonthlySeries(rng, employee, months, area) {
   const absence = new Map();
   const overtime = new Map();
   const isLeadership = LEADERSHIP_LEVELS.has(employee.roleLevel);
-  const absenceMeanBase = { 'Operações': 1.3, 'Atendimento ao Cliente': 1.5 }[area.name] ?? 0.7;
+  const absenceMeanBase = { 'Manufatura': 1.4, 'Manutenção Industrial': 1.3, 'Logística & Supply Chain': 1.2 }[area.name] ?? 0.7;
   const overtimeMeanBase = 6 * area.overtimeBias * (isLeadership ? 0.4 : 1);
 
   for (const m of months) {

@@ -33,7 +33,7 @@ export default function Home() {
         <div>
           <h1>Overview</h1>
           <p className="page-subtitle">
-            Resumo executivo · {formatNumber(metrics.activeNow.length)} colaboradores ativos · atualizado com base no fechamento de {period}
+            Montadora de veículos (dados fictícios) · {formatNumber(metrics.activeNow.length)} colaboradores ativos · fechamento de {period}
           </p>
         </div>
       </div>

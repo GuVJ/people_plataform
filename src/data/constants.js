@@ -1,20 +1,28 @@
 // "Diretoria" é o rótulo usado na interface (antigo "Área"). O campo interno do dado
 // continua sendo `area` para não quebrar o resto do código. Cada diretoria reporta a uma
 // Vice-presidência (vp), permitindo o filtro por VP no organograma.
+// Diretorias de uma montadora de veículos (dados fictícios). Estrutura industrial: manufatura
+// puxa o headcount, com engenharia, qualidade, logística, comercial e corporativo ao redor.
 export const AREAS = [
-  { name: 'Comercial', vp: 'VP Comercial & Marketing', baseHeadcount: 320, baseSalary: 6200, turnoverBias: 1.35, overtimeBias: 1.2 },
-  { name: 'Tecnologia', vp: 'VP de Tecnologia & Produto', baseHeadcount: 260, baseSalary: 10800, turnoverBias: 0.85, overtimeBias: 0.7 },
-  { name: 'Operações', vp: 'VP de Operações', baseHeadcount: 410, baseSalary: 4800, turnoverBias: 1.5, overtimeBias: 1.6 },
-  { name: 'Financeiro', vp: 'VP Corporativo', baseHeadcount: 140, baseSalary: 7600, turnoverBias: 0.7, overtimeBias: 1.4 },
-  { name: 'Marketing', vp: 'VP Comercial & Marketing', baseHeadcount: 95, baseSalary: 7200, turnoverBias: 1.0, overtimeBias: 0.9 },
-  { name: 'Recursos Humanos', vp: 'VP Corporativo', baseHeadcount: 70, baseSalary: 6800, turnoverBias: 0.6, overtimeBias: 0.8 },
-  { name: 'Atendimento ao Cliente', vp: 'VP de Operações', baseHeadcount: 230, baseSalary: 3600, turnoverBias: 1.8, overtimeBias: 1.1 },
-  { name: 'Jurídico', vp: 'VP Corporativo', baseHeadcount: 45, baseSalary: 11200, turnoverBias: 0.4, overtimeBias: 0.6 },
-  { name: 'Produto & Design', vp: 'VP de Tecnologia & Produto', baseHeadcount: 85, baseSalary: 9600, turnoverBias: 0.75, overtimeBias: 0.65 },
+  { name: 'Manufatura', vp: 'VP Industrial', baseHeadcount: 720, baseSalary: 3300, turnoverBias: 1.05, overtimeBias: 1.7 },
+  { name: 'Manutenção Industrial', vp: 'VP Industrial', baseHeadcount: 170, baseSalary: 4300, turnoverBias: 0.9, overtimeBias: 1.6 },
+  { name: 'Qualidade', vp: 'VP Industrial', baseHeadcount: 150, baseSalary: 5200, turnoverBias: 0.8, overtimeBias: 1.1 },
+  { name: 'Engenharia de Manufatura', vp: 'VP Industrial', baseHeadcount: 120, baseSalary: 8600, turnoverBias: 0.7, overtimeBias: 0.9 },
+  { name: 'Logística & Supply Chain', vp: 'VP Industrial', baseHeadcount: 210, baseSalary: 4600, turnoverBias: 1.2, overtimeBias: 1.3 },
+  { name: 'Engenharia de Produto', vp: 'VP de Engenharia & P&D', baseHeadcount: 180, baseSalary: 9800, turnoverBias: 0.75, overtimeBias: 0.8 },
+  { name: 'Pesquisa & Desenvolvimento', vp: 'VP de Engenharia & P&D', baseHeadcount: 95, baseSalary: 10500, turnoverBias: 0.7, overtimeBias: 0.75 },
+  { name: 'Comercial & Vendas', vp: 'VP Comercial & Marketing', baseHeadcount: 160, baseSalary: 6500, turnoverBias: 1.5, overtimeBias: 1.0 },
+  { name: 'Pós-vendas & Assistência', vp: 'VP Comercial & Marketing', baseHeadcount: 120, baseSalary: 4800, turnoverBias: 1.4, overtimeBias: 1.1 },
+  { name: 'Marketing', vp: 'VP Comercial & Marketing', baseHeadcount: 65, baseSalary: 7200, turnoverBias: 1.0, overtimeBias: 0.8 },
+  { name: 'Compras (Suprimentos)', vp: 'VP Corporativo', baseHeadcount: 85, baseSalary: 7800, turnoverBias: 0.7, overtimeBias: 0.8 },
+  { name: 'Financeiro', vp: 'VP Corporativo', baseHeadcount: 90, baseSalary: 7600, turnoverBias: 0.7, overtimeBias: 1.1 },
+  { name: 'Recursos Humanos', vp: 'VP Corporativo', baseHeadcount: 70, baseSalary: 6800, turnoverBias: 0.6, overtimeBias: 0.7 },
+  { name: 'Tecnologia da Informação', vp: 'VP Corporativo', baseHeadcount: 110, baseSalary: 9500, turnoverBias: 0.9, overtimeBias: 0.8 },
+  { name: 'Jurídico', vp: 'VP Corporativo', baseHeadcount: 35, baseSalary: 11200, turnoverBias: 0.4, overtimeBias: 0.6 },
 ];
 
 // Vice-presidências, na ordem de exibição. Derivadas do mapa acima.
-export const VPS = ['VP de Tecnologia & Produto', 'VP Comercial & Marketing', 'VP de Operações', 'VP Corporativo'];
+export const VPS = ['VP Industrial', 'VP de Engenharia & P&D', 'VP Comercial & Marketing', 'VP Corporativo'];
 
 export const AREA_TO_VP = Object.fromEntries(AREAS.map((a) => [a.name, a.vp]));
 
@@ -32,22 +40,25 @@ export const OVERTIME_COST_TYPES = [
 ];
 
 export const ROLE_LEVELS = [
-  { level: 'Estagiário', weight: 8, salaryMult: 0.35, ageRange: [19, 24] },
-  { level: 'Analista Jr', weight: 22, salaryMult: 0.6, ageRange: [21, 28] },
-  { level: 'Analista Pleno', weight: 24, salaryMult: 0.85, ageRange: [24, 34] },
-  { level: 'Analista Sênior', weight: 16, salaryMult: 1.15, ageRange: [27, 40] },
-  { level: 'Especialista', weight: 10, salaryMult: 1.45, ageRange: [28, 46] },
-  { level: 'Coordenador', weight: 9, salaryMult: 1.7, ageRange: [28, 46] },
-  { level: 'Gerente', weight: 7, salaryMult: 2.4, ageRange: [32, 52] },
-  { level: 'Diretor', weight: 3, salaryMult: 4.2, ageRange: [38, 58] },
-  { level: 'C-Level', weight: 1, salaryMult: 6.5, ageRange: [40, 62] },
+  { level: 'Aprendiz', weight: 5, salaryMult: 0.35, ageRange: [18, 22] },
+  { level: 'Operador de Produção', weight: 30, salaryMult: 0.8, ageRange: [19, 48] },
+  { level: 'Técnico', weight: 16, salaryMult: 1.05, ageRange: [21, 50] },
+  { level: 'Analista', weight: 13, salaryMult: 1.2, ageRange: [23, 44] },
+  { level: 'Engenheiro', weight: 11, salaryMult: 1.7, ageRange: [25, 50] },
+  { level: 'Especialista', weight: 6, salaryMult: 2.0, ageRange: [30, 54] },
+  { level: 'Supervisor', weight: 8, salaryMult: 1.9, ageRange: [30, 55] },
+  { level: 'Coordenador', weight: 6, salaryMult: 2.5, ageRange: [33, 56] },
+  { level: 'Gerente', weight: 3.5, salaryMult: 3.6, ageRange: [36, 58] },
+  { level: 'Diretor', weight: 1.2, salaryMult: 5.8, ageRange: [40, 61] },
+  { level: 'C-Level', weight: 0.4, salaryMult: 8.5, ageRange: [42, 63] },
 ];
 
-export const LEADERSHIP_LEVELS = new Set(['Coordenador', 'Gerente', 'Diretor', 'C-Level']);
+export const LEADERSHIP_LEVELS = new Set(['Supervisor', 'Coordenador', 'Gerente', 'Diretor', 'C-Level']);
 
+// Plantas e unidades (cidades com polo automotivo no Brasil) — empresa fictícia.
 export const UNITS = [
-  'São Paulo - SP', 'Rio de Janeiro - RJ', 'Belo Horizonte - MG', 'Curitiba - PR',
-  'Porto Alegre - RS', 'Recife - PE', 'Remoto',
+  'São Bernardo do Campo - SP', 'Taubaté - SP', 'São José dos Pinhais - PR',
+  'São Carlos - SP (Motores)', 'Vinhedo - SP (CD)', 'Sede Corporativa - SP', 'Remoto',
 ];
 
 export const GENDERS = [
@@ -99,12 +110,12 @@ export const RECRUITMENT_SOURCES = [
 export const FUNNEL_STAGES = ['Candidatos', 'Triagem', 'Teste técnico', 'Entrevista RH', 'Entrevista gestor', 'Proposta', 'Contratado'];
 
 export const TRAININGS = [
-  'Liderança de Alta Performance', 'Excel Avançado', 'Comunicação Não-violenta', 'Segurança da Informação',
-  'Vendas Consultivas', 'Power BI para Negócios', 'Gestão de Projetos Ágeis', 'Diversidade & Inclusão',
-  'Atendimento ao Cliente 4.0', 'Inteligência Emocional',
+  'Sistema de Produção Enxuta (Lean)', 'IATF 16949 — Qualidade Automotiva', 'Green Belt Six Sigma',
+  'Segurança NR-12 (Máquinas)', 'NR-35 — Trabalho em Altura', 'Kaizen e Melhoria Contínua',
+  'Solda e Processos de União', 'Automação e CLP', 'Metrologia e Controle Dimensional', 'Liderança de Chão de Fábrica',
 ];
 
-export const BENEFITS = ['Vale Refeição', 'Vale Transporte', 'Plano de Saúde', 'Plano Odontológico', 'Gympass', 'Auxílio Home Office', 'Previdência Privada', 'Day Off Aniversário'];
+export const BENEFITS = ['PLR', 'Vale Alimentação', 'Transporte Fretado', 'Plano de Saúde', 'Plano Odontológico', 'Refeitório na Planta', 'Previdência Privada', 'Auxílio Creche', 'Gympass', 'Compra de Veículo com Desconto'];
 
 export const MONTH_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 

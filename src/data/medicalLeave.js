@@ -23,15 +23,17 @@ const GROUP_BY_KEY = Object.fromEntries(CID_GROUPS.map((g) => [g.key, g]));
 // Viés por diretoria: onde cada tipo de atestado se concentra (área operacional puxa
 // osteomuscular/lesão, áreas de pressão puxam saúde mental, etc.).
 const AREA_BIAS = {
-  'Operações': { M: 1.6, S: 1.8, J: 1.1, F: 0.7 },
-  'Atendimento ao Cliente': { F: 1.6, J: 1.2, R: 1.3, M: 1.1 },
-  'Tecnologia': { F: 1.4, M: 1.3, J: 0.8 },
-  'Comercial': { F: 1.3, I: 1.2, K: 1.1 },
+  'Manufatura': { M: 1.7, S: 1.9, J: 1.1, F: 0.7 },
+  'Manutenção Industrial': { M: 1.6, S: 1.7, J: 1.0 },
+  'Logística & Supply Chain': { M: 1.5, S: 1.4, R: 1.1 },
+  'Qualidade': { M: 1.2, R: 1.1 },
+  'Comercial & Vendas': { F: 1.3, I: 1.2, K: 1.1 },
+  'Pós-vendas & Assistência': { M: 1.2, F: 1.2, J: 1.1 },
+  'Tecnologia da Informação': { F: 1.4, M: 1.3, J: 0.8 },
+  'Engenharia de Produto': { F: 1.2, M: 1.1 },
   'Financeiro': { F: 1.1, I: 1.1 },
-  'Marketing': { F: 1.2 },
   'Recursos Humanos': { F: 1.1 },
   'Jurídico': { F: 1.1, I: 1.1 },
-  'Produto & Design': { F: 1.3, M: 1.2 },
 };
 
 // CIDs específicos mais frequentes, para a tabela de detalhe.

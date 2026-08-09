@@ -26,11 +26,15 @@ export const INTERVENTIONS = [
 
 // Diretorias com exposição a risco físico (as demais são majoritariamente administrativas).
 const AREA_RISK = {
-  'Operações': 1.7,
-  'Atendimento ao Cliente': 0.5,
-  'Comercial': 0.4,
-  'Tecnologia': 0.2,
-  'Produto & Design': 0.2,
+  'Manufatura': 1.9,
+  'Manutenção Industrial': 1.7,
+  'Logística & Supply Chain': 1.2,
+  'Qualidade': 0.6,
+  'Engenharia de Manufatura': 0.7,
+  'Pós-vendas & Assistência': 0.5,
+  'Compras (Suprimentos)': 0.2,
+  'Engenharia de Produto': 0.25,
+  'Comercial & Vendas': 0.2,
   'Financeiro': 0.15,
   'Marketing': 0.15,
   'Recursos Humanos': 0.15,

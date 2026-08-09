@@ -25,13 +25,13 @@ export const TEMPLATE_COLUMNS = [
 const EXAMPLE_ROWS = [
   {
     'Nome': 'Maria Fernanda Silva', 'Gênero': 'Feminino', 'Raça/Etnia': 'Parda', 'Data de Nascimento': '1995-04-12',
-    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Comercial', 'Cargo': 'Analista Pleno', 'Unidade': 'São Paulo - SP',
-    'Gestor': 'Ricardo Souza Melo', 'Salário': 6500, 'Data de Admissão': '2026-07-01', 'Benefícios': 'Vale Refeição; Vale Transporte; Plano de Saúde',
+    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Manufatura', 'Cargo': 'Operador de Produção', 'Unidade': 'São Bernardo do Campo - SP',
+    'Gestor': 'Ricardo Souza Melo', 'Salário': 3200, 'Data de Admissão': '2026-07-01', 'Benefícios': 'PLR; Vale Alimentação; Transporte Fretado; Plano de Saúde',
   },
   {
     'Nome': 'Pedro Henrique Costa', 'Gênero': 'Masculino', 'Raça/Etnia': 'Branca', 'Data de Nascimento': '1990-11-03',
-    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Tecnologia', 'Cargo': 'Analista Sênior', 'Unidade': 'Remoto',
-    'Gestor': '', 'Salário': 11200, 'Data de Admissão': '2026-07-05', 'Benefícios': 'Vale Refeição; Plano de Saúde; Gympass',
+    'PCD (Sim/Não)': 'Não', 'Tipo de PCD': '', 'Diretoria': 'Engenharia de Produto', 'Cargo': 'Engenheiro', 'Unidade': 'São José dos Pinhais - PR',
+    'Gestor': '', 'Salário': 14500, 'Data de Admissão': '2026-07-05', 'Benefícios': 'PLR; Plano de Saúde; Previdência Privada',
   },
 ];
 
