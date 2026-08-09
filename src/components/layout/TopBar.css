@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  height: var(--topbar-height);
+  min-height: var(--topbar-height);
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   backdrop-filter: saturate(180%) blur(8px);
@@ -10,12 +10,12 @@
 
 .topbar-inner {
   max-width: var(--content-max-width);
-  height: 100%;
+  min-height: var(--topbar-height);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 8px 24px;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 16px;
 }
 
 .topbar-brand {
@@ -55,24 +55,22 @@
 .topbar-nav {
   display: flex;
   align-items: center;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 2px;
+  row-gap: 4px;
   flex: 1;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-
-.topbar-nav::-webkit-scrollbar { display: none; }
 
 .topbar-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
+  gap: 3px;
+  padding: 5px 8px;
+  white-space: nowrap;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  white-space: nowrap;
   border: none;
   background: transparent;
   transition: all var(--duration-fast) var(--ease-out);
