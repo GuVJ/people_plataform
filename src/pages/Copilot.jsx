@@ -37,9 +37,9 @@ export default function Copilot() {
     const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety, hr });
     let answer = { ...localAnswer, source: 'local' };
 
-    // Cards de funcionário e tabelas são determinísticos — pulamos o Gemini para o dado sempre
-    // aparecer na hora e o texto não contradizer a tabela (ex.: "não tenho acesso à lista").
-    if (!localAnswer.employeeCard && !localAnswer.table) {
+    // Cards, tabelas e esclarecimentos com botões são determinísticos — pulamos o Gemini para o
+    // dado aparecer na hora e o texto não contradizer (ex.: "não tenho acesso à lista").
+    if (!localAnswer.employeeCard && !localAnswer.table && !localAnswer.quickReplies) {
       try {
         const context = buildCopilotContext({ metrics, insights, risk, medical, safety });
         const geminiText = await askGemini(q, context);
@@ -64,7 +64,7 @@ export default function Copilot() {
 
       <div className="copilot-layout card">
         <div className="copilot-messages" ref={scrollRef}>
-          {messages.map((m, i) => <ChatMessage key={i} message={m} />)}
+          {messages.map((m, i) => <ChatMessage key={i} message={m} onQuickReply={send} />)}
           {thinking && (
             <div className="chat-row chat-row-assistant">
               <div className="chat-avatar-ai">✦</div>

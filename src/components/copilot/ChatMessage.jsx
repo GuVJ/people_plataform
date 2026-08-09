@@ -7,7 +7,7 @@ import EmployeeCard from './EmployeeCard.jsx';
 import ExecutiveSummaryTable from '../summary/ExecutiveSummaryTable.jsx';
 import './ChatMessage.css';
 
-export default function ChatMessage({ message }) {
+export default function ChatMessage({ message, onQuickReply }) {
   const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
 
@@ -26,7 +26,7 @@ export default function ChatMessage({ message }) {
     );
   }
 
-  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard, initial } = message.content;
+  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard, initial, quickReplies } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
@@ -66,6 +66,16 @@ export default function ChatMessage({ message }) {
         {execSummary && (
           <div className="chat-table">
             <ExecutiveSummaryTable rows={execSummary} />
+          </div>
+        )}
+
+        {quickReplies?.length > 0 && (
+          <div className="chat-quick-replies">
+            {quickReplies.map((qr) => (
+              <button type="button" key={qr.label} className="chat-quick-reply" onClick={() => onQuickReply?.(qr.prompt)}>
+                {qr.label}
+              </button>
+            ))}
           </div>
         )}
 

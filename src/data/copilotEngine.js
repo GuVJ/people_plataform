@@ -315,6 +315,21 @@ export function answerQuestion(question, ctx) {
     };
   }
 
+  // Ranking ambíguo ("ofensores", "os piores") sem métrica definida → pede esclarecimento
+  // com botões de opção (cada botão já envia a pergunta completa).
+  if (has(q, 'ofensor', 'piores', 'maiores problemas', 'principais problemas')
+    && !has(q, 'turnover', 'rotativ', 'absent', 'falta', 'hora extra', 'horas extras', 'atestado', 'custo', 'headcount', 'seguranca', 'acidente', 'epi', 'trabalhista')) {
+    return {
+      text: 'Posso montar o ranking dos maiores ofensores — de qual indicador?',
+      quickReplies: [
+        { label: 'Turnover', prompt: 'tabela de turnover por diretoria' },
+        { label: 'Absenteísmo', prompt: 'tabela de absenteísmo por gestor' },
+        { label: 'Horas extras', prompt: 'tabela de horas extras por diretoria' },
+        { label: 'Atestados', prompt: 'tabela de atestados por CID' },
+      ],
+    };
+  }
+
   // Pedido de tabela / lista. Só responde localmente quando há um conjunto de dados
   // correspondente; caso contrário, deixa a pergunta seguir para a IA (Gemini).
   if (wantsTable(q)) {
@@ -489,7 +504,15 @@ export function answerQuestion(question, ctx) {
   }
 
   return {
-    text: `Não tenho certeza do que você quis dizer. Pode esclarecer? Por exemplo, você quer ver **turnover**, **absenteísmo**, **headcount**, **custo de pessoal**, **horas extras**, **atestados**, **segurança**, **diversidade** ou **risco de saída** — e de qual diretoria ou período?`,
+    text: 'Não tenho certeza do que você quis dizer. Escolha um tema abaixo ou reformule a pergunta:',
+    quickReplies: [
+      { label: 'Turnover', prompt: 'tabela de turnover por diretoria' },
+      { label: 'Absenteísmo', prompt: 'tabela de absenteísmo por gestor' },
+      { label: 'Headcount', prompt: 'tabela de headcount por diretoria' },
+      { label: 'Horas extras', prompt: 'tabela de horas extras por diretoria' },
+      { label: 'Atestados', prompt: 'tabela de atestados por CID' },
+      { label: 'Risco de saída', prompt: 'quais diretorias apresentam maior risco' },
+    ],
   };
 }
 
