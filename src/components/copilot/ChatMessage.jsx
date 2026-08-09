@@ -31,7 +31,7 @@ export default function ChatMessage({ message, onQuickReply }) {
   return (
     <div className="chat-row chat-row-assistant fade-in">
       <div className="chat-avatar-ai">✦</div>
-      <div className="chat-bubble chat-bubble-assistant">
+      <div className={`chat-bubble chat-bubble-assistant${(table || chart || execSummary) ? ' chat-bubble-wide' : ''}`}>
         {source && !employeeCard && (
           <span className={`chat-source-badge chat-source-${source}`}>
             {source === 'gemini' ? '✦ Gemini' : '⚙ Motor local'}

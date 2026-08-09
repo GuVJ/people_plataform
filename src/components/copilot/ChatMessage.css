@@ -42,6 +42,12 @@
   flex: 1;
 }
 
+/* Respostas com tabela/gráfico ocupam toda a largura disponível do chat,
+   para as colunas (ex.: Salário) não ficarem cortadas. */
+.chat-bubble-assistant.chat-bubble-wide {
+  max-width: 100%;
+}
+
 .mini-markdown p {
   margin-bottom: 8px;
 }
