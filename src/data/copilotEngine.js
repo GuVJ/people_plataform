@@ -28,6 +28,7 @@ function wantsTable(q) {
     'tabela', 'em tabela', 'lista', 'listar', 'planilha', 'baixar', 'download', 'exportar', 'excel', 'csv',
     'banco de horas', 'ranking', 'top ', 'quais funcionario', 'quais colaborador',
     'funcionarios com', 'funcionários com', 'colaboradores com', 'quem tem mais', 'quem sao os', 'quem são os',
+    'maiores salarios', 'maior salario', 'salarios mais', 'quem ganha', 'quem recebe',
   );
 }
 
@@ -77,6 +78,32 @@ function buildTable(q, ctx) {
         rows: top,
         exportRows: ranked.map((r) => ({ Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, Gestor: r.managerName, 'Banco de horas (h)': r.hours })),
         filename: 'banco_de_horas', sheetName: 'Banco de horas',
+      },
+    };
+  }
+
+  // Ranking de maiores salários (opcionalmente por diretoria citada).
+  if (has(q, 'salario', 'salarios', 'salário', 'salários', 'remuneracao', 'remuneração', 'quem ganha', 'quem recebe')
+    && !has(q, 'posicionamento', 'compa', 'faixa salarial', 'medio', 'media', 'média')) {
+    const area = findArea(q);
+    let emps = metrics.activeNow;
+    if (area) emps = emps.filter((e) => e.area === area);
+    const ranked = [...emps].sort((a, b) => b.salary - a.salary);
+    const top = ranked.slice(0, 30).map((e) => ({ id: e.id, name: e.name, area: e.area, roleLevel: e.roleLevel, managerName: e.managerName, salary: e.salary }));
+    return {
+      text: `Colaboradores com os maiores salários${area ? ` da diretoria **${area}**` : ''}. Mostrando o top 30 — baixe o Excel para todos. Clique no nome para abrir a ficha.`,
+      table: {
+        title: 'Maiores salários',
+        columns: [
+          { key: 'name', label: 'Nome', href: (r) => `/funcionario/${r.id}` },
+          { key: 'area', label: 'Diretoria' },
+          { key: 'roleLevel', label: 'Cargo' },
+          { key: 'managerName', label: 'Gestor' },
+          { key: 'salary', label: 'Salário', align: 'right', render: (r) => formatCurrency(r.salary) },
+        ],
+        rows: top,
+        exportRows: ranked.map((r) => ({ Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, Gestor: r.managerName, Salário: r.salary })),
+        filename: 'maiores_salarios', sheetName: 'Salários',
       },
     };
   }
