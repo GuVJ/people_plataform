@@ -9,6 +9,19 @@ export const AI_FRAMEWORKS = [
   { label: 'PL 2338/2023', desc: 'Marco legal de IA (Brasil), baseado em risco' },
 ];
 
+// Regras operacionais — o que a Íris faz na prática (capacidades e comportamento no chat).
+export const AI_CAPABILITIES = [
+  { title: 'Só usa os dados da plataforma', desc: 'Responde com base nos indicadores atuais (fictícios); nunca inventa números fora do contexto.' },
+  { title: 'Dois motores de resposta', desc: 'Gemini (IA generativa) para perguntas abertas/analíticas; motor local determinístico para tabelas, listas e números exatos.' },
+  { title: 'Esclarece perguntas ambíguas', desc: 'Se a pergunta for vaga ou sem sentido (ex.: "ofensores" sem dizer de qual métrica), pergunta o que você quis dizer em vez de adivinhar.' },
+  { title: 'Tabelas e listas sob demanda', desc: 'Pedidos com "tabela/lista/planilha/baixar" geram uma tabela real com download em Excel (funcionários, gestores, turnover, atestados, EPI, NRs, ASO, PCD, trabalhista e mais).' },
+  { title: 'Lista de funcionários completa', desc: 'Lista colaboradores (com filtro por diretoria); o nome é clicável e abre a ficha do funcionário.' },
+  { title: 'Cruza e correlaciona indicadores', desc: 'Relaciona métricas (ex.: horas extras × turnover) e aponta associações — marcando que é associação, não causalidade.' },
+  { title: 'Busca de pessoa por nome', desc: 'Cite o nome de um colaborador e ela abre a ficha com resumo, desempenho e risco de saída.' },
+  { title: 'Quando falta o dado', desc: 'Usa a métrica mais próxima e sinaliza que é aproximação, em vez de inventar.' },
+  { title: 'Tom executivo e acionável', desc: 'Responde em português, direto ao ponto, e fecha com uma recomendação quando faz sentido.' },
+];
+
 export const AI_PRINCIPLES = [
   {
     tag: 'Grounding',

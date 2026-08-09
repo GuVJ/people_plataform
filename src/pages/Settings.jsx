@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 import { THEMES, THEME_BY_KEY } from '../data/themes.js';
 import SectionCard from '../components/ui/SectionCard.jsx';
-import { AI_FRAMEWORKS, AI_PRINCIPLES } from '../data/aiRules.js';
+import { AI_FRAMEWORKS, AI_PRINCIPLES, AI_CAPABILITIES } from '../data/aiRules.js';
 import './Settings.css';
 import './RulesAI.css';
 
@@ -82,7 +82,20 @@ export default function Settings() {
         <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>como a Íris funciona e quais regras segue</span>
       </div>
 
-      <SectionCard title="Regras e governança da Íris" subtitle="Princípios de IA responsável alinhados aos frameworks de mercado (NIST AI RMF, ISO/IEC 42001, EU AI Act) e à LGPD">
+      <SectionCard title="Regras e governança da Íris" subtitle="O que ela faz + princípios de IA responsável (NIST AI RMF, ISO/IEC 42001, EU AI Act, LGPD)">
+        <p className="rules-op-heading">O que a Íris faz</p>
+        <ol className="rules-ops" style={{ marginBottom: 18 }}>
+          {AI_CAPABILITIES.map((c, i) => (
+            <li className="rules-op" key={c.title}>
+              <span className="rules-op-num">{i + 1}</span>
+              <div className="rules-op-body">
+                <span className="rules-op-title">{c.title}</span>
+                <span className="rules-op-desc">{c.desc}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="rules-op-heading">Governança e frameworks</p>
         <div className="rules-frameworks" style={{ marginBottom: 16 }}>
           {AI_FRAMEWORKS.map((f) => (
             <div className="rules-fw" key={f.label}>

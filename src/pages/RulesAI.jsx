@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AI_FRAMEWORKS as FRAMEWORKS, AI_PRINCIPLES as PRINCIPLES } from '../data/aiRules.js';
+import { AI_FRAMEWORKS as FRAMEWORKS, AI_PRINCIPLES as PRINCIPLES, AI_CAPABILITIES as CAPABILITIES } from '../data/aiRules.js';
 import './RulesAI.css';
 
 export default function RulesAI() {
@@ -29,6 +29,20 @@ export default function RulesAI() {
         </div>
       </div>
 
+      <div className="section-title"><span>O que a Íris faz</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>capacidades e regras operacionais</span></div>
+      <ol className="rules-ops">
+        {CAPABILITIES.map((c, i) => (
+          <li className="rules-op" key={c.title}>
+            <span className="rules-op-num">{i + 1}</span>
+            <div className="rules-op-body">
+              <span className="rules-op-title">{c.title}</span>
+              <span className="rules-op-desc">{c.desc}</span>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div className="section-title" style={{ marginTop: 28 }}><span>Princípios de governança</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>frameworks de IA responsável</span></div>
       <div className="rules-grid">
         {PRINCIPLES.map((p, i) => (
           <div className="rules-card card" key={p.title}>

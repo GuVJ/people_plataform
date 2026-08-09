@@ -489,7 +489,7 @@ export function answerQuestion(question, ctx) {
   }
 
   return {
-    text: `Não encontrei uma métrica específica para essa pergunta ainda. Tente perguntar sobre: turnover, absenteísmo, headcount, custo de pessoal, horas extras, diversidade, treinamentos ou risco de saída — eu respondo com base nos dados atuais da plataforma.`,
+    text: `Não tenho certeza do que você quis dizer. Pode esclarecer? Por exemplo, você quer ver **turnover**, **absenteísmo**, **headcount**, **custo de pessoal**, **horas extras**, **atestados**, **segurança**, **diversidade** ou **risco de saída** — e de qual diretoria ou período?`,
   };
 }
 
