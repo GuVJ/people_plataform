@@ -248,12 +248,16 @@ function buildTable(q, ctx) {
       [{ key: 'name', label: 'Treinamento' }, { key: 'count', label: 'Concluíram', align: 'right', render: (r) => num(r.count) }], metrics.training.topTrainings);
   }
 
-  // Padrão: painel de indicadores do mês.
-  return tableAnswer('indicadores_do_mes', 'Indicadores', 'Indicadores do mês',
-    [
-      { key: 'label', label: 'Indicador' },
-      { key: 'valor', label: 'Valor', align: 'right' },
-    ], metrics.kpis.map((k) => ({ label: k.label, valor: kpiValue(k) })));
+  // KPIs só quando o usuário pede explicitamente indicadores/painel/resumo. Sem match,
+  // retorna null para a pergunta ir para a IA (Gemini) em vez de cair numa tabela genérica.
+  if (has(q, 'indicador', 'kpi', 'painel', 'resumo', 'resumão')) {
+    return tableAnswer('indicadores_do_mes', 'Indicadores', 'Indicadores do mês',
+      [
+        { key: 'label', label: 'Indicador' },
+        { key: 'valor', label: 'Valor', align: 'right' },
+      ], metrics.kpis.map((k) => ({ label: k.label, valor: kpiValue(k) })));
+  }
+  return null;
 }
 
 // A chart earns its place only when the question actually asks for a breakdown/ranking/
@@ -311,9 +315,11 @@ export function answerQuestion(question, ctx) {
     };
   }
 
-  // Pedido explícito de tabela / lista / planilha (com download em Excel).
+  // Pedido de tabela / lista. Só responde localmente quando há um conjunto de dados
+  // correspondente; caso contrário, deixa a pergunta seguir para a IA (Gemini).
   if (wantsTable(q)) {
-    return buildTable(q, ctx);
+    const built = buildTable(q, ctx);
+    if (built) return built;
   }
 
   // Correlação turnover × horas extras — cruza as duas métricas por diretoria.
