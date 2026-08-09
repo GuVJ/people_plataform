@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
 import { usePreferences } from '../context/PreferencesContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
@@ -11,7 +11,8 @@ import EmployeeSearch from '../components/orgchart/EmployeeSearch.jsx';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { buildLocalEmployeeInsight, buildEmployeeCopilotContext } from '../data/employeeInsight.js';
 import { buildEmployeeBenchmark } from '../data/employeeBenchmark.js';
-import { monthKey } from '../utils/dates.js';
+import { simulateSeverance, SEVERANCE_SCENARIOS } from '../data/severanceSimulator.js';
+import { monthKey, diffInMonths } from '../utils/dates.js';
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import '../components/profile/profile.css';
 
@@ -24,6 +25,9 @@ export default function EmployeeProfile() {
   const employeeId = Number(id);
   const { employees, metrics, risk } = useData();
   const { privacyMode } = usePreferences();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const fromOrgChart = location.state?.from === 'organograma';
 
   const employee = useMemo(() => employees.find((e) => e.id === employeeId), [employees, employeeId]);
   const riskEntry = useMemo(() => risk.find((r) => r.id === employeeId), [risk, employeeId]);
@@ -71,11 +75,29 @@ export default function EmployeeProfile() {
   const localInsight = buildLocalEmployeeInsight({ employee, riskEntry, referenceDate: metrics.referenceDate });
   const geminiContext = buildEmployeeCopilotContext({ employee, riskEntry, metrics, referenceDate: metrics.referenceDate });
 
+  // Tempo de casa em anos e meses (admissão → desligamento, se desligado; senão até hoje).
+  const tenureEndDate = employee.terminationDate || metrics.referenceDate;
+  const tenureMonthsTotal = Math.max(0, diffInMonths(employee.admissionDate, tenureEndDate));
+  const tenureY = Math.floor(tenureMonthsTotal / 12);
+  const tenureM = tenureMonthsTotal % 12;
+  const tenureLabel = `${tenureY} ${tenureY === 1 ? 'ano' : 'anos'}${tenureM ? ` e ${tenureM} ${tenureM === 1 ? 'mês' : 'meses'}` : ''}`;
+
+  // Rescisão efetivamente paga (para desligados): cenário conforme o tipo de desligamento.
+  const terminationScenario = employee.terminationType === 'Voluntário' ? 'pedido_demissao' : 'sem_justa_causa';
+  const severancePaid = employee.status !== 'Ativo' && employee.terminationDate
+    ? simulateSeverance({ employee, scenario: terminationScenario, referenceDate: employee.terminationDate })
+    : null;
+  const scenarioLabel = SEVERANCE_SCENARIOS.find((s) => s.key === terminationScenario)?.label;
+
   return (
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <Link to="/organograma" className="text-secondary" style={{ fontSize: 12 }}>← Voltar ao organograma</Link>
+          {fromOrgChart ? (
+            <Link to="/organograma" className="text-secondary" style={{ fontSize: 12 }}>← Voltar ao organograma</Link>
+          ) : (
+            <button type="button" onClick={() => navigate(-1)} className="profile-back-btn">← Voltar</button>
+          )}
           <h1 style={{ marginTop: 6 }}>Ficha do funcionário</h1>
         </div>
         <EmployeeSearch employees={metrics.activeNow} />
@@ -94,6 +116,8 @@ export default function EmployeeProfile() {
             <span>Unidade: {employee.unit}</span>
             <span>Gestor: {employee.managerId ? <Link to={`/funcionario/${employee.managerId}`}>{employee.managerName}</Link> : employee.managerName}</span>
             <span>Admissão: {employee.admissionDate.toLocaleDateString('pt-BR')}</span>
+            {employee.terminationDate && <span>Desligamento: {employee.terminationDate.toLocaleDateString('pt-BR')}</span>}
+            <span>Tempo de casa: {tenureLabel}</span>
           </div>
         </div>
       </div>
@@ -115,7 +139,7 @@ export default function EmployeeProfile() {
             <div className="fact-item"><span className="fact-label">Geração</span><span className="fact-value">{employee.generation}</span></div>
             <div className="fact-item"><span className="fact-label">Idade</span><span className="fact-value">{employee.age} anos</span></div>
             <div className="fact-item"><span className="fact-label">PCD</span><span className="fact-value">{employee.pcd ? employee.pcdType : 'Não'}</span></div>
-            <div className="fact-item"><span className="fact-label">Tempo de casa</span><span className="fact-value">{formatNumber(employee.tenureYears, 1)} anos</span></div>
+            <div className="fact-item"><span className="fact-label">Tempo de casa</span><span className="fact-value">{tenureLabel}</span></div>
             <div className="fact-item">
               <span className="fact-label">Salário</span>
               <span className={`fact-value${privacyMode ? ' privacy-blur' : ''}`}>{formatCurrency(employee.salary)}</span>
@@ -229,6 +253,43 @@ export default function EmployeeProfile() {
         <div style={{ marginBottom: 16 }}>
           <SectionCard title="Simulação de custo de rescisão" subtitle="Estimativa CLT para desligamento na data de hoje">
             <SeveranceSimulator employee={employee} referenceDate={metrics.referenceDate} privacyMode={privacyMode} />
+          </SectionCard>
+        </div>
+      )}
+
+      {severancePaid && (
+        <div style={{ marginBottom: 16 }}>
+          <SectionCard
+            title="Rescisão paga"
+            subtitle={`${scenarioLabel} · desligado em ${employee.terminationDate.toLocaleDateString('pt-BR')}${employee.terminationReason ? ` · ${employee.terminationReason}` : ''}`}
+          >
+            <div className="severance-paid-total">
+              <span className="fact-label">Total pago em verbas rescisórias</span>
+              <span className={`stat-big${privacyMode ? ' privacy-blur' : ''}`}>{formatCurrency(severancePaid.total)}</span>
+              {severancePaid.saqueFgts > 0 && (
+                <span className="text-secondary" style={{ fontSize: 12 }}>
+                  + saque de FGTS de <span className={privacyMode ? 'privacy-blur' : ''}>{formatCurrency(severancePaid.saqueFgts, { compact: true })}</span>
+                </span>
+              )}
+            </div>
+            <div className="severance-list">
+              {severancePaid.components.map((c) => (
+                <div className="severance-row" key={c.key}>
+                  <div className="severance-row-info">
+                    <span className="severance-row-label">{c.label}</span>
+                    <span className="severance-row-desc">{c.description}</span>
+                  </div>
+                  <span className={`severance-row-value${privacyMode ? ' privacy-blur' : ''}`}>{formatCurrency(c.value)}</span>
+                </div>
+              ))}
+              <div className="severance-row severance-row-total">
+                <span>Total das verbas</span>
+                <span className={privacyMode ? 'privacy-blur' : ''}>{formatCurrency(severancePaid.total)}</span>
+              </div>
+            </div>
+            <p className="text-secondary" style={{ fontSize: 11.5, marginTop: 10 }}>
+              Estimativa CLT para referência de RH/Financeiro — não substitui o cálculo oficial da folha (FGTS com juros, férias vencidas e adicionais).
+            </p>
           </SectionCard>
         </div>
       )}

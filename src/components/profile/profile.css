@@ -299,3 +299,77 @@
   font-size: 10.5px;
   color: var(--color-text-tertiary);
 }
+
+.profile-back-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.profile-back-btn:hover {
+  color: var(--color-primary);
+}
+
+.severance-paid-total {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.severance-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.severance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.severance-row:last-child {
+  border-bottom: none;
+}
+
+.severance-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.severance-row-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.severance-row-desc {
+  font-size: 11.5px;
+  color: var(--color-text-tertiary);
+}
+
+.severance-row-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.severance-row-total {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 2px solid var(--color-border);
+  font-size: 14.5px;
+  font-weight: 700;
+}

@@ -80,7 +80,7 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
                               <li key={m.id}>
                                 <div className={`orgviz-node orgviz-node-manager${mOpen ? ' open' : ''}`} onClick={() => m.reports.length > 0 && toggleManager(m.id)}>
                                   <span className="orgviz-avatar orgviz-avatar-lead">{initials(m.name)}</span>
-                                  <Link to={`/funcionario/${m.id}`} className="orgviz-node-title orgviz-node-link" onClick={(e) => e.stopPropagation()}>{m.name}</Link>
+                                  <Link to={`/funcionario/${m.id}`} state={{ from: 'organograma' }} className="orgviz-node-title orgviz-node-link" onClick={(e) => e.stopPropagation()}>{m.name}</Link>
                                   <span className="orgviz-node-sub">{m.roleLevel}</span>
                                   {m.reports.length > 0 && (
                                     <span className="orgviz-caret">{mOpen ? '−' : `${m.reports.length}`}</span>
@@ -91,7 +91,7 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
                                   <ul>
                                     {m.reports.slice(0, REPORTS_CAP).map((r) => (
                                       <li key={r.id}>
-                                        <Link to={`/funcionario/${r.id}`} className="orgviz-node orgviz-node-report">
+                                        <Link to={`/funcionario/${r.id}`} state={{ from: 'organograma' }} className="orgviz-node orgviz-node-report">
                                           <span className="orgviz-avatar">{initials(r.name)}</span>
                                           <span className="orgviz-node-title">{r.name}</span>
                                           <span className="orgviz-node-sub">{r.roleLevel}</span>
