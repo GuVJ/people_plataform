@@ -9,7 +9,7 @@ import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { buildManagerView } from '../data/managerView.js';
 import { buildLocalManagerInsight, buildManagerCopilotContext } from '../data/managerInsight.js';
 import { formatNumber, formatPercent } from '../utils/format.js';
-import { PRIMARY_RGB } from '../utils/colors.js';
+import { PRIMARY_RGB, HEAT_RGB } from '../utils/colors.js';
 import './ManagerView.css';
 
 function initials(name) {
@@ -41,6 +41,7 @@ export default function ManagerView() {
   const localInsight = buildLocalManagerInsight(view);
   const geminiContext = buildManagerCopilotContext(view);
   const maxNineBox = Math.max(...view.nineBoxGrid.map((c) => c.count), 1);
+  const maxOvertime = Math.max(...view.roster.map((r) => r.recentOvertimeHours || 0), 1);
 
   return (
     <div className="page fade-in">
@@ -117,8 +118,10 @@ export default function ManagerView() {
             </SectionCard>
           </div>
 
-          <SectionCard title="Time" subtitle={`${view.roster.length} colaboradores — ordenado por risco de saída`}>
+          <SectionCard title="Time" subtitle={`${view.roster.length} colaboradores — ordenado por banco de horas (H. extras)`}>
             <Table
+              defaultSortKey="recentOvertimeHours"
+              defaultSortDir="desc"
               columns={[
                 { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
                 { key: 'roleLevel', label: 'Cargo' },
@@ -126,7 +129,20 @@ export default function ManagerView() {
                 { key: 'performanceBucket', label: 'Desempenho' },
                 { key: 'engagementScore', label: 'Engajamento', align: 'right', render: (r) => formatPercent(r.engagementScore) },
                 { key: 'recentAbsenceDays', label: 'Faltas (3m)', align: 'right' },
-                { key: 'recentOvertimeHours', label: 'H. extras (3m)', align: 'right' },
+                {
+                  key: 'recentOvertimeHours',
+                  label: 'H. extras (3m)',
+                  align: 'right',
+                  cellStyle: (r) => {
+                    const ratio = (r.recentOvertimeHours || 0) / maxOvertime;
+                    const alpha = 0.1 + ratio * 0.72;
+                    return {
+                      background: `rgba(${HEAT_RGB}, ${alpha})`,
+                      color: alpha > 0.5 ? '#fff' : 'var(--color-text)',
+                      fontWeight: 600,
+                    };
+                  },
+                },
                 { key: 'risk', label: 'Risco', sortAccessor: (r) => r.risk?.score ?? -1, render: (r) => (r.risk ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.risk.level]}`}>{r.risk.level}</span> : '—') },
               ]}
               rows={view.roster}

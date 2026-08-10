@@ -7,12 +7,14 @@ function compareValues(a, b) {
   return String(a ?? '').localeCompare(String(b ?? ''), 'pt-BR', { numeric: true });
 }
 
-// columns: [{ key, label, align, render, sortable?, sortAccessor? }]
+// columns: [{ key, label, align, render, sortable?, sortAccessor?, cellStyle? }]
 // A column is sortable automatically when its values are numbers; pass sortable/sortAccessor
 // to force it or to sort by a value other than row[key] (e.g. a badge column backed by a score).
-export default function Table({ columns, rows, rowKey = (r, i) => i }) {
-  const [sortKey, setSortKey] = useState(null);
-  const [sortDir, setSortDir] = useState('asc');
+// cellStyle(row) returns an inline style merged into the <td> (ex.: gradiente de intensidade).
+// defaultSortKey/defaultSortDir definem a ordenação inicial mantendo as demais colunas ordenáveis.
+export default function Table({ columns, rows, rowKey = (r, i) => i, defaultSortKey = null, defaultSortDir = 'asc' }) {
+  const [sortKey, setSortKey] = useState(defaultSortKey);
+  const [sortDir, setSortDir] = useState(defaultSortDir);
 
   const sortableKeys = useMemo(() => {
     const set = new Set();
@@ -69,8 +71,9 @@ export default function Table({ columns, rows, rowKey = (r, i) => i }) {
             <tr key={rowKey(row, i)}>
               {columns.map((c) => {
                 const content = c.render ? c.render(row) : row[c.key];
+                const extraStyle = c.cellStyle ? c.cellStyle(row) : null;
                 return (
-                  <td key={c.key} style={{ textAlign: c.align || 'left' }}>
+                  <td key={c.key} style={{ textAlign: c.align || 'left', ...extraStyle }}>
                     {c.href ? <Link className="table-link" to={c.href(row)}>{content}</Link> : content}
                   </td>
                 );
