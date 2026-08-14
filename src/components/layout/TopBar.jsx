@@ -121,6 +121,12 @@ export default function TopBar() {
         </nav>
 
         <div className="topbar-actions">
+          <NavLink to="/sobre" className="topbar-icon-btn" title="Sobre a empresa" aria-label="Sobre a empresa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" />
+            </svg>
+          </NavLink>
           <NavLink to="/configuracoes" className="topbar-icon-btn" title="Configurações" aria-label="Configurações">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3" />
@@ -142,6 +148,7 @@ export default function TopBar() {
         <div className="topbar-mobile-menu fade-in">
           <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Overview</NavLink>
           <NavLink to="/meu-painel" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Meu Painel</NavLink>
+          <NavLink to="/sobre" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Sobre a empresa</NavLink>
           <NavLink to="/configuracoes" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Configurações</NavLink>
           <div className="topbar-mobile-section">Dashboards</div>
           {DASHBOARD_LINKS.map((link) => (

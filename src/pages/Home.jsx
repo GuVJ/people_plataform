@@ -33,7 +33,7 @@ export default function Home() {
         <div>
           <h1>Overview</h1>
           <p className="page-subtitle">
-            Montadora de veículos (dados fictícios) · {formatNumber(metrics.activeNow.length)} colaboradores ativos · fechamento de {period}
+            Volttera Motors · montadora de veículos (dados fictícios) · {formatNumber(metrics.activeNow.length)} colaboradores ativos · fechamento de {period}
           </p>
         </div>
       </div>

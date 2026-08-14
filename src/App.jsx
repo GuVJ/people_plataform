@@ -34,6 +34,7 @@ import MyDashboard from './pages/MyDashboard.jsx';
 import MedicalLeave from './pages/MedicalLeave.jsx';
 import Safety from './pages/Safety.jsx';
 import Production from './pages/Production.jsx';
+import About from './pages/About.jsx';
 import SalaryPositioning from './pages/SalaryPositioning.jsx';
 import Pcd from './pages/Pcd.jsx';
 import Apprentices from './pages/Apprentices.jsx';
@@ -59,6 +60,7 @@ function App() {
                 <Route element={<AppLayout />}>
                   <Route path="/" element={<Home />} />
                   <Route path="/produtividade" element={<Production />} />
+                  <Route path="/sobre" element={<About />} />
                   <Route path="/workforce" element={<Workforce />} />
                   <Route path="/turnover" element={<Turnover />} />
                   <Route path="/recruitment" element={<Recruitment />} />
