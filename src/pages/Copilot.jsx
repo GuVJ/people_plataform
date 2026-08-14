@@ -16,7 +16,7 @@ const INITIAL_MESSAGE = {
 };
 
 export default function Copilot() {
-  const { metrics, forecasts, insights, risk, medical, safety, hr } = useData();
+  const { metrics, forecasts, insights, risk, medical, safety, hr, production } = useData();
   const { targets } = useBudget();
   const [messages, setMessages] = useState([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
@@ -34,14 +34,14 @@ export default function Copilot() {
     setInput('');
     setThinking(true);
 
-    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety, hr });
+    const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety, hr, production });
     let answer = { ...localAnswer, source: 'local' };
 
     // Cards, tabelas e esclarecimentos com botões são determinísticos — pulamos o Gemini para o
     // dado aparecer na hora e o texto não contradizer (ex.: "não tenho acesso à lista").
     if (!localAnswer.employeeCard && !localAnswer.table && !localAnswer.quickReplies) {
       try {
-        const context = buildCopilotContext({ metrics, insights, risk, medical, safety });
+        const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production });
         const geminiText = await askGemini(q, context);
         answer = { ...localAnswer, text: geminiText, source: 'gemini' };
       } catch {

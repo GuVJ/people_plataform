@@ -28,6 +28,7 @@ Regras:
 - Nunca invente números fora do contexto. Se faltar um número exato, use o mais próximo disponível e sinalize que é uma aproximação ou inferência.
 - Só responda "não tenho esse dado" quando NÃO houver nenhuma base no contexto — não recuse perguntas analíticas que dá para responder cruzando as tabelas.
 - Ao apontar correlação, deixe claro que é uma associação observada nos dados, não causalidade comprovada.
+- Para perguntas sobre a LINHA DE MONTAGEM / produtividade, use o bloco "produtividadeLinha": OEE, takt time, cadência real, produção projetada vs meta (veículos/dia), estação gargalo e a lista "estacoes" (postos, presentes, faltas, cadência, folgaAteGargalo). O gargalo é a estação de MAIOR cadência — é ela que limita a produção da linha (teoria das restrições). Se faltas reduzem os presentes de uma estação a ponto de sua cadência passar o takt, ela vira o novo gargalo.
 - Feche com uma recomendação acionável de uma frase quando fizer sentido.
 
 Contexto de dados (JSON):

@@ -11,7 +11,7 @@ function formatKpi(k) {
 // Builds a small, JSON-safe snapshot of the current dataset — grounding data for the
 // Gemini prompt. Deliberately compact: never send the full employee list (thousands of
 // records) to the model, only pre-aggregated numbers it can quote back accurately.
-export function buildCopilotContext({ metrics, insights, risk, medical, safety }) {
+export function buildCopilotContext({ metrics, insights, risk, medical, safety, production }) {
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
 
@@ -80,6 +80,25 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety }
       paralisacoes12m: safety.kpis.paralisacoes12,
       conformidadeInspecoes: formatPercent(safety.kpis.conformidade),
       principalMotivoParalisacao: safety.stoppagesByReason[0]?.label,
+    } : undefined,
+    produtividadeLinha: production ? {
+      oee: formatPercent(production.oee * 100),
+      taktSegundosPorVeiculo: production.takt,
+      cadenciaRealSegundos: production.lineCycle,
+      producaoProjetadaVeiculosDia: production.carsDay,
+      metaVeiculosDia: production.demandPerDay,
+      atingeMeta: production.carsDay >= production.demandPerDay,
+      estacaoGargalo: production.bottleneck.name,
+      capacidadeGargaloVeiculosHora: Math.round(production.bottleneck.capacity * 10) / 10,
+      operadoresAlocados: production.totalAssigned,
+      ativosHoje: production.totalPresent,
+      faltasHoje: production.totalAbsent,
+      taxaFaltaLinha: formatPercent(production.absenceRate * 100),
+      estacoes: production.stations.map((s) => ({
+        estacao: s.name, postos: s.assigned, presentes: s.present, faltas: s.absent,
+        cadenciaSegundos: Math.round(s.cycle), capacidadeVeiculosHora: Math.round(s.capacity * 10) / 10,
+        folgaAteGargalo: s.buffer, status: s.statusLabel, gargalo: s.isBottleneck,
+      })),
     } : undefined,
     diversidade: {
       mulheresQuadro: formatPercent(metrics.diversity.gender.find((g) => g.label === 'Feminino')?.pct ?? 0),

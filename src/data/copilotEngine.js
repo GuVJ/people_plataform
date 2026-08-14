@@ -9,7 +9,7 @@ const SUGGESTED_PROMPTS = [
   'Como está a saúde mental nos atestados?',
   'Resuma os indicadores do mês',
   'Como está a segurança do trabalho?',
-  'Monte uma tabela de turnover por diretoria',
+  'A linha vai bater a meta de produção hoje?',
 ];
 
 function normalize(text) {
@@ -317,7 +317,7 @@ function findEmployeeMention(q, activeNow) {
 }
 
 export function answerQuestion(question, ctx) {
-  const { metrics, forecasts, insights, risk, targets, medical, safety, hr } = ctx;
+  const { metrics, forecasts, insights, risk, targets, medical, safety, hr, production } = ctx;
   const q = normalize(question);
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
@@ -353,6 +353,44 @@ export function answerQuestion(question, ctx) {
         { label: 'Absenteísmo', prompt: 'tabela de absenteísmo por gestor' },
         { label: 'Horas extras', prompt: 'tabela de horas extras por diretoria' },
         { label: 'Atestados', prompt: 'tabela de atestados por CID' },
+      ],
+    };
+  }
+
+  // Produtividade da linha de montagem (OEE, takt, gargalo, faltas na linha).
+  if (production && has(
+    q, 'produtividade', 'linha de montagem', 'linha de produc', 'na linha', 'gargalo', 'takt',
+    'oee', 'estacao', 'estacoes', 'cadencia', 'chao de fabrica', 'montagem final', 'bater a meta',
+    'veiculos/dia', 'veiculos por dia', 'producao da linha', 'produtiva',
+  )) {
+    const p = production;
+    const oeePct = Math.round(p.oee * 100);
+    const bn = p.bottleneck;
+    const meta = p.carsDay >= p.demandPerDay;
+    const atRisk = [...p.stations].filter((s) => !s.isBottleneck && s.buffer >= 0).sort((a, b) => a.buffer - b.buffer)[0];
+
+    // Tabela detalhada quando o usuário pede lista/tabela/detalhe por estação.
+    if (has(q, 'tabela', 'lista', 'detalhe', 'por estacao', 'cada estacao', 'estacoes')) {
+      return tableAnswer('produtividade_estacoes', 'Estações', 'Produtividade por estação',
+        [
+          { key: 'name', label: 'Estação' },
+          { key: 'assigned', label: 'Postos', align: 'right', render: (r) => formatNumber(r.assigned) },
+          { key: 'present', label: 'Presentes', align: 'right', render: (r) => formatNumber(r.present) },
+          { key: 'absent', label: 'Faltas', align: 'right', render: (r) => formatNumber(r.absent) },
+          { key: 'capacity', label: 'Capac. (veíc/h)', align: 'right', render: (r) => formatNumber(r.capacity, 1) },
+          { key: 'cycle', label: 'Cadência (s)', align: 'right', render: (r) => formatNumber(r.cycle, 0) },
+          { key: 'statusLabel', label: 'Status' },
+        ], p.stations);
+    }
+
+    const chartData = [...p.stations].sort((a, b) => b.cycle - a.cycle).map((s) => ({ label: s.short, cadencia: Math.round(s.cycle) }));
+    return {
+      text: `A linha está com **OEE de ${oeePct}%** e produção projetada de **${formatNumber(p.carsDay)} veículos/dia** (meta ${formatNumber(p.demandPerDay)} — ${meta ? '✓ no alvo' : `${formatNumber(p.demandPerDay - p.carsDay)} abaixo`}). O gargalo é a estação **${bn.name}**, com cadência de ${formatNumber(bn.cycle, 0)}s por veículo contra um takt de ${p.takt}s. Hoje há **${formatNumber(p.totalPresent)} operadores presentes** de ${formatNumber(p.totalAssigned)} alocados (${formatNumber(p.totalAbsent)} faltas, ${formatPercent(p.absenceRate * 100)}).${atRisk ? ` A estação de menor folga é **${atRisk.name}**, que aguenta só ${atRisk.buffer} falta${atRisk.buffer === 1 ? '' : 's'} a mais antes de virar gargalo.` : ''}`,
+      chart: { type: 'bar', title: 'Cadência por estação (s/veículo) — maior = gargalo', data: chartData, valueKey: 'cadencia', labelKey: 'label', formatValue: (v) => `${formatNumber(v, 0)}s` },
+      recommendations: [
+        `Reforçar ou realocar operadores na estação ${bn.name} — é ela que dita o ritmo da linha (teoria das restrições).`,
+        atRisk ? `Monitorar faltas em ${atRisk.name}: baixa folga até virar o próximo gargalo.` : 'Manter o balanceamento atual — as estações têm folga frente ao takt.',
+        'Ampliar a polivalência (cross-training) para realocar pessoas entre estações quando houver falta concentrada.',
       ],
     };
   }
