@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import './TopBar.css';
 
 const DASHBOARD_LINKS = [
+  { to: '/produtividade', label: 'Produtividade da Linha' },
   { to: '/workforce', label: 'Workforce' },
   { to: '/turnover', label: 'Turnover' },
   { to: '/recruitment', label: 'Recrutamento' },
