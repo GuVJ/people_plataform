@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './TopBar.css';
 
 const DASHBOARD_LINKS = [
@@ -52,6 +53,7 @@ export default function TopBar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dashRef = useRef(null);
   const dashBtnRef = useRef(null);
+  const { lang, setLang, t, tNav } = useLang();
   useClickOutside(dashRef, () => setDashboardsOpen(false));
 
   // A nav tem overflow-x: auto (rola os links), o que força overflow-y: auto e clipa um menu
@@ -86,10 +88,10 @@ export default function TopBar() {
 
         <nav className="topbar-nav">
           <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            Overview
+            {t('nav.overview')}
           </NavLink>
           <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            Meu Painel
+            {t('nav.myPanel')}
           </NavLink>
 
           <div className="topbar-dropdown" ref={dashRef}>
@@ -99,14 +101,14 @@ export default function TopBar() {
               className={`topbar-link topbar-link-btn${dashboardsOpen ? ' active' : ''}`}
               onClick={toggleDashboards}
             >
-              Dashboards
+              {t('nav.dashboards')}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
             </button>
             {dashboardsOpen && dashMenuPos && (
               <div className="topbar-dropdown-menu topbar-dropdown-menu-fixed fade-in" style={{ left: dashMenuPos.left, top: dashMenuPos.top }}>
                 {DASHBOARD_LINKS.map((link) => (
                   <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-dropdown-item${isActive ? ' active' : ''}`} onClick={() => setDashboardsOpen(false)}>
-                    {link.label}
+                    {tNav(link.to, link.label)}
                   </NavLink>
                 ))}
               </div>
@@ -115,13 +117,17 @@ export default function TopBar() {
 
           {PRIMARY_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-              {link.label}
+              {tNav(link.to, link.label)}
             </NavLink>
           ))}
         </nav>
 
         <div className="topbar-actions">
-          <NavLink to="/sobre" className="topbar-icon-btn" title="Sobre a empresa" aria-label="Sobre a empresa">
+          <div className="topbar-lang" role="group" aria-label={t('common.language')}>
+            <button type="button" className={`topbar-lang-btn${lang === 'pt' ? ' active' : ''}`} onClick={() => setLang('pt')}>PT</button>
+            <button type="button" className={`topbar-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLang('en')}>EN</button>
+          </div>
+          <NavLink to="/sobre" className="topbar-icon-btn" title={t('nav.about')} aria-label={t('nav.about')}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4M12 8h.01" />
@@ -146,20 +152,20 @@ export default function TopBar() {
 
       {mobileMenuOpen && (
         <div className="topbar-mobile-menu fade-in">
-          <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Overview</NavLink>
-          <NavLink to="/meu-painel" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Meu Painel</NavLink>
-          <NavLink to="/sobre" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Sobre a empresa</NavLink>
-          <NavLink to="/configuracoes" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>Configurações</NavLink>
-          <div className="topbar-mobile-section">Dashboards</div>
+          <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.overview')}</NavLink>
+          <NavLink to="/meu-painel" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.myPanel')}</NavLink>
+          <NavLink to="/sobre" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.about')}</NavLink>
+          <NavLink to="/configuracoes" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.settings')}</NavLink>
+          <div className="topbar-mobile-section">{t('nav.dashboards')}</div>
           {DASHBOARD_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className="topbar-mobile-link topbar-mobile-link-sub" onClick={() => setMobileMenuOpen(false)}>
-              {link.label}
+              {tNav(link.to, link.label)}
             </NavLink>
           ))}
-          <div className="topbar-mobile-section">Ferramentas</div>
+          <div className="topbar-mobile-section">{t('nav.tools')}</div>
           {PRIMARY_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>
-              {link.label}
+              {tNav(link.to, link.label)}
             </NavLink>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PreferencesProvider } from './context/PreferencesContext.jsx';
+import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { DataProvider } from './context/DataContext.jsx';
 import { BudgetProvider } from './context/BudgetContext.jsx';
@@ -49,6 +50,7 @@ import Locked from './pages/Locked.jsx';
 function App() {
   return (
     <PreferencesProvider>
+      <LanguageProvider>
       <AuthProvider>
         <DataProvider>
           <BudgetProvider>
@@ -104,6 +106,7 @@ function App() {
           </BudgetProvider>
         </DataProvider>
       </AuthProvider>
+      </LanguageProvider>
     </PreferencesProvider>
   );
 }
