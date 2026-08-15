@@ -7,11 +7,13 @@ import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
 import DashboardFilters from '../components/ui/DashboardFilters.jsx';
 import { useDashboardData } from '../hooks/useDashboardData.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { OVERTIME_COST_TYPES } from '../data/constants.js';
 import { formatNumber, formatCurrency, formatPercent } from '../utils/format.js';
 import './Overtime.css';
 
 export default function Overtime() {
+  const { tx } = useLang();
   const { metrics } = useDashboardData();
   const series = metrics.overtimeSeries;
   const last = series[series.length - 1];
@@ -45,8 +47,8 @@ export default function Overtime() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Horas Extras</h1>
-          <p className="page-subtitle">Evolução, composição por tipo e ranking por diretoria e gestor</p>
+          <h1>{tx('Horas Extras')}</h1>
+          <p className="page-subtitle">{tx('Evolução, composição por tipo e ranking por diretoria e gestor')}</p>
         </div>
         <ExportButton filename="horas_extras_por_tipo" sheetName="Horas Extras" rows={exportRows} />
       </div>
@@ -54,42 +56,42 @@ export default function Overtime() {
       <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-        <SectionCard title="Custo de horas extras (mês)">
+        <SectionCard title={tx('Custo de horas extras (mês)')}>
           <div className="stat-big">{formatCurrency(last.cost, { compact: true })}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>
-            {last.cost >= prev.cost ? '↑' : '↓'} {formatCurrency(Math.abs(last.cost - prev.cost), { compact: true })} vs. mês anterior
+            {last.cost >= prev.cost ? '↑' : '↓'} {formatCurrency(Math.abs(last.cost - prev.cost), { compact: true })} {tx('vs. mês anterior')}
           </p>
         </SectionCard>
-        <SectionCard title="Horas extras (mês)">
+        <SectionCard title={tx('Horas extras (mês)')}>
           <div className="stat-big">{formatNumber(last.hours)}h</div>
         </SectionCard>
-        <SectionCard title="% da folha de pagamento">
+        <SectionCard title={tx('% da folha de pagamento')}>
           <div className="stat-big">{formatPercent(pctOfPayroll)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>benchmark de mercado: {formatPercent(metrics.benchmark.overtimeCostPctPayroll)}</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('benchmark de mercado:')} {formatPercent(metrics.benchmark.overtimeCostPctPayroll)}</p>
         </SectionCard>
-        <SectionCard title="Custo acumulado (12 meses)">
+        <SectionCard title={tx('Custo acumulado (12 meses)')}>
           <div className="stat-big">{formatCurrency(annualCost, { compact: true })}</div>
         </SectionCard>
       </div>
 
-      <div className="section-title"><span>Composição do custo por tipo de hora extra</span></div>
+      <div className="section-title"><span>{tx('Composição do custo por tipo de hora extra')}</span></div>
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Custo no mês por tipo" subtitle={`Total: ${formatCurrency(last.cost, { compact: true })}`}>
+        <SectionCard title={tx('Custo no mês por tipo')} subtitle={`${tx('Total:')} ${formatCurrency(last.cost, { compact: true })}`}>
           <BarChart
             data={byType}
             valueKey="monthly" labelKey="label"
             formatValue={(v) => formatCurrency(v, { compact: true })}
           />
         </SectionCard>
-        <SectionCard title="O que compõe cada tipo">
+        <SectionCard title={tx('O que compõe cada tipo')}>
           <div className="overtime-type-list">
             {byType.map((t) => (
               <div className="overtime-type-item" key={t.key}>
                 <div className="overtime-type-top">
-                  <span className="overtime-type-label">{t.label}</span>
-                  <span className="overtime-type-value">{formatCurrency(t.monthly, { compact: true })}/mês · {formatPercent(t.pct)}</span>
+                  <span className="overtime-type-label">{tx(t.label)}</span>
+                  <span className="overtime-type-value">{formatCurrency(t.monthly, { compact: true })}{tx('/mês')} · {formatPercent(t.pct)}</span>
                 </div>
-                <p className="overtime-type-desc">{t.description}</p>
+                <p className="overtime-type-desc">{tx(t.description)}</p>
               </div>
             ))}
           </div>
@@ -97,24 +99,24 @@ export default function Overtime() {
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Evolução do custo de horas extras" subtitle="Últimos 12 meses">
+        <SectionCard title={tx('Evolução do custo de horas extras')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={history} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
-        <SectionCard title="Custo de horas extras por diretoria" subtitle="Matriz mês a mês (12 meses)">
+        <SectionCard title={tx('Custo de horas extras por diretoria')} subtitle={tx('Matriz mês a mês (12 meses)')}>
           <HeatmapTable rows={metrics.overtimeByAreaMonthly.rows} cols={metrics.overtimeByAreaMonthly.cols} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-2">
-        <SectionCard title="Ranking de gestores" subtitle="Horas acumuladas do time (24 meses) — top 8">
+        <SectionCard title={tx('Ranking de gestores')} subtitle={tx('Horas acumuladas do time (24 meses) — top 8')}>
           <BarChart data={metrics.overtimeByManager} valueKey="hours" labelKey="manager" color="var(--color-navy)" formatValue={(v) => `${formatNumber(v)}h`} />
         </SectionCard>
-        <SectionCard title="Leitura da Íris">
+        <SectionCard title={tx('Leitura da Íris')}>
           <p className="text-secondary" style={{ fontSize: 13, lineHeight: 1.6 }}>
-            A diretoria <strong>{metrics.overtimeByArea[0]?.area}</strong> concentra o maior custo de horas extras do período,
-            respondendo por {formatCurrency(metrics.overtimeByArea[0]?.cost ?? 0, { compact: true })} nos últimos 24 meses.
-            O tipo mais representativo é <strong>{byType[0]?.label}</strong> ({formatPercent(byType[0]?.pct ?? 0)} do total).
-            Recomenda-se avaliar redistribuição de carga e a política de sobreaviso para reduzir sobrecarga e burnout.
+            {tx('A diretoria')} <strong>{tx(metrics.overtimeByArea[0]?.area)}</strong> {tx('concentra o maior custo de horas extras do período, respondendo por')}{' '}
+            {formatCurrency(metrics.overtimeByArea[0]?.cost ?? 0, { compact: true })} {tx('nos últimos 24 meses. O tipo mais representativo é')}{' '}
+            <strong>{tx(byType[0]?.label)}</strong> ({formatPercent(byType[0]?.pct ?? 0)} {tx('do total).')}{' '}
+            {tx('Recomenda-se avaliar redistribuição de carga e a política de sobreaviso para reduzir sobrecarga e burnout.')}
           </p>
         </SectionCard>
       </div>

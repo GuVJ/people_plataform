@@ -1,6 +1,8 @@
 import './charts.css';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220, formatValue = (v) => `${Math.round(v)}` }) {
+  const { tx } = useLang();
   const width = 640;
   const padTop = 20;
   const padBottom = 26;
@@ -80,7 +82,7 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
       )}
 
       {allPoints.map((p, i) => (
-        <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle" className="line-chart-axis-label line-chart-month-label">{p.label}</text>
+        <text key={`lbl-${i}`} x={xAt(i)} y={height - 6} textAnchor="middle" className="line-chart-axis-label line-chart-month-label">{tx(p.label)}</text>
       ))}
       <rect x={xAt(forecastStartIdx)} y={padTop} width={plotW - forecastStartIdx * stepX} height={plotH} fill="var(--color-surface-subtle)" opacity="0.35" />
     </svg>

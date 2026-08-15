@@ -1,9 +1,11 @@
 import './CostBridge.css';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 // steps: [{ label, value, kind: 'base' | 'delta' | 'total' }]
 // Renders a horizontal waterfall (bridge): base and total are full bars from zero; each delta
 // is a floating bar spanning the running total before/after, colored by whether cost rose or fell.
 export default function CostBridge({ steps, formatValue = (v) => v }) {
+  const { tx } = useLang();
   let running = 0;
   const rows = steps.map((s) => {
     if (s.kind === 'base') {
@@ -28,7 +30,7 @@ export default function CostBridge({ steps, formatValue = (v) => v }) {
         const tone = r.kind === 'base' ? 'base' : r.kind === 'total' ? 'total' : r.value > 0 ? 'up' : 'down';
         return (
           <div className="cost-bridge-row" key={i}>
-            <span className="cost-bridge-label">{r.label}</span>
+            <span className="cost-bridge-label">{tx(r.label)}</span>
             <div className="cost-bridge-track">
               <div className={`cost-bridge-bar ${tone}`} style={{ left: `${leftPct}%`, width: `${widthPct}%` }} />
             </div>

@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './EmployeeSearch.css';
 
 function normalize(text) {
@@ -7,6 +8,7 @@ function normalize(text) {
 }
 
 export default function EmployeeSearch({ employees, placeholder = 'Buscar funcionário por nome…' }) {
+  const { tx } = useLang();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ export default function EmployeeSearch({ employees, placeholder = 'Buscar funcio
       </svg>
       <input
         className="employee-search-input"
-        placeholder={placeholder}
+        placeholder={tx(placeholder)}
         value={query}
         onChange={(e) => { setQuery(e.target.value); setOpen(true); }}
         onFocus={() => setOpen(true)}

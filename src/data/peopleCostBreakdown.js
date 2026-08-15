@@ -1,4 +1,5 @@
 import { formatCurrency } from '../utils/format.js';
+import { pick } from '../i18n/lang.js';
 
 // Encargos sociais sobre a folha bruta (CLT, Brasil): INSS patronal (~20%), FGTS (8%),
 // 13º salário provisionado (8,33%), férias + 1/3 provisionadas (~11,1%), RAT (1–3%) e
@@ -41,31 +42,43 @@ export function buildPeopleCostBreakdown(metrics) {
   const categories = [
     {
       key: 'salarios', label: 'Salários e ordenados', monthly: grossSalaryMonthly,
-      description: 'Remuneração bruta mensal do quadro ativo.',
+      description: pick('Remuneração bruta mensal do quadro ativo.', 'Monthly gross pay of the active workforce.'),
     },
     {
       key: 'encargos', label: 'Encargos sociais', monthly: encargosMonthly,
-      description: `INSS patronal, FGTS, 13º, férias + 1/3, RAT e Sistema S — estimado em ${(ENCARGOS_RATE * 100).toFixed(0)}% sobre o salário bruto (referência de mercado para CLT no Brasil).`,
+      description: pick(
+        `INSS patronal, FGTS, 13º, férias + 1/3, RAT e Sistema S — estimado em ${(ENCARGOS_RATE * 100).toFixed(0)}% sobre o salário bruto (referência de mercado para CLT no Brasil).`,
+        `Employer INSS, FGTS, 13th salary, vacation + 1/3, RAT and Sistema S — estimated at ${(ENCARGOS_RATE * 100).toFixed(0)}% of gross salary (market benchmark for CLT payroll in Brazil).`,
+      ),
     },
     {
       key: 'beneficios', label: 'Benefícios', monthly: beneficiosMonthly,
-      description: 'VR/VA, plano de saúde, odontológico, VT, gympass e previdência privada — calculado a partir da adesão real de cada colaborador.',
+      description: pick(
+        'VR/VA, plano de saúde, odontológico, VT, gympass e previdência privada — calculado a partir da adesão real de cada colaborador.',
+        'Meal/food vouchers, health and dental plans, transport voucher, gym benefit and private pension — computed from each employee\'s actual enrollment.',
+      ),
     },
     {
       key: 'horasExtras', label: 'Horas extras', monthly: overtimeMonthly,
-      description: 'Custo do mês corrente com horas extras (1,5x hora normal).',
+      description: pick('Custo do mês corrente com horas extras (1,5x hora normal).', 'Current-month cost of overtime (1.5x the normal hourly rate).'),
     },
     {
       key: 'turnover', label: 'Desligamento e reposição', monthly: turnoverMonthlyAvg,
-      description: 'Média mensal do custo de rescisão, reposição e ramp-up de produtividade (últimos 12 meses).',
+      description: pick(
+        'Média mensal do custo de rescisão, reposição e ramp-up de produtividade (últimos 12 meses).',
+        'Monthly average cost of severance, replacement and productivity ramp-up (last 12 months).',
+      ),
     },
     {
       key: 'treinamento', label: 'Treinamento e desenvolvimento', monthly: trainingMonthlyAvg,
-      description: 'Média mensal de investimento em capacitação do último ano.',
+      description: pick('Média mensal de investimento em capacitação do último ano.', 'Monthly average investment in training over the past year.'),
     },
     {
       key: 'recrutamento', label: 'Recrutamento e seleção', monthly: recruitingMonthlyAvg,
-      description: `Estimado em ${formatCurrency(COST_PER_HIRE)} por contratação — ${recentHires12m} contratações nos últimos 12 meses.`,
+      description: pick(
+        `Estimado em ${formatCurrency(COST_PER_HIRE)} por contratação — ${recentHires12m} contratações nos últimos 12 meses.`,
+        `Estimated at ${formatCurrency(COST_PER_HIRE)} per hire — ${recentHires12m} hires in the last 12 months.`,
+      ),
     },
   ];
 

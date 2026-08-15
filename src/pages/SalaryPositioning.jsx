@@ -4,9 +4,11 @@ import DonutChart from '../components/ui/DonutChart.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 
 export default function SalaryPositioning() {
   const { hr } = useData();
+  const { tx } = useLang();
   const p = hr.positioning;
   const k = p.kpis;
   const compa = (v) => formatNumber(v, 2);
@@ -16,41 +18,41 @@ export default function SalaryPositioning() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Posicionamento Salarial</h1>
-          <p className="page-subtitle">Compa-ratio: salário frente à mediana da faixa por cargo e diretoria</p>
+          <h1>{tx('Posicionamento Salarial')}</h1>
+          <p className="page-subtitle">{tx('Compa-ratio: salário frente à mediana da faixa por cargo e diretoria')}</p>
         </div>
         <ExportButton filename="posicionamento_salarial" sheetName="Posicionamento" rows={exportRows} />
       </div>
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-        <SectionCard title="Compa-ratio médio">
+        <SectionCard title={tx('Compa-ratio médio')}>
           <div className="stat-big">{compa(k.compaMedio)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>1,00 = na mediana da faixa</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('1,00 = na mediana da faixa')}</p>
         </SectionCard>
-        <SectionCard title="Dentro da faixa">
+        <SectionCard title={tx('Dentro da faixa')}>
           <div className="stat-big">{formatPercent(k.pctDentro)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>Entre 0,90 e 1,10</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('Entre 0,90 e 1,10')}</p>
         </SectionCard>
-        <SectionCard title="Abaixo do piso">
+        <SectionCard title={tx('Abaixo do piso')}>
           <div className="stat-big">{formatPercent(k.pctAbaixo)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>Compa-ratio &lt; 0,90</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('Compa-ratio < 0,90')}</p>
         </SectionCard>
-        <SectionCard title="Acima do teto">
+        <SectionCard title={tx('Acima do teto')}>
           <div className="stat-big">{formatPercent(k.pctAcima)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>Compa-ratio &gt; 1,10</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('Compa-ratio > 1,10')}</p>
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Distribuição do posicionamento" subtitle="Frente à faixa salarial">
-          <DonutChart data={p.dist} centerValue={compa(k.compaMedio)} centerLabel="compa médio" formatValue={(v) => formatNumber(v, 1)} />
+        <SectionCard title={tx('Distribuição do posicionamento')} subtitle={tx('Frente à faixa salarial')}>
+          <DonutChart data={p.dist} centerValue={compa(k.compaMedio)} centerLabel={tx('compa médio')} formatValue={(v) => formatNumber(v, 1)} />
         </SectionCard>
-        <SectionCard title="Compa-ratio por diretoria">
+        <SectionCard title={tx('Compa-ratio por diretoria')}>
           <BarChart data={p.byArea} valueKey="compa" labelKey="area" formatValue={compa} />
         </SectionCard>
       </div>
 
-      <SectionCard title="Compa-ratio por cargo" subtitle="Do júnior ao C-level">
+      <SectionCard title={tx('Compa-ratio por cargo')} subtitle={tx('Do júnior ao C-level')}>
         <BarChart data={p.byRole} valueKey="compa" labelKey="role" formatValue={compa} />
       </SectionCard>
     </div>

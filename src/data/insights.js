@@ -1,8 +1,5 @@
 import { formatCurrency, formatPercent, formatNumber } from '../utils/format.js';
-
-function trendWord(delta) {
-  return delta >= 0 ? 'aumentou' : 'reduziu';
-}
+import { pick, txt } from '../i18n/lang.js';
 
 export function generateInsights(metrics, forecasts) {
   const insights = [];
@@ -18,8 +15,14 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'turnover-trend',
       type: turnDelta > 0 ? 'danger' : 'success',
-      title: `Turnover ${trendWord(turnDelta)} ${formatPercent(Math.abs(turnDelta))} em relação ao mês anterior`,
-      text: `A taxa de turnover mensal foi de ${formatPercent(turn.totalRate)} contra ${formatPercent(turnPrev.totalRate)} no mês anterior, puxada principalmente pela diretoria ${topArea?.area ?? '—'}.`,
+      title: pick(
+        `Turnover ${turnDelta >= 0 ? 'aumentou' : 'reduziu'} ${formatPercent(Math.abs(turnDelta))} em relação ao mês anterior`,
+        `Turnover ${turnDelta >= 0 ? 'rose' : 'fell'} ${formatPercent(Math.abs(turnDelta))} vs. the previous month`,
+      ),
+      text: pick(
+        `A taxa de turnover mensal foi de ${formatPercent(turn.totalRate)} contra ${formatPercent(turnPrev.totalRate)} no mês anterior, puxada principalmente pela diretoria ${txt(topArea?.area ?? '—')}.`,
+        `The monthly turnover rate was ${formatPercent(turn.totalRate)} vs. ${formatPercent(turnPrev.totalRate)} the previous month, driven mainly by the ${txt(topArea?.area ?? '—')} division.`,
+      ),
       metric: 'turnover',
     });
   }
@@ -33,8 +36,14 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'overtime-cost',
       type: otGrowth > 0 ? 'warning' : 'success',
-      title: `Custo de horas extras ${otGrowth > 0 ? 'cresceu' : 'caiu'} ${formatCurrency(Math.abs(otGrowth), { compact: true })} nos últimos 3 meses`,
-      text: `O custo mensal de horas extras passou de ${formatCurrency(ot3ago.cost, { compact: true })} para ${formatCurrency(otNow.cost, { compact: true })}.`,
+      title: pick(
+        `Custo de horas extras ${otGrowth > 0 ? 'cresceu' : 'caiu'} ${formatCurrency(Math.abs(otGrowth), { compact: true })} nos últimos 3 meses`,
+        `Overtime cost ${otGrowth > 0 ? 'grew' : 'fell'} ${formatCurrency(Math.abs(otGrowth), { compact: true })} over the last 3 months`,
+      ),
+      text: pick(
+        `O custo mensal de horas extras passou de ${formatCurrency(ot3ago.cost, { compact: true })} para ${formatCurrency(otNow.cost, { compact: true })}.`,
+        `Monthly overtime cost went from ${formatCurrency(ot3ago.cost, { compact: true })} to ${formatCurrency(otNow.cost, { compact: true })}.`,
+      ),
       metric: 'horasExtras',
     });
   }
@@ -45,8 +54,14 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'overload-area',
       type: 'warning',
-      title: `A diretoria ${overloadArea.area} apresenta o maior risco de sobrecarga`,
-      text: `Responde por ${formatCurrency(overloadArea.cost, { compact: true })} em horas extras nos últimos 24 meses — o maior volume entre todas as diretorias monitoradas.`,
+      title: pick(
+        `A diretoria ${txt(overloadArea.area)} apresenta o maior risco de sobrecarga`,
+        `The ${txt(overloadArea.area)} division shows the highest overload risk`,
+      ),
+      text: pick(
+        `Responde por ${formatCurrency(overloadArea.cost, { compact: true })} em horas extras nos últimos 24 meses — o maior volume entre todas as diretorias monitoradas.`,
+        `It accounts for ${formatCurrency(overloadArea.cost, { compact: true })} in overtime over the last 24 months — the highest volume among all monitored divisions.`,
+      ),
       metric: 'horasExtras',
     });
   }
@@ -57,8 +72,14 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'absenteeism-forecast',
       type: 'warning',
-      title: 'Tendência indica aumento do absenteísmo nos próximos meses',
-      text: `O modelo projeta absenteísmo de ${formatPercent(absForecast.result.forecast[absForecast.result.forecast.length - 1].y)} em ${absForecast.result.forecast[absForecast.result.forecast.length - 1].label}, ante ${formatPercent(absForecast.result.history[absForecast.result.history.length - 1].y)} no último mês fechado.`,
+      title: pick(
+        'Tendência indica aumento do absenteísmo nos próximos meses',
+        'Trend indicates rising absenteeism in the coming months',
+      ),
+      text: pick(
+        `O modelo projeta absenteísmo de ${formatPercent(absForecast.result.forecast[absForecast.result.forecast.length - 1].y)} em ${absForecast.result.forecast[absForecast.result.forecast.length - 1].label}, ante ${formatPercent(absForecast.result.history[absForecast.result.history.length - 1].y)} no último mês fechado.`,
+        `The model projects absenteeism of ${formatPercent(absForecast.result.forecast[absForecast.result.forecast.length - 1].y)} in ${absForecast.result.forecast[absForecast.result.forecast.length - 1].label}, versus ${formatPercent(absForecast.result.history[absForecast.result.history.length - 1].y)} in the last closed month.`,
+      ),
       metric: 'absenteismo',
     });
   }
@@ -70,8 +91,14 @@ export function generateInsights(metrics, forecasts) {
     insights.push({
       id: 'diversity-leadership-gap',
       type: 'info',
-      title: 'Mulheres estão sub-representadas em posições de liderança',
-      text: `Mulheres representam ${formatPercent(womenOverall)} do quadro total, mas apenas ${formatPercent(womenLeadership)} das posições de liderança.`,
+      title: pick(
+        'Mulheres estão sub-representadas em posições de liderança',
+        'Women are underrepresented in leadership positions',
+      ),
+      text: pick(
+        `Mulheres representam ${formatPercent(womenOverall)} do quadro total, mas apenas ${formatPercent(womenLeadership)} das posições de liderança.`,
+        `Women make up ${formatPercent(womenOverall)} of the total workforce, but only ${formatPercent(womenLeadership)} of leadership positions.`,
+      ),
       metric: 'diversidade',
     });
   }
@@ -81,8 +108,14 @@ export function generateInsights(metrics, forecasts) {
   insights.push({
     id: 'turnover-cost-annual',
     type: 'info',
-    title: `O turnover custou ${formatCurrency(last12Cost, { compact: true })} nos últimos 12 meses`,
-    text: `Estimativa baseada em ${formatNumber(metrics.terminationsSeries.slice(-12).reduce((s, t) => s + t.total, 0))} desligamentos, considerando custo de reposição, ramp-up e perda de produtividade.`,
+    title: pick(
+      `O turnover custou ${formatCurrency(last12Cost, { compact: true })} nos últimos 12 meses`,
+      `Turnover cost ${formatCurrency(last12Cost, { compact: true })} over the last 12 months`,
+    ),
+    text: pick(
+      `Estimativa baseada em ${formatNumber(metrics.terminationsSeries.slice(-12).reduce((s, t) => s + t.total, 0))} desligamentos, considerando custo de reposição, ramp-up e perda de produtividade.`,
+      `Estimate based on ${formatNumber(metrics.terminationsSeries.slice(-12).reduce((s, t) => s + t.total, 0))} terminations, factoring in replacement cost, ramp-up and lost productivity.`,
+    ),
     metric: 'custoPessoal',
   });
 
@@ -90,8 +123,14 @@ export function generateInsights(metrics, forecasts) {
   insights.push({
     id: 'training-roi',
     type: 'success',
-    title: `Treinamentos geram R$ ${formatNumber(metrics.training.roiRatio, 2)} de retorno para cada R$ 1,00 investido`,
-    text: `Investimento estimado de ${formatCurrency(metrics.training.trainingInvestment, { compact: true })} em capacitação no último ano, com ${formatPercent(metrics.training.completionPct)} de conclusão média.`,
+    title: pick(
+      `Treinamentos geram R$ ${formatNumber(metrics.training.roiRatio, 2)} de retorno para cada R$ 1,00 investido`,
+      `Training generates R$ ${formatNumber(metrics.training.roiRatio, 2)} of return for every R$ 1.00 invested`,
+    ),
+    text: pick(
+      `Investimento estimado de ${formatCurrency(metrics.training.trainingInvestment, { compact: true })} em capacitação no último ano, com ${formatPercent(metrics.training.completionPct)} de conclusão média.`,
+      `Estimated investment of ${formatCurrency(metrics.training.trainingInvestment, { compact: true })} in training over the last year, with ${formatPercent(metrics.training.completionPct)} average completion.`,
+    ),
     metric: 'treinamentos',
   });
 

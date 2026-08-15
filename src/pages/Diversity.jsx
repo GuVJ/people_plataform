@@ -5,9 +5,11 @@ import BarChart from '../components/ui/BarChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
 import DashboardFilters from '../components/ui/DashboardFilters.jsx';
 import { useDashboardData } from '../hooks/useDashboardData.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
 
 export default function Diversity() {
+  const { tx } = useLang();
   const { metrics } = useDashboardData();
   const { diversity } = metrics;
 
@@ -22,8 +24,8 @@ export default function Diversity() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Diversidade</h1>
-          <p className="page-subtitle">Gênero, raça, gerações, PCD e representatividade na liderança</p>
+          <h1>{tx('Diversidade')}</h1>
+          <p className="page-subtitle">{tx('Gênero, raça, gerações, PCD e representatividade na liderança')}</p>
         </div>
         <ExportButton filename="diversidade_raca" sheetName="Diversidade" rows={exportRows} />
       </div>
@@ -31,44 +33,44 @@ export default function Diversity() {
       <DashboardFilters />
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-        <SectionCard title="Mulheres no quadro">
+        <SectionCard title={tx('Mulheres no quadro')}>
           <div className="stat-big">{formatPercent(diversity.gender.find((g) => g.label === 'Feminino')?.pct ?? 0)}</div>
         </SectionCard>
-        <SectionCard title="Mulheres na liderança">
+        <SectionCard title={tx('Mulheres na liderança')}>
           <div className="stat-big">{formatPercent(diversity.leadershipGender.find((g) => g.label === 'Feminino')?.pct ?? 0)}</div>
         </SectionCard>
-        <SectionCard title="Pretos e pardos">
+        <SectionCard title={tx('Pretos e pardos')}>
           <div className="stat-big">{formatPercent((diversity.race.find((r) => r.label === 'Preta')?.pct ?? 0) + (diversity.race.find((r) => r.label === 'Parda')?.pct ?? 0))}</div>
         </SectionCard>
-        <SectionCard title="PCD no quadro">
+        <SectionCard title={tx('PCD no quadro')}>
           <div className="stat-big">{formatPercent(diversity.pcdPct)}</div>
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-3" style={{ marginBottom: 16 }}>
-        <SectionCard title="Gênero">
-          <DonutChart data={diversity.gender} centerValue={formatNumber(metrics.activeNow.length)} centerLabel="colaboradores" />
+        <SectionCard title={tx('Gênero')}>
+          <DonutChart data={diversity.gender} centerValue={formatNumber(metrics.activeNow.length)} centerLabel={tx('colaboradores')} />
         </SectionCard>
-        <SectionCard title="Raça / Etnia">
+        <SectionCard title={tx('Raça / Etnia')}>
           <DonutChart data={diversity.race} />
         </SectionCard>
-        <SectionCard title="Gerações">
+        <SectionCard title={tx('Gerações')}>
           <DonutChart data={diversity.generation} />
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-2">
-        <SectionCard title="Gênero — quadro geral vs. liderança" subtitle="Comparação de representatividade">
+        <SectionCard title={tx('Gênero — quadro geral vs. liderança')} subtitle={tx('Comparação de representatividade')}>
           <BarChart
-            data={genderComparison.map((g) => ({ label: `${g.label} · Geral`, value: g.geral }))}
+            data={genderComparison.map((g) => ({ label: `${tx(g.label)} · ${tx('Geral')}`, value: g.geral }))}
             valueKey="value" labelKey="label" formatValue={(v) => formatPercent(v)}
           />
           <BarChart
-            data={genderComparison.map((g) => ({ label: `${g.label} · Liderança`, value: g.lideranca }))}
+            data={genderComparison.map((g) => ({ label: `${tx(g.label)} · ${tx('Liderança')}`, value: g.lideranca }))}
             valueKey="value" labelKey="label" color="var(--color-navy)" formatValue={(v) => formatPercent(v)}
           />
         </SectionCard>
-        <SectionCard title="Raça — representatividade na liderança">
+        <SectionCard title={tx('Raça — representatividade na liderança')}>
           <BarChart data={diversity.leadershipRace} valueKey="pct" labelKey="label" color="var(--chart-6)" formatValue={(v) => formatPercent(v)} />
         </SectionCard>
       </div>

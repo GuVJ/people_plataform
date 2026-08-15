@@ -4,8 +4,10 @@ import Table from '../components/ui/Table.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
 import { average } from '../utils/stats.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 
 export default function Benchmark() {
+  const { tx } = useLang();
   const { metrics } = useData();
   const { benchmark } = metrics;
 
@@ -39,20 +41,20 @@ export default function Benchmark() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Benchmark de mercado</h1>
-          <p className="page-subtitle">Como os indicadores da empresa se comparam ao setor</p>
+          <h1>{tx('Benchmark de mercado')}</h1>
+          <p className="page-subtitle">{tx('Como os indicadores da empresa se comparam ao setor')}</p>
         </div>
         <ExportButton filename="benchmark_mercado" sheetName="Benchmark" rows={exportRows} />
       </div>
 
-      <SectionCard title="Comparativo de indicadores">
+      <SectionCard title={tx('Comparativo de indicadores')}>
         <Table
           columns={[
-            { key: 'indicator', label: 'Indicador' },
-            { key: 'company', label: 'Empresa', align: 'right', render: (r) => `${formatNumber(r.company, 1)}${r.unit}` },
-            { key: 'market', label: 'Mercado', align: 'right', render: (r) => `${formatNumber(r.market, 1)}${r.unit}` },
+            { key: 'indicator', label: tx('Indicador'), render: (r) => tx(r.indicator) },
+            { key: 'company', label: tx('Empresa'), align: 'right', render: (r) => `${formatNumber(r.company, 1)}${r.unit}` },
+            { key: 'market', label: tx('Mercado'), align: 'right', render: (r) => `${formatNumber(r.market, 1)}${r.unit}` },
             {
-              key: 'diff', label: 'Diferença', align: 'right', render: (r) => (
+              key: 'diff', label: tx('Diferença'), align: 'right', render: (r) => (
                 <span className={r.isGood ? 'value-good' : 'value-bad'}>
                   {r.diff >= 0 ? '+' : ''}{formatNumber(r.diff, 1)}{r.unit}
                 </span>
@@ -60,7 +62,7 @@ export default function Benchmark() {
             },
             {
               key: 'status', label: 'Status', render: (r) => (
-                <span className={`badge ${r.isGood ? 'badge-success' : 'badge-warning'}`}>{r.isGood ? 'Favorável' : 'Atenção'}</span>
+                <span className={`badge ${r.isGood ? 'badge-success' : 'badge-warning'}`}>{r.isGood ? tx('Favorável') : tx('Atenção')}</span>
               ),
             },
           ]}
@@ -70,10 +72,10 @@ export default function Benchmark() {
       </SectionCard>
 
       <div style={{ marginTop: 16 }}>
-        <SectionCard title="Leitura da Íris">
+        <SectionCard title={tx('Leitura da Íris')}>
           <p className="text-secondary" style={{ fontSize: 13, lineHeight: 1.6 }}>
-            A empresa está {rows.filter((r) => r.isGood).length} de {rows.length} indicadores em posição favorável frente ao benchmark setorial.
-            {' '}Os pontos de maior atenção são: {rows.filter((r) => !r.isGood).map((r) => r.indicator).join(', ') || 'nenhum no momento'}.
+            {tx('A empresa está')} {rows.filter((r) => r.isGood).length} {tx('de')} {rows.length} {tx('indicadores em posição favorável frente ao benchmark setorial.')}
+            {' '}{tx('Os pontos de maior atenção são')}: {rows.filter((r) => !r.isGood).map((r) => tx(r.indicator)).join(', ') || tx('nenhum no momento')}.
           </p>
         </SectionCard>
       </div>

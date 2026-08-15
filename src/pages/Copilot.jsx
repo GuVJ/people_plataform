@@ -5,20 +5,24 @@ import ChatMessage from '../components/copilot/ChatMessage.jsx';
 import { answerQuestion, SUGGESTED_PROMPTS } from '../data/copilotEngine.js';
 import { buildCopilotContext } from '../data/copilotContext.js';
 import { askGemini } from '../data/geminiClient.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import './Copilot.css';
 
-const INITIAL_MESSAGE = {
-  role: 'assistant',
-  content: {
-    initial: true,
-    text: 'Olá! Sou a Íris, a inteligência de People Analytics. Pergunte sobre qualquer indicador de RH — posso cruzar dados, correlacionar e montar tabelas para baixar.',
-  },
-};
+function makeInitialMessage(tx) {
+  return {
+    role: 'assistant',
+    content: {
+      initial: true,
+      text: tx('Olá! Sou a Íris, a inteligência de People Analytics. Pergunte sobre qualquer indicador de RH — posso cruzar dados, correlacionar e montar tabelas para baixar.'),
+    },
+  };
+}
 
 export default function Copilot() {
+  const { tx } = useLang();
   const { metrics, forecasts, insights, risk, medical, safety, hr, production } = useData();
   const { targets } = useBudget();
-  const [messages, setMessages] = useState([INITIAL_MESSAGE]);
+  const [messages, setMessages] = useState(() => [makeInitialMessage(tx)]);
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef(null);
@@ -57,8 +61,8 @@ export default function Copilot() {
     <div className="page copilot-page fade-in">
       <div className="page-header">
         <div>
-          <h1>Íris · Inteligência de People Analytics</h1>
-          <p className="page-subtitle">Pergunte em linguagem natural sobre qualquer indicador de RH</p>
+          <h1>Íris · {tx('Inteligência de People Analytics')}</h1>
+          <p className="page-subtitle">{tx('Pergunte em linguagem natural sobre qualquer indicador de RH')}</p>
         </div>
       </div>
 
@@ -77,7 +81,7 @@ export default function Copilot() {
 
         <div className="copilot-suggestions">
           {SUGGESTED_PROMPTS.map((p) => (
-            <button type="button" key={p} className="copilot-chip" onClick={() => send(p)}>{p}</button>
+            <button type="button" key={p} className="copilot-chip" onClick={() => send(p)}>{tx(p)}</button>
           ))}
         </div>
 
@@ -88,11 +92,11 @@ export default function Copilot() {
           <input
             type="text"
             className="copilot-input"
-            placeholder="Pergunte sobre turnover, absenteísmo, custo de pessoal…"
+            placeholder={tx('Pergunte sobre turnover, absenteísmo, custo de pessoal…')}
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
-          <button type="submit" className="btn btn-primary" disabled={!input.trim() || thinking}>Enviar</button>
+          <button type="submit" className="btn btn-primary" disabled={!input.trim() || thinking}>{tx('Enviar')}</button>
         </form>
       </div>
     </div>

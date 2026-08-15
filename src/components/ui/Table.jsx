@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './Table.css';
 
 function compareValues(a, b) {
@@ -13,6 +14,7 @@ function compareValues(a, b) {
 // cellStyle(row) returns an inline style merged into the <td> (ex.: gradiente de intensidade).
 // defaultSortKey/defaultSortDir definem a ordenação inicial mantendo as demais colunas ordenáveis.
 export default function Table({ columns, rows, rowKey = (r, i) => i, defaultSortKey = null, defaultSortDir = 'asc' }) {
+  const { tx } = useLang();
   const [sortKey, setSortKey] = useState(defaultSortKey);
   const [sortDir, setSortDir] = useState(defaultSortDir);
 
@@ -53,12 +55,12 @@ export default function Table({ columns, rows, rowKey = (r, i) => i, defaultSort
               const sortable = sortableKeys.has(c.key);
               const active = sortKey === c.key;
               if (!sortable) {
-                return <th key={c.key} style={{ textAlign: c.align || 'left' }}>{c.label}</th>;
+                return <th key={c.key} style={{ textAlign: c.align || 'left' }}>{tx(c.label)}</th>;
               }
               return (
                 <th key={c.key} style={{ textAlign: c.align || 'left' }} className={`th-sortable${active ? ' active' : ''}`} aria-sort={active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none'}>
                   <button type="button" className="th-sort-btn" onClick={() => handleSort(c.key)} style={{ justifyContent: c.align === 'right' ? 'flex-end' : 'flex-start' }}>
-                    <span>{c.label}</span>
+                    <span>{tx(c.label)}</span>
                     <span className={`th-sort-ind${active ? ' active' : ''}`}>{active ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}</span>
                   </button>
                 </th>
@@ -82,7 +84,7 @@ export default function Table({ columns, rows, rowKey = (r, i) => i, defaultSort
           ))}
         </tbody>
       </table>
-      {!rows.length && <p className="table-empty">Nenhum dado disponível para este recorte.</p>}
+      {!rows.length && <p className="table-empty">{tx('Nenhum dado disponível para este recorte.')}</p>}
     </div>
   );
 }

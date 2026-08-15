@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { exportSheet } from '../../utils/exportExcel.js';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 export default function ExportButton({ filename, sheetName, rows, label = 'Exportar' }) {
+  const { tx } = useLang();
   const [busy, setBusy] = useState(false);
 
   async function handleClick() {
@@ -21,7 +23,7 @@ export default function ExportButton({ filename, sheetName, rows, label = 'Expor
         <polyline points="7 10 12 15 17 10" />
         <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
-      {busy ? 'Exportando…' : label}
+      {busy ? tx('Exportando…') : tx(label)}
     </button>
   );
 }

@@ -1,6 +1,8 @@
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './profile.css';
 
 export default function ComparisonBar({ label, value, reference, diffPct, format, referenceLabel = 'média da diretoria', higherIsBetter = null }) {
+  const { tx } = useLang();
   const max = Math.max(value, reference, 0.0001) * 1.2;
   const valuePct = Math.min(100, (value / max) * 100);
   const refPct = Math.min(100, (reference / max) * 100);
@@ -9,7 +11,7 @@ export default function ComparisonBar({ label, value, reference, diffPct, format
   return (
     <div className="comparison-row">
       <div className="comparison-row-top">
-        <span className="comparison-label">{label}</span>
+        <span className="comparison-label">{tx(label)}</span>
         <span className="comparison-value">
           {format(value)}
           {Math.abs(diffPct) >= 1 && (
@@ -21,9 +23,9 @@ export default function ComparisonBar({ label, value, reference, diffPct, format
       </div>
       <div className="comparison-track">
         <div className="comparison-fill" style={{ width: `${valuePct}%` }} />
-        <div className="comparison-reference-marker" style={{ left: `${refPct}%` }} title={`${referenceLabel}: ${format(reference)}`} />
+        <div className="comparison-reference-marker" style={{ left: `${refPct}%` }} title={`${tx(referenceLabel)}: ${format(reference)}`} />
       </div>
-      <span className="comparison-reference-label">{referenceLabel}: {format(reference)}</span>
+      <span className="comparison-reference-label">{tx(referenceLabel)}: {format(reference)}</span>
     </div>
   );
 }

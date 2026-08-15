@@ -1,11 +1,13 @@
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './RelationshipMap.css';
 
 export default function RelationshipMap({ relationships }) {
+  const { tx } = useLang();
   return (
     <div className="card relationship-map">
       <div className="relationship-hub">
         <span className="relationship-hub-badge">funcionarios.id</span>
-        <span className="relationship-hub-caption">chave de comunicação central (matrícula)</span>
+        <span className="relationship-hub-caption">{tx('chave de comunicação central (matrícula)')}</span>
       </div>
       <div className="relationship-list">
         {relationships.map((r) => (

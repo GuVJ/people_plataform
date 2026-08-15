@@ -7,13 +7,16 @@ import ExportButton from '../components/ui/ExportButton.jsx';
 import { formatNumber, formatPercent } from '../utils/format.js';
 import { formatByType } from '../components/ui/formatValue.js';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import './Predictions.css';
 
 function RiskBadge({ level }) {
-  return <span className={`badge badge-${RISK_LEVEL_COLOR[level]}`}>{level}</span>;
+  const { tx } = useLang();
+  return <span className={`badge badge-${RISK_LEVEL_COLOR[level]}`}>{tx(level)}</span>;
 }
 
 export default function Predictions() {
+  const { tx } = useLang();
   const { metrics, forecasts, risk } = useData();
 
   const riskCounts = ['Baixo', 'Médio', 'Alto', 'Muito Alto'].map((level) => ({
@@ -30,11 +33,11 @@ export default function Predictions() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Preditivo &amp; Machine Learning</h1>
-          <p className="page-subtitle">Modelos de previsão para os principais indicadores e classificação de risco de saída</p>
+          <h1>{tx('Preditivo & Machine Learning')}</h1>
+          <p className="page-subtitle">{tx('Modelos de previsão para os principais indicadores e classificação de risco de saída')}</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Link to="/organograma" className="btn btn-sm">Ver organograma</Link>
+          <Link to="/organograma" className="btn btn-sm">{tx('Ver organograma')}</Link>
           <ExportButton filename="risco_colaboradores" sheetName="Risco" rows={exportRows} />
         </div>
       </div>
@@ -48,13 +51,13 @@ export default function Predictions() {
             <SectionCard
               key={f.key}
               title={f.label}
-              subtitle={`Projeção para os próximos 3 meses`}
+              subtitle={tx('Projeção para os próximos 3 meses')}
               action={<span className={`badge ${isGood ? 'badge-success' : 'badge-warning'}`}>{trendUp ? '↑' : '↓'} {formatNumber(Math.abs(f.result.trendPct), 1)}%</span>}
             >
               <LineChart history={f.result.history} forecast={f.result.forecast} formatValue={(v) => formatByType(v, f.format)} />
               <div className="forecast-footer">
-                <span>Último real: <strong>{formatByType(f.result.history.at(-1).y, f.format)}</strong></span>
-                <span>Projeção ({f.result.forecast.at(-1).label}): <strong>{formatByType(f.result.forecast.at(-1).y, f.format)}</strong></span>
+                <span>{tx('Último real')}: <strong>{formatByType(f.result.history.at(-1).y, f.format)}</strong></span>
+                <span>{tx('Projeção')} ({f.result.forecast.at(-1).label}): <strong>{formatByType(f.result.forecast.at(-1).y, f.format)}</strong></span>
               </div>
             </SectionCard>
           );
@@ -63,24 +66,24 @@ export default function Predictions() {
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
         {riskCounts.map((r) => (
-          <SectionCard key={r.level} title={`Risco ${r.level}`}>
+          <SectionCard key={r.level} title={`${tx('Risco')} ${tx(r.level)}`}>
             <div className="stat-big"><RiskBadge level={r.level} /></div>
             <p className="text-secondary" style={{ fontSize: 20, fontWeight: 700, marginTop: 8 }}>{formatNumber(r.count)}</p>
-            <p className="text-secondary" style={{ fontSize: 12 }}>{formatPercent((r.count / (risk.length || 1)) * 100)} do quadro ativo</p>
+            <p className="text-secondary" style={{ fontSize: 12 }}>{formatPercent((r.count / (risk.length || 1)) * 100)} {tx('do quadro ativo')}</p>
           </SectionCard>
         ))}
       </div>
 
-      <SectionCard title="Colaboradores com maior risco de saída" subtitle="Score calculado a partir de tenure, engajamento, clima, salário, horas extras e absenteísmo">
+      <SectionCard title={tx('Colaboradores com maior risco de saída')} subtitle={tx('Score calculado a partir de tenure, engajamento, clima, salário, horas extras e absenteísmo')}>
         <Table
           columns={[
-            { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
-            { key: 'area', label: 'Diretoria' },
-            { key: 'managerName', label: 'Gestor' },
+            { key: 'name', label: tx('Nome'), render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
+            { key: 'area', label: tx('Diretoria') },
+            { key: 'managerName', label: tx('Gestor') },
             { key: 'score', label: 'Score', align: 'right' },
-            { key: 'level', label: 'Nível', render: (r) => <RiskBadge level={r.level} /> },
+            { key: 'level', label: tx('Nível'), render: (r) => <RiskBadge level={r.level} /> },
             {
-              key: 'factors', label: 'Principais fatores', render: (r) => (
+              key: 'factors', label: tx('Principais fatores'), render: (r) => (
                 <div className="risk-factors">
                   {r.factors.map((f, i) => (
                     <span key={i} className={`risk-factor-chip ${f.impact > 0 ? 'up' : 'down'}`}>

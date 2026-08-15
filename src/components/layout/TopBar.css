@@ -55,18 +55,22 @@
 .topbar-nav {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 2px;
-  row-gap: 4px;
+  flex-wrap: nowrap;
+  gap: 1px;
   flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox: nav rola sem barra visível */
 }
+.topbar-nav::-webkit-scrollbar { display: none; } /* WebKit */
 
 .topbar-link {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 5px 8px;
+  padding: 5px 7px;
   white-space: nowrap;
+  flex-shrink: 0;
   border-radius: var(--radius-sm);
   font-size: 12px;
   font-weight: 500;

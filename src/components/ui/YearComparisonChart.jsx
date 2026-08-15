@@ -1,9 +1,11 @@
 import './charts.css';
 import './YearComparisonChart.css';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 // series: [{ year, label, color, values: number|null[12] }]  (null = month not reached yet)
 // target: { label, values: number[12] } | null
 export default function YearComparisonChart({ monthLabels, series, target, formatValue = (v) => `${Math.round(v)}`, height = 260 }) {
+  const { tx } = useLang();
   const width = 640;
   const padTop = 20;
   const padBottom = 28;
@@ -61,7 +63,7 @@ export default function YearComparisonChart({ monthLabels, series, target, forma
               {last && (
                 <g>
                   <rect x={xAt(last[0]) + 7} y={Math.min(Math.max(yAt(last[1]) - 9, padTop), height - padBottom - 18)} width={labelWidth} height={16} rx="4" fill={s.color} />
-                  <text x={xAt(last[0]) + 7 + labelWidth / 2} y={Math.min(Math.max(yAt(last[1]) + 2.5, padTop + 11.5), height - padBottom - 5.5)} textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#fff">{s.label}</text>
+                  <text x={xAt(last[0]) + 7 + labelWidth / 2} y={Math.min(Math.max(yAt(last[1]) + 2.5, padTop + 11.5), height - padBottom - 5.5)} textAnchor="middle" fontSize="9.5" fontWeight="700" fill="#fff">{tx(s.label)}</text>
                 </g>
               )}
             </g>
@@ -69,7 +71,7 @@ export default function YearComparisonChart({ monthLabels, series, target, forma
         })}
 
         {monthLabels.map((m, i) => (
-          <text key={`m-${i}`} x={xAt(i)} y={height - 8} textAnchor="middle" className="line-chart-axis-label">{m}</text>
+          <text key={`m-${i}`} x={xAt(i)} y={height - 8} textAnchor="middle" className="line-chart-axis-label">{tx(m)}</text>
         ))}
       </svg>
 
@@ -77,13 +79,13 @@ export default function YearComparisonChart({ monthLabels, series, target, forma
         {series.map((s) => (
           <div className="chart-legend-item" key={s.year}>
             <span className="chart-legend-swatch" style={{ background: s.color }} />
-            {s.label}
+            {tx(s.label)}
           </div>
         ))}
         {target && (
           <div className="chart-legend-item">
             <span className="chart-legend-swatch year-chart-target-swatch" />
-            {target.label}
+            {tx(target.label)}
           </div>
         )}
       </div>

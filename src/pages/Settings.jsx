@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 import { THEMES, THEME_BY_KEY } from '../data/themes.js';
 import SectionCard from '../components/ui/SectionCard.jsx';
@@ -15,6 +16,7 @@ function StarIcon({ filled }) {
 }
 
 export default function Settings() {
+  const { tx } = useLang();
   const { favorites, toggleFavorite, move, isFavorite } = useFavorites();
   const available = THEMES.filter((t) => !isFavorite(t.key));
 
@@ -22,15 +24,15 @@ export default function Settings() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Configurações</h1>
-          <p className="page-subtitle">Favorite os temas mais urgentes e defina a ordem de prioridade — eles aparecem primeiro em <Link to="/meu-painel">Meu Painel</Link>.</p>
+          <h1>{tx('Configurações')}</h1>
+          <p className="page-subtitle">{tx('Favorite os temas mais urgentes e defina a ordem de prioridade — eles aparecem primeiro em')} <Link to="/meu-painel">{tx('Meu Painel')}</Link>.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-2">
-        <SectionCard title="Temas favoritos" subtitle={favorites.length ? 'Arraste a prioridade com as setas — o topo é o mais urgente' : 'Nenhum tema favoritado ainda'}>
+        <SectionCard title={tx('Temas favoritos')} subtitle={favorites.length ? tx('Arraste a prioridade com as setas — o topo é o mais urgente') : tx('Nenhum tema favoritado ainda')}>
           {favorites.length === 0 ? (
-            <p className="text-secondary" style={{ fontSize: 13 }}>Marque temas com a estrela ao lado para priorizá-los no seu painel.</p>
+            <p className="text-secondary" style={{ fontSize: 13 }}>{tx('Marque temas com a estrela ao lado para priorizá-los no seu painel.')}</p>
           ) : (
             <ol className="settings-fav-list">
               {favorites.map((key, i) => {
@@ -40,13 +42,13 @@ export default function Settings() {
                   <li className="settings-fav-item" key={key}>
                     <span className="settings-fav-rank">{i + 1}</span>
                     <div className="settings-fav-info">
-                      <span className="settings-fav-label">{theme.label}</span>
-                      <span className="settings-fav-desc">{theme.group} · {theme.description}</span>
+                      <span className="settings-fav-label">{tx(theme.label)}</span>
+                      <span className="settings-fav-desc">{tx(theme.group)} · {tx(theme.description)}</span>
                     </div>
                     <div className="settings-fav-actions">
-                      <button type="button" className="settings-move" disabled={i === 0} onClick={() => move(key, 'up')} aria-label="Subir prioridade">↑</button>
-                      <button type="button" className="settings-move" disabled={i === favorites.length - 1} onClick={() => move(key, 'down')} aria-label="Descer prioridade">↓</button>
-                      <button type="button" className="settings-star active" onClick={() => toggleFavorite(key)} aria-label="Remover dos favoritos"><StarIcon filled /></button>
+                      <button type="button" className="settings-move" disabled={i === 0} onClick={() => move(key, 'up')} aria-label={tx('Subir prioridade')}>↑</button>
+                      <button type="button" className="settings-move" disabled={i === favorites.length - 1} onClick={() => move(key, 'down')} aria-label={tx('Descer prioridade')}>↓</button>
+                      <button type="button" className="settings-star active" onClick={() => toggleFavorite(key)} aria-label={tx('Remover dos favoritos')}><StarIcon filled /></button>
                     </div>
                   </li>
                 );
@@ -55,35 +57,35 @@ export default function Settings() {
           )}
         </SectionCard>
 
-        <SectionCard title="Todos os temas" subtitle="Clique na estrela para favoritar">
+        <SectionCard title={tx('Todos os temas')} subtitle={tx('Clique na estrela para favoritar')}>
           <div className="settings-all-list">
             {THEMES.map((theme) => {
               const fav = isFavorite(theme.key);
               return (
                 <div className={`settings-theme-row${fav ? ' fav' : ''}`} key={theme.key}>
-                  <button type="button" className={`settings-star${fav ? ' active' : ''}`} onClick={() => toggleFavorite(theme.key)} aria-label={fav ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}>
+                  <button type="button" className={`settings-star${fav ? ' active' : ''}`} onClick={() => toggleFavorite(theme.key)} aria-label={fav ? tx('Remover dos favoritos') : tx('Adicionar aos favoritos')}>
                     <StarIcon filled={fav} />
                   </button>
                   <div className="settings-fav-info">
-                    <span className="settings-fav-label">{theme.label}</span>
-                    <span className="settings-fav-desc">{theme.group} · {theme.description}</span>
+                    <span className="settings-fav-label">{tx(theme.label)}</span>
+                    <span className="settings-fav-desc">{tx(theme.group)} · {tx(theme.description)}</span>
                   </div>
-                  <Link to={theme.route} className="settings-theme-link">abrir →</Link>
+                  <Link to={theme.route} className="settings-theme-link">{tx('abrir')} →</Link>
                 </div>
               );
             })}
           </div>
-          {available.length === 0 && <p className="text-tertiary" style={{ fontSize: 12, marginTop: 10 }}>Todos os temas já estão favoritados.</p>}
+          {available.length === 0 && <p className="text-tertiary" style={{ fontSize: 12, marginTop: 10 }}>{tx('Todos os temas já estão favoritados.')}</p>}
         </SectionCard>
       </div>
 
       <div className="section-title" style={{ marginTop: 30 }}>
-        <span>Governança da IA</span>
-        <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>como a Íris funciona e quais regras segue</span>
+        <span>{tx('Governança da IA')}</span>
+        <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>{tx('como a Íris funciona e quais regras segue')}</span>
       </div>
 
-      <SectionCard title="Regras e governança da Íris" subtitle="O que ela faz + princípios de IA responsável (NIST AI RMF, ISO/IEC 42001, EU AI Act, LGPD)">
-        <p className="rules-op-heading">O que a Íris faz</p>
+      <SectionCard title={tx('Regras e governança da Íris')} subtitle={tx('O que ela faz + princípios de IA responsável (NIST AI RMF, ISO/IEC 42001, EU AI Act, LGPD)')}>
+        <p className="rules-op-heading">{tx('O que a Íris faz')}</p>
         <ol className="rules-ops" style={{ marginBottom: 18 }}>
           {AI_CAPABILITIES.map((c, i) => (
             <li className="rules-op" key={c.title}>
@@ -95,7 +97,7 @@ export default function Settings() {
             </li>
           ))}
         </ol>
-        <p className="rules-op-heading">Governança e frameworks</p>
+        <p className="rules-op-heading">{tx('Governança e frameworks')}</p>
         <div className="rules-frameworks" style={{ marginBottom: 16 }}>
           {AI_FRAMEWORKS.map((f) => (
             <div className="rules-fw" key={f.label}>
@@ -114,14 +116,14 @@ export default function Settings() {
               <h3 className="rules-card-title">{p.title}</h3>
               <p className="rules-card-market">{p.market}</p>
               <div className="rules-card-iris">
-                <span className="rules-card-iris-label">Na Íris</span>
+                <span className="rules-card-iris-label">{tx('Na Íris')}</span>
                 <span>{p.iris}</span>
               </div>
             </div>
           ))}
         </div>
         <p style={{ marginTop: 16 }}>
-          <Link to="/configuracoes/ia">Abrir em página cheia →</Link>
+          <Link to="/configuracoes/ia">{tx('Abrir em página cheia')} →</Link>
         </p>
       </SectionCard>
     </div>

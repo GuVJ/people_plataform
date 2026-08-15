@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { useData } from '../context/DataContext.jsx';
 import { usePreferences } from '../context/PreferencesContext.jsx';
 import { useFavorites } from '../context/FavoritesContext.jsx';
@@ -9,6 +10,7 @@ import { sparklineForKpi } from '../utils/kpiSeries.js';
 import './MyDashboard.css';
 
 export default function MyDashboard() {
+  const { tx } = useLang();
   const { metrics } = useData();
   const { privacyMode } = usePreferences();
   const { favorites } = useFavorites();
@@ -31,19 +33,19 @@ export default function MyDashboard() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Meu Painel</h1>
+          <h1>{tx('Meu Painel')}</h1>
           <p className="page-subtitle">
-            Indicadores organizados pela sua prioridade · ajuste em <Link to="/configuracoes">Configurações</Link>
+            {tx('Indicadores organizados pela sua prioridade · ajuste em')} <Link to="/configuracoes">{tx('Configurações')}</Link>
           </p>
         </div>
-        <Link to="/configuracoes" className="btn btn-sm">Personalizar</Link>
+        <Link to="/configuracoes" className="btn btn-sm">{tx('Personalizar')}</Link>
       </div>
 
       {prioritized.length > 0 ? (
         <>
           <div className="section-title">
-            <span>Prioritários</span>
-            <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>na ordem que você definiu</span>
+            <span>{tx('Prioritários')}</span>
+            <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>{tx('na ordem que você definiu')}</span>
           </div>
           <div className="grid grid-cols-3 mydash-priority">
             {prioritized.map((item) => (
@@ -56,7 +58,7 @@ export default function MyDashboard() {
 
           {others.length > 0 && (
             <>
-              <div className="section-title" style={{ marginTop: 28 }}><span>Demais indicadores</span></div>
+              <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Demais indicadores')}</span></div>
               <div className="grid grid-cols-4">
                 {others.map((item) => <Card key={item.key} item={item} privacy={privacyMode && (item.key === 'custoPessoal' || item.key === 'horasExtras')} />)}
               </div>
@@ -66,13 +68,13 @@ export default function MyDashboard() {
       ) : (
         <>
           <div className="card mydash-empty">
-            <h3>Seu painel ainda não está personalizado</h3>
+            <h3>{tx('Seu painel ainda não está personalizado')}</h3>
             <p className="text-secondary" style={{ fontSize: 13.5, marginTop: 6 }}>
-              Favorite os temas mais urgentes em Configurações e eles aparecerão aqui em destaque, na ordem de prioridade que você escolher.
+              {tx('Favorite os temas mais urgentes em Configurações e eles aparecerão aqui em destaque, na ordem de prioridade que você escolher.')}
             </p>
-            <Link to="/configuracoes" className="btn btn-primary" style={{ marginTop: 14, alignSelf: 'flex-start' }}>Escolher meus favoritos</Link>
+            <Link to="/configuracoes" className="btn btn-primary" style={{ marginTop: 14, alignSelf: 'flex-start' }}>{tx('Escolher meus favoritos')}</Link>
           </div>
-          <div className="section-title" style={{ marginTop: 24 }}><span>Todos os indicadores</span></div>
+          <div className="section-title" style={{ marginTop: 24 }}><span>{tx('Todos os indicadores')}</span></div>
           <div className="grid grid-cols-4">
             {others.map((item) => <Card key={item.key} item={item} privacy={privacyMode && (item.key === 'custoPessoal' || item.key === 'horasExtras')} />)}
           </div>

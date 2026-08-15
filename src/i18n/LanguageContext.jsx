@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { UI, NAV_EN, INDICATORS_EN } from './translations.js';
+import { DICT } from './dict/index.js';
 
 const LanguageContext = createContext(null);
 
@@ -29,6 +30,14 @@ export function LanguageProvider({ children }) {
     tNav: (to, ptFallback) => (lang === 'en' ? (NAV_EN[to] ?? ptFallback) : ptFallback),
     // Traduz um indicador (KPI) pela sua key; em PT mantém o label original.
     tIndicator: (key, ptFallback) => (lang === 'en' ? (INDICATORS_EN[key] ?? ptFallback) : ptFallback),
+    // Tradução por texto-fonte: em PT devolve o próprio texto em português (língua-fonte);
+    // em EN busca no dicionário e, se não achar, devolve o PT como fallback seguro.
+    // Aceita um valor não-string (ex.: número, elemento) e o devolve intacto.
+    tx: (pt) => {
+      if (typeof pt !== 'string') return pt;
+      if (lang !== 'en') return pt;
+      return DICT[pt] ?? pt;
+    },
   }), [lang]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

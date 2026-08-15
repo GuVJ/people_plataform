@@ -1,6 +1,8 @@
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './SchemaTable.css';
 
 export default function SchemaTable({ table }) {
+  const { tx } = useLang();
   return (
     <div className="card schema-table">
       <div className="schema-table-header">
@@ -8,7 +10,7 @@ export default function SchemaTable({ table }) {
           <h3 className="schema-table-name">{table.name}</h3>
           <p className="schema-table-label">{table.label}</p>
         </div>
-        <span className="badge badge-neutral">{table.fields.length} campos</span>
+        <span className="badge badge-neutral">{table.fields.length} {tx('campos')}</span>
       </div>
       <p className="schema-table-desc">{table.description}</p>
       <div className="schema-field-list">
@@ -17,7 +19,7 @@ export default function SchemaTable({ table }) {
             <span className="schema-field-name">{f.name}</span>
             <span className="schema-field-type">{f.type}</span>
             {f.key === 'PK' && <span className="badge badge-info schema-key-badge">PK</span>}
-            {f.key === 'FK' && <span className="badge badge-warning schema-key-badge" title={`Referencia ${f.references}`}>FK → {f.references}</span>}
+            {f.key === 'FK' && <span className="badge badge-warning schema-key-badge" title={`${tx('Referencia')} ${f.references}`}>FK → {f.references}</span>}
             {f.description && <span className="schema-field-desc">{f.description}</span>}
           </div>
         ))}

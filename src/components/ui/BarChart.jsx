@@ -1,14 +1,16 @@
 import './charts.css';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 const DEFAULT_COLOR = 'var(--color-primary)';
 
 export default function BarChart({ data, valueKey = 'value', labelKey = 'label', color = DEFAULT_COLOR, formatValue = (v) => v, height = 30 }) {
+  const { tx } = useLang();
   const max = Math.max(...data.map((d) => d[valueKey]), 1);
   return (
     <div className="bar-chart">
       {data.map((d, i) => (
         <div className="bar-chart-row" key={d[labelKey] ?? i} style={{ '--row-h': `${height}px` }}>
-          <span className="bar-chart-label" title={d[labelKey]}>{d[labelKey]}</span>
+          <span className="bar-chart-label" title={tx(d[labelKey])}>{tx(d[labelKey])}</span>
           <div className="bar-chart-track">
             <div
               className="bar-chart-fill fade-in"

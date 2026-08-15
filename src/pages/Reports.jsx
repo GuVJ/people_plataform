@@ -3,6 +3,7 @@ import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import { exportSheet, exportWorkbook } from '../utils/exportExcel.js';
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import './Reports.css';
 
 function buildReportDefinitions(metrics) {
@@ -97,6 +98,7 @@ function openPrintableSummary(title, text) {
 }
 
 export default function Reports() {
+  const { tx } = useLang();
   const { metrics, employees, insights } = useData();
   const [busyAll, setBusyAll] = useState(false);
   const reports = buildReportDefinitions(metrics).map((r) => {
@@ -126,11 +128,11 @@ export default function Reports() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Relatórios</h1>
-          <p className="page-subtitle">Exporte recortes prontos em Excel</p>
+          <h1>{tx('Relatórios')}</h1>
+          <p className="page-subtitle">{tx('Exporte recortes prontos em Excel')}</p>
         </div>
         <button type="button" className="btn btn-primary" onClick={handleExportAll} disabled={busyAll}>
-          {busyAll ? 'Gerando…' : 'Exportar tudo (.xlsx)'}
+          {busyAll ? tx('Gerando…') : tx('Exportar tudo (.xlsx)')}
         </button>
       </div>
 
@@ -138,10 +140,10 @@ export default function Reports() {
         {reports.map((r) => {
           const rowCount = r.rows().length;
           return (
-            <SectionCard key={r.id} title={r.title} subtitle={r.description}>
+            <SectionCard key={r.id} title={tx(r.title)} subtitle={tx(r.description)}>
               <div className="report-card-footer">
-                <span className="text-tertiary" style={{ fontSize: 11.5 }}>{formatNumber(rowCount)} linhas disponíveis</span>
-                <button type="button" className="btn btn-sm" onClick={() => exportSheet(r.id, r.title, r.rows())}>Exportar Excel</button>
+                <span className="text-tertiary" style={{ fontSize: 11.5 }}>{formatNumber(rowCount)} {tx('linhas disponíveis')}</span>
+                <button type="button" className="btn btn-sm" onClick={() => exportSheet(r.id, r.title, r.rows())}>{tx('Exportar Excel')}</button>
               </div>
             </SectionCard>
           );

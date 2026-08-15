@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
 import { AREAS } from '../data/constants.js';
-import { formatNumber } from '../utils/format.js';
+import { formatNumber, managerLabel } from '../utils/format.js';
 import './EmployeeDirectory.css';
 
 const PAGE_SIZE = 25;
@@ -19,6 +20,7 @@ function initials(name) {
 
 export default function EmployeeDirectory() {
   const { employees, risk } = useData();
+  const { tx, lang } = useLang();
   const [query, setQuery] = useState('');
   const [area, setArea] = useState('Todas');
   const [status, setStatus] = useState('Ativo');
@@ -47,8 +49,8 @@ export default function EmployeeDirectory() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Funcionários</h1>
-          <p className="page-subtitle">Diretório completo — busque e acesse a ficha de qualquer colaborador</p>
+          <h1>{tx('Funcionários')}</h1>
+          <p className="page-subtitle">{tx('Diretório completo — busque e acesse a ficha de qualquer colaborador')}</p>
         </div>
       </div>
 
@@ -56,34 +58,34 @@ export default function EmployeeDirectory() {
         <div className="directory-filters">
           <input
             className="directory-input directory-search"
-            placeholder="Buscar por nome…"
+            placeholder={tx('Buscar por nome…')}
             value={query}
             onChange={(e) => updateFilter(setQuery)(e.target.value)}
           />
           <select className="directory-input" value={area} onChange={(e) => updateFilter(setArea)(e.target.value)}>
-            <option value="Todas">Todas as diretorias</option>
-            {AREAS.map((a) => <option key={a.name} value={a.name}>{a.name}</option>)}
+            <option value="Todas">{tx('Todas as diretorias')}</option>
+            {AREAS.map((a) => <option key={a.name} value={a.name}>{tx(a.name)}</option>)}
           </select>
           <select className="directory-input" value={status} onChange={(e) => updateFilter(setStatus)(e.target.value)}>
-            <option value="Ativo">Ativos</option>
-            <option value="Desligado">Desligados</option>
-            <option value="Todos">Todos</option>
+            <option value="Ativo">{tx('Ativos')}</option>
+            <option value="Desligado">{tx('Desligados')}</option>
+            <option value="Todos">{tx('Todos')}</option>
           </select>
-          <span className="directory-count">{formatNumber(filtered.length)} colaborador{filtered.length !== 1 ? 'es' : ''}</span>
+          <span className="directory-count">{formatNumber(filtered.length)} {filtered.length !== 1 ? tx('colaboradores') : tx('colaborador')}</span>
         </div>
 
         <div className="directory-table-wrap">
           <table className="directory-table">
             <thead>
               <tr>
-                <th>Nome</th>
-                <th>Diretoria</th>
-                <th>Cargo</th>
-                <th>Gestor</th>
-                <th>Tempo de casa</th>
-                <th>Desempenho</th>
-                <th>Risco</th>
-                <th>Status</th>
+                <th>{tx('Nome')}</th>
+                <th>{tx('Diretoria')}</th>
+                <th>{tx('Cargo')}</th>
+                <th>{tx('Gestor')}</th>
+                <th>{tx('Tempo de casa')}</th>
+                <th>{tx('Desempenho')}</th>
+                <th>{tx('Risco')}</th>
+                <th>{tx('Status')}</th>
               </tr>
             </thead>
             <tbody>
@@ -97,18 +99,18 @@ export default function EmployeeDirectory() {
                         {e.name}
                       </Link>
                     </td>
-                    <td>{e.area}</td>
-                    <td>{e.roleLevel}</td>
-                    <td>{e.managerName}</td>
-                    <td>{formatNumber(e.tenureYears, 1)} anos</td>
-                    <td>{e.performanceBucket}</td>
-                    <td>{r ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.level]}`}>{r.level}</span> : <span className="text-tertiary">—</span>}</td>
-                    <td><span className={`badge ${e.status === 'Ativo' ? 'badge-success' : 'badge-danger'}`}>{e.status}</span></td>
+                    <td>{tx(e.area)}</td>
+                    <td>{tx(e.roleLevel)}</td>
+                    <td>{managerLabel(e.managerName, lang)}</td>
+                    <td>{formatNumber(e.tenureYears, 1)} {tx('anos')}</td>
+                    <td>{tx(e.performanceBucket)}</td>
+                    <td>{r ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.level]}`}>{tx(r.level)}</span> : <span className="text-tertiary">—</span>}</td>
+                    <td><span className={`badge ${e.status === 'Ativo' ? 'badge-success' : 'badge-danger'}`}>{tx(e.status)}</span></td>
                   </tr>
                 );
               })}
               {pageRows.length === 0 && (
-                <tr><td colSpan={8} className="directory-empty">Nenhum colaborador encontrado para esse filtro.</td></tr>
+                <tr><td colSpan={8} className="directory-empty">{tx('Nenhum colaborador encontrado para esse filtro.')}</td></tr>
               )}
             </tbody>
           </table>
@@ -116,9 +118,9 @@ export default function EmployeeDirectory() {
 
         {totalPages > 1 && (
           <div className="directory-pagination">
-            <button type="button" className="btn btn-sm" disabled={currentPage === 1} onClick={() => setPage((p) => p - 1)}>← Anterior</button>
-            <span className="text-secondary" style={{ fontSize: 12 }}>Página {currentPage} de {totalPages}</span>
-            <button type="button" className="btn btn-sm" disabled={currentPage === totalPages} onClick={() => setPage((p) => p + 1)}>Próxima →</button>
+            <button type="button" className="btn btn-sm" disabled={currentPage === 1} onClick={() => setPage((p) => p - 1)}>← {tx('Anterior')}</button>
+            <span className="text-secondary" style={{ fontSize: 12 }}>{tx('Página')} {currentPage} {tx('de')} {totalPages}</span>
+            <button type="button" className="btn btn-sm" disabled={currentPage === totalPages} onClick={() => setPage((p) => p + 1)}>{tx('Próxima')} →</button>
           </div>
         )}
       </SectionCard>

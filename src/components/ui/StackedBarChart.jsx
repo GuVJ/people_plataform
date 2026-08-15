@@ -1,8 +1,10 @@
 import './StackedBarChart.css';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 // data: [{ label, total, values: { seriesKey: number } }]
 // series: [{ key, label, color }]
 export default function StackedBarChart({ data, series, height = 200, formatValue = (v) => v }) {
+  const { tx } = useLang();
   const max = Math.max(...data.map((d) => d.total), 1);
   const plotH = height - 24;
 
@@ -19,13 +21,13 @@ export default function StackedBarChart({ data, series, height = 200, formatValu
                 const segHeight = (v / (d.total || 1)) * 100;
                 const segPx = (v / max) * plotH;
                 return (
-                  <div key={s.key} className="stacked-chart-seg" style={{ height: `${segHeight}%`, background: s.color }} title={`${s.label}: ${formatValue(v)}`}>
+                  <div key={s.key} className="stacked-chart-seg" style={{ height: `${segHeight}%`, background: s.color }} title={`${tx(s.label)}: ${formatValue(v)}`}>
                     {segPx >= 15 && <span className="stacked-chart-seg-label">{formatValue(v)}</span>}
                   </div>
                 );
               })}
             </div>
-            <span className="stacked-chart-label">{d.label}</span>
+            <span className="stacked-chart-label">{tx(d.label)}</span>
           </div>
         ))}
       </div>
@@ -33,7 +35,7 @@ export default function StackedBarChart({ data, series, height = 200, formatValu
         {series.map((s) => (
           <div className="chart-legend-item" key={s.key}>
             <span className="chart-legend-swatch" style={{ background: s.color }} />
-            {s.label}
+            {tx(s.label)}
           </div>
         ))}
       </div>

@@ -5,6 +5,7 @@ import YearComparisonChart from '../components/ui/YearComparisonChart.jsx';
 import CostBridge from '../components/ui/CostBridge.jsx';
 import { addMonths, monthLabel } from '../utils/dates.js';
 import { formatCurrency, formatNumber, formatPercent, formatSigned, formatSignedCurrency } from '../utils/format.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import './Planning.css';
 
 const ANNUAL_COST_MULTIPLIER = 1.65; // encargos, benefícios e provisões sobre o salário nominal (Brasil, CLT)
@@ -20,6 +21,7 @@ const SCENARIOS = [
 ];
 
 export default function Planning() {
+  const { tx } = useLang();
   const { metrics } = useData();
   const [headcountDelta, setHeadcountDelta] = useState(0);
   const [meritPct, setMeritPct] = useState(0);
@@ -104,11 +106,11 @@ export default function Planning() {
   }, [metrics.months, baseHeadcount, headcountDelta, impact.projTerminations]);
 
   const bridgeSteps = [
-    { label: 'Custo atual', value: impact.baseBudget, kind: 'base' },
-    { label: 'Crescimento de headcount', value: impact.headcountEffect, kind: 'delta' },
-    { label: 'Reajuste salarial', value: impact.meritEffect, kind: 'delta' },
-    { label: 'Variação de turnover', value: impact.turnoverCostDelta, kind: 'delta' },
-    { label: 'Custo projetado', value: impact.projBudget, kind: 'total' },
+    { label: tx('Custo atual'), value: impact.baseBudget, kind: 'base' },
+    { label: tx('Crescimento de headcount'), value: impact.headcountEffect, kind: 'delta' },
+    { label: tx('Reajuste salarial'), value: impact.meritEffect, kind: 'delta' },
+    { label: tx('Variação de turnover'), value: impact.turnoverCostDelta, kind: 'delta' },
+    { label: tx('Custo projetado'), value: impact.projBudget, kind: 'total' },
   ];
 
   return (
@@ -116,7 +118,7 @@ export default function Planning() {
       <div className="page-header">
         <div>
           <h1>Workforce Planning</h1>
-          <p className="page-subtitle">Simule cenários de quadro, reajuste e turnover — com análise de gap, projeção de 12 meses e impacto no orçamento</p>
+          <p className="page-subtitle">{tx('Simule cenários de quadro, reajuste e turnover — com análise de gap, projeção de 12 meses e impacto no orçamento')}</p>
         </div>
       </div>
 
@@ -128,113 +130,113 @@ export default function Planning() {
             className={`planning-scenario${activeScenario === s.key ? ' active' : ''}`}
             onClick={() => applyScenario(s)}
           >
-            <span className="planning-scenario-label">{s.label}</span>
-            <span className="planning-scenario-hint">{s.hint}</span>
+            <span className="planning-scenario-label">{tx(s.label)}</span>
+            <span className="planning-scenario-hint">{tx(s.hint)}</span>
           </button>
         ))}
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Alavancas do cenário">
-          <label className="planning-label">Diretoria de referência (base do salário médio)</label>
+        <SectionCard title={tx('Alavancas do cenário')}>
+          <label className="planning-label">{tx('Diretoria de referência (base do salário médio)')}</label>
           <select className="planning-select" value={area} onChange={(e) => setArea(e.target.value)}>
-            {areaOptions.map((a) => <option key={a} value={a}>{a}</option>)}
+            {areaOptions.map((a) => <option key={a} value={a}>{tx(a)}</option>)}
           </select>
 
           <label className="planning-label" style={{ marginTop: 18 }}>
-            {headcountDelta >= 0 ? 'Crescer' : 'Reduzir'} o quadro em <strong>{formatNumber(Math.abs(headcountDelta))}</strong> ({formatSigned(impact.headcountDeltaPct, 1, '%')})
+            {headcountDelta >= 0 ? tx('Crescer') : tx('Reduzir')} {tx('o quadro em')} <strong>{formatNumber(Math.abs(headcountDelta))}</strong> ({formatSigned(impact.headcountDeltaPct, 1, '%')})
           </label>
           <input type="range" min="-400" max="400" step="5" value={headcountDelta}
             onChange={(e) => onLeverChange(setHeadcountDelta)(Number(e.target.value))} className="planning-slider" />
           <div className="planning-slider-labels"><span>−400</span><span>0</span><span>+400</span></div>
 
           <label className="planning-label" style={{ marginTop: 18 }}>
-            Reajuste salarial médio de <strong>{formatPercent(meritPct)}</strong>
+            {tx('Reajuste salarial médio de')} <strong>{formatPercent(meritPct)}</strong>
           </label>
           <input type="range" min="0" max="15" step="0.5" value={meritPct}
             onChange={(e) => onLeverChange(setMeritPct)(Number(e.target.value))} className="planning-slider" />
           <div className="planning-slider-labels"><span>0%</span><span>7,5%</span><span>15%</span></div>
 
           <label className="planning-label" style={{ marginTop: 18 }}>
-            Alterar turnover em <strong>{formatSigned(turnoverChangePct, 0, '%')}</strong>
+            {tx('Alterar turnover em')} <strong>{formatSigned(turnoverChangePct, 0, '%')}</strong>
           </label>
           <input type="range" min="-50" max="50" step="1" value={turnoverChangePct}
             onChange={(e) => onLeverChange(setTurnoverChangePct)(Number(e.target.value))} className="planning-slider" />
-          <div className="planning-slider-labels"><span>−50% (reter)</span><span>0</span><span>+50%</span></div>
+          <div className="planning-slider-labels"><span>{tx('−50% (reter)')}</span><span>0</span><span>+50%</span></div>
         </SectionCard>
 
-        <SectionCard title="Resumo do cenário" subtitle={`Salário médio de referência: ${formatCurrency(impact.areaAvgSalary, { compact: true })} · horizonte de 12 meses`}>
+        <SectionCard title={tx('Resumo do cenário')} subtitle={`${tx('Salário médio de referência')}: ${formatCurrency(impact.areaAvgSalary, { compact: true })} · ${tx('horizonte de 12 meses')}`}>
           <div className="planning-summary-grid">
             <div>
-              <span className="planning-summary-label">Headcount-alvo</span>
+              <span className="planning-summary-label">{tx('Headcount-alvo')}</span>
               <span className="planning-summary-value">{formatNumber(impact.targetHeadcount)}</span>
               <span className={`planning-summary-delta ${headcountDelta >= 0 ? 'up' : 'down'}`}>{formatSigned(impact.headcountDeltaPct, 1, '%')}</span>
             </div>
             <div>
-              <span className="planning-summary-label">Folha mensal projetada</span>
+              <span className="planning-summary-label">{tx('Folha mensal projetada')}</span>
               <span className="planning-summary-value">{formatCurrency(impact.newMonthlyPayroll, { compact: true })}</span>
               <span className={`planning-summary-delta ${impact.monthlyPayrollDelta <= 0 ? 'down' : 'up'}`}>{formatSignedCurrency(impact.monthlyPayrollDelta)}</span>
             </div>
             <div>
-              <span className="planning-summary-label">Desligamentos projetados (12m)</span>
+              <span className="planning-summary-label">{tx('Desligamentos projetados (12m)')}</span>
               <span className="planning-summary-value">{formatNumber(impact.projTerminations)}</span>
               <span className={`planning-summary-delta ${turnoverChangePct <= 0 ? 'down' : 'up'}`}>{formatSigned(turnoverChangePct, 0, '%')}</span>
             </div>
             <div>
-              <span className="planning-summary-label">Índice de produtividade</span>
+              <span className="planning-summary-label">{tx('Índice de produtividade')}</span>
               <span className="planning-summary-value">{formatNumber(impact.productivityIndex, 0)}</span>
-              <span className="text-tertiary" style={{ fontSize: 11 }}>base 100</span>
+              <span className="text-tertiary" style={{ fontSize: 11 }}>{tx('base 100')}</span>
             </div>
           </div>
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title="Projeção de headcount" subtitle="Próximos 12 meses · sem ação (só atrição) vs. cenário">
+        <SectionCard title={tx('Projeção de headcount')} subtitle={tx('Próximos 12 meses · sem ação (só atrição) vs. cenário')}>
           <YearComparisonChart
             monthLabels={projection.labels}
             series={[
-              { year: 'semAcao', label: 'Sem ação', color: 'var(--color-year-previous)', values: projection.semAcao },
-              { year: 'cenario', label: 'Cenário', color: 'var(--color-year-current)', values: projection.cenario },
+              { year: 'semAcao', label: tx('Sem ação'), color: 'var(--color-year-previous)', values: projection.semAcao },
+              { year: 'cenario', label: tx('Cenário'), color: 'var(--color-year-current)', values: projection.cenario },
             ]}
-            target={{ label: `Alvo ${formatNumber(impact.targetHeadcount)}`, values: projection.labels.map(() => impact.targetHeadcount) }}
+            target={{ label: `${tx('Alvo')} ${formatNumber(impact.targetHeadcount)}`, values: projection.labels.map(() => impact.targetHeadcount) }}
             formatValue={(v) => formatNumber(v, 0)}
           />
         </SectionCard>
 
-        <SectionCard title="Oferta × Demanda × Gap" subtitle="Quantas contratações o cenário exige, já descontando a atrição esperada">
+        <SectionCard title={tx('Oferta × Demanda × Gap')} subtitle={tx('Quantas contratações o cenário exige, já descontando a atrição esperada')}>
           <div className="planning-gap">
             <div className="planning-gap-row">
-              <span className="planning-gap-label">Oferta projetada</span>
-              <span className="planning-gap-desc">quadro atual − saídas esperadas ({formatNumber(impact.projTerminations)})</span>
+              <span className="planning-gap-label">{tx('Oferta projetada')}</span>
+              <span className="planning-gap-desc">{tx('quadro atual − saídas esperadas')} ({formatNumber(impact.projTerminations)})</span>
               <span className="planning-gap-value">{formatNumber(impact.supply)}</span>
             </div>
             <div className="planning-gap-row">
-              <span className="planning-gap-label">Demanda (quadro-alvo)</span>
-              <span className="planning-gap-desc">headcount desejado ao fim do período</span>
+              <span className="planning-gap-label">{tx('Demanda (quadro-alvo)')}</span>
+              <span className="planning-gap-desc">{tx('headcount desejado ao fim do período')}</span>
               <span className="planning-gap-value">{formatNumber(impact.demand)}</span>
             </div>
             <div className="planning-gap-highlight">
               {impact.hiresNeeded > 0 ? (
                 <>
                   <span className="planning-gap-big">{formatNumber(impact.hiresNeeded)}</span>
-                  <span className="planning-gap-big-label">contratações necessárias no período</span>
+                  <span className="planning-gap-big-label">{tx('contratações necessárias no período')}</span>
                 </>
               ) : impact.layoffs > 0 ? (
                 <>
                   <span className="planning-gap-big warn">{formatNumber(impact.layoffs)}</span>
-                  <span className="planning-gap-big-label">reduções além da atrição natural (excedente)</span>
+                  <span className="planning-gap-big-label">{tx('reduções além da atrição natural (excedente)')}</span>
                 </>
               ) : (
                 <>
                   <span className="planning-gap-big">0</span>
-                  <span className="planning-gap-big-label">a atrição natural já equilibra o quadro-alvo</span>
+                  <span className="planning-gap-big-label">{tx('a atrição natural já equilibra o quadro-alvo')}</span>
                 </>
               )}
             </div>
             {impact.layoffs > 0 && (
               <p className="text-tertiary" style={{ fontSize: 11.5, marginTop: 10 }}>
-                Custo estimado de rescisão das reduções: <strong>{formatCurrency(impact.severanceCost, { compact: true })}</strong> (one-time, ~{SEVERANCE_MONTHS} salários por saída).
+                {tx('Custo estimado de rescisão das reduções')}: <strong>{formatCurrency(impact.severanceCost, { compact: true })}</strong> ({tx('one-time')}, ~{SEVERANCE_MONTHS} {tx('salários por saída')}).
               </p>
             )}
           </div>
@@ -242,23 +244,23 @@ export default function Planning() {
       </div>
 
       <div style={{ marginBottom: 16 }}>
-        <SectionCard title="Ponte de custo anual" subtitle="Do orçamento atual de pessoas ao projetado — folha carregada + custo de turnover">
+        <SectionCard title={tx('Ponte de custo anual')} subtitle={tx('Do orçamento atual de pessoas ao projetado — folha carregada + custo de turnover')}>
           <CostBridge steps={bridgeSteps} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-3">
-        <SectionCard title="Impacto na folha (anual)">
+        <SectionCard title={tx('Impacto na folha (anual)')}>
           <div className={`stat-big ${impact.annualPayrollDelta > 0 ? 'value-bad' : 'value-good'}`}>{formatSignedCurrency(impact.annualPayrollDelta)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>carregada com encargos e benefícios ({formatPercent((ANNUAL_COST_MULTIPLIER - 1) * 100)} sobre o salário)</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('carregada com encargos e benefícios')} ({formatPercent((ANNUAL_COST_MULTIPLIER - 1) * 100)} {tx('sobre o salário')})</p>
         </SectionCard>
-        <SectionCard title="Impacto no custo de turnover (anual)">
+        <SectionCard title={tx('Impacto no custo de turnover (anual)')}>
           <div className={`stat-big ${impact.turnoverCostDelta > 0 ? 'value-bad' : 'value-good'}`}>{formatSignedCurrency(impact.turnoverCostDelta)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>vs. custo atual de {formatCurrency(impact.annualTurnoverCost, { compact: true })}/ano</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('vs. custo atual de')} {formatCurrency(impact.annualTurnoverCost, { compact: true })}{tx('/ano')}</p>
         </SectionCard>
-        <SectionCard title="Impacto total no orçamento (anual)">
+        <SectionCard title={tx('Impacto total no orçamento (anual)')}>
           <div className={`stat-big ${impact.totalAnnualBudgetDelta > 0 ? 'value-bad' : 'value-good'}`}>{formatSignedCurrency(impact.totalAnnualBudgetDelta)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>folha + custo de turnover combinados</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('folha + custo de turnover combinados')}</p>
         </SectionCard>
       </div>
     </div>

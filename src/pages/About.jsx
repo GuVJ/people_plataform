@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
 import { AREAS, VPS, UNITS } from '../data/constants.js';
 import { formatNumber } from '../utils/format.js';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import './About.css';
 
 const TIMELINE = [
@@ -43,6 +44,7 @@ const PLANT_ROLES = {
 
 export default function About() {
   const { metrics, production } = useData();
+  const { tx } = useLang();
   const headcount = metrics.activeNow.length;
   const plants = UNITS.filter((u) => u !== 'Remoto');
 
@@ -50,19 +52,16 @@ export default function About() {
     <div className="page fade-in about-page">
       {/* Hero */}
       <div className="about-hero">
-        <div className="about-hero-badge">Empresa fictícia · dados 100% simulados</div>
+        <div className="about-hero-badge">{tx('Empresa fictícia · dados 100% simulados')}</div>
         <div className="about-hero-brand">
           <span className="about-logo">VM</span>
           <div>
             <h1 className="about-title">Volttera Motors</h1>
-            <p className="about-tagline">Engenharia que move o Brasil.</p>
+            <p className="about-tagline">{tx('Engenharia que move o Brasil.')}</p>
           </div>
         </div>
         <p className="about-lead">
-          A Volttera Motors é uma montadora de veículos brasileira (fictícia) fundada em 1979, com sede em
-          São Bernardo do Campo. Produz hatches, sedans, SUVs, picapes e, mais recentemente, veículos elétricos —
-          de plantas espalhadas por São Paulo e Paraná. Esta plataforma de People Analytics usa a Volttera como
-          cenário para demonstrar, ponta a ponta, como dados de pessoas sustentam decisões de uma operação industrial.
+          {tx('A Volttera Motors é uma montadora de veículos brasileira (fictícia) fundada em 1979, com sede em São Bernardo do Campo. Produz hatches, sedans, SUVs, picapes e, mais recentemente, veículos elétricos — de plantas espalhadas por São Paulo e Paraná. Esta plataforma de People Analytics usa a Volttera como cenário para demonstrar, ponta a ponta, como dados de pessoas sustentam decisões de uma operação industrial.')}
         </p>
       </div>
 
@@ -70,90 +69,90 @@ export default function About() {
       <div className="about-stats">
         <div className="about-stat">
           <span className="about-stat-value">{formatNumber(headcount)}</span>
-          <span className="about-stat-label">Colaboradores ativos</span>
+          <span className="about-stat-label">{tx('Colaboradores ativos')}</span>
         </div>
         <div className="about-stat">
           <span className="about-stat-value">{plants.length}</span>
-          <span className="about-stat-label">Plantas e unidades</span>
+          <span className="about-stat-label">{tx('Plantas e unidades')}</span>
         </div>
         <div className="about-stat">
           <span className="about-stat-value">{VPS.length}</span>
-          <span className="about-stat-label">Vice-presidências</span>
+          <span className="about-stat-label">{tx('Vice-presidências')}</span>
         </div>
         <div className="about-stat">
           <span className="about-stat-value">{AREAS.length}</span>
-          <span className="about-stat-label">Diretorias</span>
+          <span className="about-stat-label">{tx('Diretorias')}</span>
         </div>
         <div className="about-stat">
           <span className="about-stat-value">~{formatNumber(production?.demandPerDay ?? 300)}</span>
-          <span className="about-stat-label">Veículos/dia (meta da linha)</span>
+          <span className="about-stat-label">{tx('Veículos/dia (meta da linha)')}</span>
         </div>
         <div className="about-stat">
           <span className="about-stat-value">1979</span>
-          <span className="about-stat-label">Fundação</span>
+          <span className="about-stat-label">{tx('Fundação')}</span>
         </div>
       </div>
 
       {/* Missão / Visão */}
       <div className="grid grid-cols-2 about-mv">
         <div className="card about-mv-card">
-          <h3>Missão</h3>
-          <p>Projetar e fabricar veículos seguros, acessíveis e confiáveis, movendo pessoas e o desenvolvimento do país — com respeito a quem constrói cada carro.</p>
+          <h3>{tx('Missão')}</h3>
+          <p>{tx('Projetar e fabricar veículos seguros, acessíveis e confiáveis, movendo pessoas e o desenvolvimento do país — com respeito a quem constrói cada carro.')}</p>
         </div>
         <div className="card about-mv-card">
-          <h3>Visão</h3>
-          <p>Ser a montadora brasileira referência em eficiência industrial e cuidado com as pessoas, liderando a transição para a mobilidade eletrificada até 2035.</p>
+          <h3>{tx('Visão')}</h3>
+          <p>{tx('Ser a montadora brasileira referência em eficiência industrial e cuidado com as pessoas, liderando a transição para a mobilidade eletrificada até 2035.')}</p>
         </div>
       </div>
 
       {/* Valores */}
-      <div className="section-title" style={{ marginTop: 28 }}><span>Nossos valores</span></div>
+      <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Nossos valores')}</span></div>
       <div className="grid grid-cols-3 about-values">
         {VALUES.map((v) => (
           <div className="card about-value" key={v.title}>
             <span className="about-value-icon">{v.icon}</span>
-            <h4>{v.title}</h4>
-            <p>{v.text}</p>
+            <h4>{tx(v.title)}</h4>
+            <p>{tx(v.text)}</p>
           </div>
         ))}
       </div>
 
       {/* Linha do tempo */}
-      <div className="section-title" style={{ marginTop: 28 }}><span>Nossa história</span></div>
+      <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Nossa história')}</span></div>
       <div className="card about-timeline">
         {TIMELINE.map((t) => (
           <div className="about-timeline-item" key={t.year}>
             <div className="about-timeline-year">{t.year}</div>
             <div className="about-timeline-dot" />
             <div className="about-timeline-content">
-              <h4>{t.title}</h4>
-              <p>{t.text}</p>
+              <h4>{tx(t.title)}</h4>
+              <p>{tx(t.text)}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Portfólio */}
-      <div className="section-title" style={{ marginTop: 28 }}><span>Portfólio de produtos</span> <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>Modelos fictícios</span></div>
+      <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Portfólio de produtos')}</span> <span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>{tx('Modelos fictícios')}</span></div>
       <div className="about-models">
         {MODELS.map((m) => (
           <div className="card about-model" key={m.name}>
             <span className="about-model-emoji">{m.emoji}</span>
             <span className="about-model-name">Volttera {m.name}</span>
-            <span className="about-model-cat">{m.cat}</span>
+            <span className="about-model-cat">{tx(m.cat)}</span>
           </div>
         ))}
       </div>
 
       {/* Plantas */}
-      <div className="section-title" style={{ marginTop: 28 }}><span>Plantas e unidades</span></div>
+      <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Plantas e unidades')}</span></div>
       <div className="card about-plants">
         {UNITS.map((u) => (
           <div className="about-plant" key={u}>
             <span className="about-plant-pin">📍</span>
             <div>
               <span className="about-plant-name">{u}</span>
-              <span className="about-plant-role">{PLANT_ROLES[u] ?? 'Unidade Volttera'}</span>
+              <span className="about-plant-role">{tx(PLANT_ROLES[u] ?? 'Unidade Volttera')}</span>
             </div>
           </div>
         ))}
@@ -162,14 +161,15 @@ export default function About() {
       {/* Rodapé / disclaimer */}
       <div className="card about-disclaimer">
         <p>
-          <strong>Aviso:</strong> a Volttera Motors é uma <strong>empresa fictícia</strong> criada exclusivamente
-          para esta demonstração de portfólio. Nomes, plantas, modelos, números e colaboradores são
-          <strong> 100% simulados</strong> e não representam nenhuma empresa, produto ou pessoa real. Nenhum dado é
-          coletado ou enviado a serviços externos — tudo é gerado deterministicamente no seu navegador.
+          <strong>{tx('Aviso:')}</strong>{' '}
+          {tx('a Volttera Motors é uma')}{' '}
+          <strong>{tx('empresa fictícia')}</strong>{' '}
+          {tx('criada exclusivamente para esta demonstração de portfólio. Nomes, plantas, modelos, números e colaboradores são')}
+          <strong>{tx(' 100% simulados')}</strong>{' '}
+          {tx('e não representam nenhuma empresa, produto ou pessoa real. Nenhum dado é coletado ou enviado a serviços externos — tudo é gerado deterministicamente no seu navegador.')}
         </p>
         <p style={{ marginTop: 8 }}>
-          Explore os indicadores no <Link to="/">Overview</Link>, a operação em <Link to="/produtividade">Produtividade da Linha</Link> ou
-          converse com a <Link to="/copilot">Íris</Link>.
+          {tx('Explore os indicadores no')}{' '}<Link to="/">Overview</Link>{tx(', a operação em')}{' '}<Link to="/produtividade">{tx('Produtividade da Linha')}</Link>{' '}{tx('ou converse com a')}{' '}<Link to="/copilot">Íris</Link>.
         </p>
       </div>
     </div>

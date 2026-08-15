@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useData } from '../context/DataContext.jsx';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { buildOrgTree } from '../data/orgChart.js';
 import { VPS } from '../data/constants.js';
 import SectionCard from '../components/ui/SectionCard.jsx';
@@ -10,6 +11,7 @@ import './OrgChart.css';
 
 export default function OrgChart() {
   const { metrics } = useData();
+  const { tx } = useLang();
   const [vp, setVp] = useState('');
   const [nameQuery, setNameQuery] = useState('');
 
@@ -24,32 +26,32 @@ export default function OrgChart() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Organograma</h1>
-          <p className="page-subtitle">Clique em uma diretoria ou gestor para expandir o time — use os filtros e o zoom para navegar</p>
+          <h1>{tx('Organograma')}</h1>
+          <p className="page-subtitle">{tx('Clique em uma diretoria ou gestor para expandir o time — use os filtros e o zoom para navegar')}</p>
         </div>
         <EmployeeSearch employees={metrics.activeNow} />
       </div>
 
       <div className="orgchart-filters">
         <div className="orgchart-filter">
-          <label>Vice-presidência</label>
+          <label>{tx('Vice-presidência')}</label>
           <select value={vp} onChange={(e) => setVp(e.target.value)}>
-            <option value="">Todas as vice-presidências</option>
-            {VPS.map((v) => <option key={v} value={v}>{v}</option>)}
+            <option value="">{tx('Todas as vice-presidências')}</option>
+            {VPS.map((v) => <option key={v} value={v}>{tx(v)}</option>)}
           </select>
         </div>
         <div className="orgchart-filter orgchart-filter-grow">
-          <label>Filtrar por nome (funcionário ou gestor)</label>
+          <label>{tx('Filtrar por nome (funcionário ou gestor)')}</label>
           <input
             type="text"
-            placeholder="Digite um nome para filtrar o organograma…"
+            placeholder={tx('Digite um nome para filtrar o organograma…')}
             value={nameQuery}
             onChange={(e) => setNameQuery(e.target.value)}
           />
         </div>
         {(vp || filtering) && (
           <button type="button" className="btn btn-sm orgchart-clear" onClick={() => { setVp(''); setNameQuery(''); }}>
-            Limpar filtros
+            {tx('Limpar filtros')}
           </button>
         )}
       </div>
@@ -57,25 +59,25 @@ export default function OrgChart() {
       {filtering && (
         <p className="orgchart-match-note">
           {tree.matchCount > 0
-            ? `${formatNumber(tree.matchCount)} resultado(s) para "${nameQuery.trim()}"${vp ? ` em ${vp}` : ''}.`
-            : `Nenhum resultado para "${nameQuery.trim()}"${vp ? ` em ${vp}` : ''}.`}
+            ? `${formatNumber(tree.matchCount)} ${tx('resultado(s) para')} "${nameQuery.trim()}"${vp ? ` ${tx('em')} ${vp}` : ''}.`
+            : `${tx('Nenhum resultado para')} "${nameQuery.trim()}"${vp ? ` ${tx('em')} ${vp}` : ''}.`}
         </p>
       )}
 
       <div className="grid grid-cols-4" style={{ marginBottom: 20 }}>
-        <SectionCard title="Headcount total">
+        <SectionCard title={tx('Headcount total')}>
           <div className="stat-big">{formatNumber(tree.company.headcount)}</div>
-          {vp && <p className="text-secondary" style={{ fontSize: 12 }}>em {vp}</p>}
+          {vp && <p className="text-secondary" style={{ fontSize: 12 }}>{tx('em')} {vp}</p>}
         </SectionCard>
-        <SectionCard title="Diretorias">
+        <SectionCard title={tx('Diretorias')}>
           <div className="stat-big">{tree.company.areaCount}</div>
         </SectionCard>
-        <SectionCard title="Gestores">
+        <SectionCard title={tx('Gestores')}>
           <div className="stat-big">{formatNumber(tree.spanOfControl.managerCount)}</div>
         </SectionCard>
-        <SectionCard title="Span de controle médio">
+        <SectionCard title={tx('Span de controle médio')}>
           <div className="stat-big">{formatNumber(tree.spanOfControl.avg, 1)}</div>
-          <p className="text-secondary" style={{ fontSize: 12 }}>máximo: {tree.spanOfControl.max} reportes diretos</p>
+          <p className="text-secondary" style={{ fontSize: 12 }}>{tx('máximo:')} {tree.spanOfControl.max} {tx('reportes diretos')}</p>
         </SectionCard>
       </div>
 
@@ -83,7 +85,7 @@ export default function OrgChart() {
         <OrgVizTree company={tree.company} areas={tree.areas} forceExpand={filtering} />
       ) : (
         <SectionCard>
-          <p className="text-secondary" style={{ padding: 8 }}>Nenhum resultado para os filtros aplicados.</p>
+          <p className="text-secondary" style={{ padding: 8 }}>{tx('Nenhum resultado para os filtros aplicados.')}</p>
         </SectionCard>
       )}
     </div>

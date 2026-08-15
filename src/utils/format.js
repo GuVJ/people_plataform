@@ -38,3 +38,12 @@ export function formatSignedCurrency(value) {
 export function formatCompactNumber(value) {
   return new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 }
+
+// Nome do gestor com tratamento dos sentinelas de dados: colaboradores no topo da
+// hierarquia reportam à "Diretoria" (conselho/board) e vagas de gestor podem estar
+// "A definir". Traduz apenas esses rótulos; nomes de pessoas passam intactos.
+export function managerLabel(name, lang) {
+  if (name === 'Diretoria') return lang === 'en' ? 'Board' : 'Diretoria';
+  if (name === 'A definir') return lang === 'en' ? 'To be defined' : 'A definir';
+  return name;
+}

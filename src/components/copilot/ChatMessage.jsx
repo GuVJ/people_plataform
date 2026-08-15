@@ -5,9 +5,11 @@ import Table from '../ui/Table.jsx';
 import ExportButton from '../ui/ExportButton.jsx';
 import EmployeeCard from './EmployeeCard.jsx';
 import ExecutiveSummaryTable from '../summary/ExecutiveSummaryTable.jsx';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import './ChatMessage.css';
 
 export default function ChatMessage({ message, onQuickReply }) {
+  const { tx } = useLang();
   const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
 
@@ -34,7 +36,7 @@ export default function ChatMessage({ message, onQuickReply }) {
       <div className={`chat-bubble chat-bubble-assistant${(table || chart || execSummary) ? ' chat-bubble-wide' : ''}`}>
         {source && !employeeCard && (
           <span className={`chat-source-badge chat-source-${source}`}>
-            {source === 'gemini' ? '✦ Gemini' : '⚙ Motor local'}
+            {source === 'gemini' ? '✦ Gemini' : `⚙ ${tx('Motor local')}`}
           </span>
         )}
         <MiniMarkdown text={text} />
@@ -81,14 +83,14 @@ export default function ChatMessage({ message, onQuickReply }) {
 
         {financialImpact && (
           <div className="chat-callout chat-callout-financial">
-            <strong>Impacto financeiro</strong>
+            <strong>{tx('Impacto financeiro')}</strong>
             <span>{financialImpact}</span>
           </div>
         )}
 
         {recommendations?.length > 0 && (
           <div className="chat-callout chat-callout-recs">
-            <strong>Recomendações</strong>
+            <strong>{tx('Recomendações')}</strong>
             <ul>
               {recommendations.map((r, i) => <li key={i}>{r}</li>)}
             </ul>
@@ -97,7 +99,7 @@ export default function ChatMessage({ message, onQuickReply }) {
 
         {!initial && (
           <button type="button" className="chat-copy-btn" onClick={handleCopy}>
-            {copied ? 'Copiado ✓' : 'Copiar resposta'}
+            {copied ? `${tx('Copiado')} ✓` : tx('Copiar resposta')}
           </button>
         )}
       </div>

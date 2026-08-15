@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext.jsx';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
 import Table from '../components/ui/Table.jsx';
@@ -28,6 +29,7 @@ function pickDefaultManager(managers, employees) {
 
 export default function ManagerView() {
   const { employees, metrics, risk } = useData();
+  const { tx } = useLang();
   const managers = useMemo(() => metrics.activeNow.filter((e) => e.isLeadership).sort((a, b) => a.area.localeCompare(b.area) || a.name.localeCompare(b.name)), [metrics.activeNow]);
   const [managerId, setManagerId] = useState(() => pickDefaultManager(managers, employees).id);
 
@@ -47,11 +49,11 @@ export default function ManagerView() {
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Visão do Gestor</h1>
-          <p className="page-subtitle">Indicadores do time — escopo restrito aos reportes diretos do gestor selecionado</p>
+          <h1>{tx('Visão do Gestor')}</h1>
+          <p className="page-subtitle">{tx('Indicadores do time — escopo restrito aos reportes diretos do gestor selecionado')}</p>
         </div>
         <select className="manager-select" value={managerId} onChange={(e) => setManagerId(e.target.value)}>
-          {managers.map((m) => <option key={m.id} value={m.id}>{m.name} · {m.area}</option>)}
+          {managers.map((m) => <option key={m.id} value={m.id}>{m.name} · {tx(m.area)}</option>)}
         </select>
       </div>
 
@@ -59,12 +61,12 @@ export default function ManagerView() {
         <span className="manager-avatar">{initials(view.manager.name)}</span>
         <div>
           <Link to={`/funcionario/${view.manager.id}`} className="manager-header-name">{view.manager.name}</Link>
-          <p className="text-secondary" style={{ fontSize: 12.5, marginTop: 2 }}>{view.manager.roleLevel} · {view.manager.area} · {view.headcount} reporte{view.headcount !== 1 ? 's' : ''} diretos</p>
+          <p className="text-secondary" style={{ fontSize: 12.5, marginTop: 2 }}>{view.manager.roleLevel} · {view.manager.area} · {view.headcount} {view.headcount !== 1 ? tx('reportes diretos') : tx('reporte direto')}</p>
         </div>
       </div>
 
       {view.headcount === 0 ? (
-        <SectionCard><p className="text-secondary">Este gestor ainda não possui reportes diretos ativos.</p></SectionCard>
+        <SectionCard><p className="text-secondary">{tx('Este gestor ainda não possui reportes diretos ativos.')}</p></SectionCard>
       ) : (
         <>
           <div style={{ margin: '16px 0' }}>
@@ -77,33 +79,33 @@ export default function ManagerView() {
           </div>
 
           <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-            <SectionCard title="Headcount do time"><div className="stat-big">{formatNumber(view.headcount)}</div></SectionCard>
-            <SectionCard title="Turnover do time (12m)"><div className="stat-big">{formatPercent(view.turnoverRate)}</div></SectionCard>
-            <SectionCard title="Engajamento médio"><div className="stat-big">{formatPercent(view.avgEngagement)}</div></SectionCard>
-            <SectionCard title="Colaboradores em risco alto">
+            <SectionCard title={tx('Headcount do time')}><div className="stat-big">{formatNumber(view.headcount)}</div></SectionCard>
+            <SectionCard title={tx('Turnover do time (12m)')}><div className="stat-big">{formatPercent(view.turnoverRate)}</div></SectionCard>
+            <SectionCard title={tx('Engajamento médio')}><div className="stat-big">{formatPercent(view.avgEngagement)}</div></SectionCard>
+            <SectionCard title={tx('Colaboradores em risco alto')}>
               <div className="stat-big">{formatNumber(view.highRisk.length)}</div>
-              <p className="text-secondary" style={{ fontSize: 12 }}>de {view.headcount} no time</p>
+              <p className="text-secondary" style={{ fontSize: 12 }}>{tx('de')} {view.headcount} {tx('no time')}</p>
             </SectionCard>
           </div>
 
           <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-            <SectionCard title="Absenteísmo médio"><div className="stat-big">{formatNumber(view.avgAbsenceDays, 1)}</div><p className="text-secondary" style={{ fontSize: 12 }}>dias/mês por pessoa</p></SectionCard>
-            <SectionCard title="Horas extras médias"><div className="stat-big">{formatNumber(view.avgOvertimeHours, 1)}h</div><p className="text-secondary" style={{ fontSize: 12 }}>por pessoa/mês</p></SectionCard>
-            <SectionCard title="Tempo de casa médio"><div className="stat-big">{formatNumber(view.avgTenureYears, 1)}</div><p className="text-secondary" style={{ fontSize: 12 }}>anos</p></SectionCard>
-            <SectionCard title="Talentos críticos"><div className="stat-big">{formatNumber(view.criticalTalents.length)}</div><p className="text-secondary" style={{ fontSize: 12 }}>alto desempenho + potencial</p></SectionCard>
+            <SectionCard title={tx('Absenteísmo médio')}><div className="stat-big">{formatNumber(view.avgAbsenceDays, 1)}</div><p className="text-secondary" style={{ fontSize: 12 }}>{tx('dias/mês por pessoa')}</p></SectionCard>
+            <SectionCard title={tx('Horas extras médias')}><div className="stat-big">{formatNumber(view.avgOvertimeHours, 1)}h</div><p className="text-secondary" style={{ fontSize: 12 }}>{tx('por pessoa/mês')}</p></SectionCard>
+            <SectionCard title={tx('Tempo de casa médio')}><div className="stat-big">{formatNumber(view.avgTenureYears, 1)}</div><p className="text-secondary" style={{ fontSize: 12 }}>{tx('anos')}</p></SectionCard>
+            <SectionCard title={tx('Talentos críticos')}><div className="stat-big">{formatNumber(view.criticalTalents.length)}</div><p className="text-secondary" style={{ fontSize: 12 }}>{tx('alto desempenho + potencial')}</p></SectionCard>
           </div>
 
           <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-            <SectionCard title="Desempenho do time">
+            <SectionCard title={tx('Desempenho do time')}>
               <BarChart data={view.performanceDistribution} valueKey="count" labelKey="label" formatValue={(v) => formatNumber(v)} />
             </SectionCard>
-            <SectionCard title="Risco de saída do time">
+            <SectionCard title={tx('Risco de saída do time')}>
               <BarChart data={view.riskDistribution} valueKey="count" labelKey="label" color="var(--color-warning)" formatValue={(v) => formatNumber(v)} />
             </SectionCard>
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <SectionCard title="Nine Box do time" subtitle="Desempenho x Potencial">
+            <SectionCard title={tx('Nine Box do time')} subtitle={tx('Desempenho x Potencial')}>
               <div className="manager-ninebox">
                 {view.nineBoxGrid.map((c, i) => {
                   const intensity = 0.08 + (c.count / maxNineBox) * 0.7;
@@ -118,20 +120,20 @@ export default function ManagerView() {
             </SectionCard>
           </div>
 
-          <SectionCard title="Time" subtitle={`${view.roster.length} colaboradores — ordenado por banco de horas (H. extras)`}>
+          <SectionCard title={tx('Time')} subtitle={`${view.roster.length} ${tx('colaboradores — ordenado por banco de horas (H. extras)')}`}>
             <Table
               defaultSortKey="recentOvertimeHours"
               defaultSortDir="desc"
               columns={[
-                { key: 'name', label: 'Nome', render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
-                { key: 'roleLevel', label: 'Cargo' },
-                { key: 'tenureYears', label: 'Tempo de casa', render: (r) => `${formatNumber(r.tenureYears, 1)} anos` },
-                { key: 'performanceBucket', label: 'Desempenho' },
-                { key: 'engagementScore', label: 'Engajamento', align: 'right', render: (r) => formatPercent(r.engagementScore) },
-                { key: 'recentAbsenceDays', label: 'Faltas (3m)', align: 'right' },
+                { key: 'name', label: tx('Nome'), render: (r) => <Link to={`/funcionario/${r.id}`}>{r.name}</Link> },
+                { key: 'roleLevel', label: tx('Cargo') },
+                { key: 'tenureYears', label: tx('Tempo de casa'), render: (r) => `${formatNumber(r.tenureYears, 1)} ${tx('anos')}` },
+                { key: 'performanceBucket', label: tx('Desempenho') },
+                { key: 'engagementScore', label: tx('Engajamento'), align: 'right', render: (r) => formatPercent(r.engagementScore) },
+                { key: 'recentAbsenceDays', label: tx('Faltas (3m)'), align: 'right' },
                 {
                   key: 'recentOvertimeHours',
-                  label: 'H. extras (3m)',
+                  label: tx('H. extras (3m)'),
                   align: 'right',
                   cellStyle: (r) => {
                     const ratio = (r.recentOvertimeHours || 0) / maxOvertime;
@@ -143,7 +145,7 @@ export default function ManagerView() {
                     };
                   },
                 },
-                { key: 'risk', label: 'Risco', sortAccessor: (r) => r.risk?.score ?? -1, render: (r) => (r.risk ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.risk.level]}`}>{r.risk.level}</span> : '—') },
+                { key: 'risk', label: tx('Risco'), sortAccessor: (r) => r.risk?.score ?? -1, render: (r) => (r.risk ? <span className={`badge badge-${RISK_LEVEL_COLOR[r.risk.level]}`}>{r.risk.level}</span> : '—') },
               ]}
               rows={view.roster}
             />

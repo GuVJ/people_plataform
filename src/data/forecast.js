@@ -1,5 +1,6 @@
 import { linearRegression, average } from '../utils/stats.js';
 import { addMonths, monthLabel } from '../utils/dates.js';
+import { txt } from '../i18n/lang.js';
 
 // Fits a linear trend to the last `window` points and projects `monthsAhead` forward.
 // Returns {history: [{x,y,label}], forecast: [{x,y,label,low,high}]}
@@ -40,8 +41,11 @@ export const FORECAST_METRICS = [
 ];
 
 export function buildAllForecasts(metrics) {
+  // `label` is translated here (at call time) rather than in the module-level FORECAST_METRICS
+  // const, so it reacts to language toggles. The original PT string is kept as the dict key.
   return FORECAST_METRICS.map((m) => ({
     ...m,
+    label: txt(m.label),
     result: forecastSeries(metrics[m.series], m.valueKey),
   }));
 }

@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 
 // Dropdown customizado (substitui o <select> nativo) para o menu aberto seguir o estilo do app.
 // options: [{ value, label }]
 export default function FilterSelect({ value, onChange, options, placeholder, searchable = false, ariaLabel }) {
+  const { tx } = useLang();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const ref = useRef(null);
@@ -42,7 +44,7 @@ export default function FilterSelect({ value, onChange, options, placeholder, se
         aria-expanded={open}
         aria-label={ariaLabel}
       >
-        <span className="fsel-value">{selected ? selected.label : placeholder}</span>
+        <span className="fsel-value">{selected ? tx(selected.label) : tx(placeholder)}</span>
         <svg className="fsel-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>
       </button>
       {open && (
@@ -51,7 +53,7 @@ export default function FilterSelect({ value, onChange, options, placeholder, se
             <input
               className="fsel-search"
               type="text"
-              placeholder="Buscar…"
+              placeholder={tx('Buscar…')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
@@ -67,10 +69,10 @@ export default function FilterSelect({ value, onChange, options, placeholder, se
                 role="option"
                 aria-selected={o.value === value}
               >
-                {o.label}
+                {tx(o.label)}
               </button>
             ))}
-            {!filtered.length && <div className="fsel-empty">Nada encontrado</div>}
+            {!filtered.length && <div className="fsel-empty">{tx('Nada encontrado')}</div>}
           </div>
         </div>
       )}

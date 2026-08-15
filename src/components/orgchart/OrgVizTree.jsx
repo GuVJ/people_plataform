@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../../i18n/LanguageContext.jsx';
 import { formatNumber } from '../../utils/format.js';
 import './OrgVizTree.css';
 
@@ -22,6 +23,7 @@ function useToggleSet(initial = []) {
 }
 
 export default function OrgVizTree({ company, areas, forceExpand = false }) {
+  const { tx } = useLang();
   const [expandedAreas, toggleArea, setExpandedAreas] = useToggleSet([areas[0]?.name]);
   const [expandedManagers, toggleManager, setExpandedManagers] = useToggleSet([]);
   const [zoom, setZoom] = useState(1);
@@ -38,13 +40,13 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
     <div className="orgviz">
       <div className="orgviz-toolbar">
         <div className="orgviz-toolbar-group">
-          <button type="button" className="btn btn-sm" onClick={expandAll}>Expandir tudo</button>
-          <button type="button" className="btn btn-sm" onClick={collapseAll}>Recolher tudo</button>
+          <button type="button" className="btn btn-sm" onClick={expandAll}>{tx('Expandir tudo')}</button>
+          <button type="button" className="btn btn-sm" onClick={collapseAll}>{tx('Recolher tudo')}</button>
         </div>
         <div className="orgviz-toolbar-group">
-          <button type="button" className="orgviz-zoom-btn" onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(1)))} aria-label="Diminuir zoom">−</button>
+          <button type="button" className="orgviz-zoom-btn" onClick={() => setZoom((z) => Math.max(0.5, +(z - 0.1).toFixed(1)))} aria-label={tx('Diminuir zoom')}>−</button>
           <span className="orgviz-zoom-value">{Math.round(zoom * 100)}%</span>
-          <button type="button" className="orgviz-zoom-btn" onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(1)))} aria-label="Aumentar zoom">+</button>
+          <button type="button" className="orgviz-zoom-btn" onClick={() => setZoom((z) => Math.min(1.5, +(z + 0.1).toFixed(1)))} aria-label={tx('Aumentar zoom')}>+</button>
         </div>
       </div>
 
@@ -53,8 +55,8 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
           <ul className="orgviz-tree">
             <li>
               <div className="orgviz-node orgviz-node-company">
-                <span className="orgviz-node-title">Empresa</span>
-                <span className="orgviz-node-sub">{formatNumber(company.headcount)} colaboradores · {company.areaCount} diretorias</span>
+                <span className="orgviz-node-title">{tx('Empresa')}</span>
+                <span className="orgviz-node-sub">{formatNumber(company.headcount)} {tx('colaboradores')} · {company.areaCount} {tx('diretorias')}</span>
               </div>
 
               <ul>
@@ -67,8 +69,8 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
                         className={`orgviz-node orgviz-node-area${isOpen ? ' open' : ''}`}
                         onClick={() => toggleArea(area.name)}
                       >
-                        <span className="orgviz-node-title">{area.name}</span>
-                        <span className="orgviz-node-sub">{formatNumber(area.headcount)} pessoas · {area.managers.length} gestor{area.managers.length !== 1 ? 'es' : ''}</span>
+                        <span className="orgviz-node-title">{tx(area.name)}</span>
+                        <span className="orgviz-node-sub">{formatNumber(area.headcount)} {tx('pessoas')} · {area.managers.length} {area.managers.length !== 1 ? tx('gestores') : tx('gestor')}</span>
                         <span className="orgviz-caret">{isOpen ? '−' : '+'}</span>
                       </button>
 
@@ -81,7 +83,7 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
                                 <div className={`orgviz-node orgviz-node-manager${mOpen ? ' open' : ''}`} onClick={() => m.reports.length > 0 && toggleManager(m.id)}>
                                   <span className="orgviz-avatar orgviz-avatar-lead">{initials(m.name)}</span>
                                   <Link to={`/funcionario/${m.id}`} state={{ from: 'organograma' }} className="orgviz-node-title orgviz-node-link" onClick={(e) => e.stopPropagation()}>{m.name}</Link>
-                                  <span className="orgviz-node-sub">{m.roleLevel}</span>
+                                  <span className="orgviz-node-sub">{tx(m.roleLevel)}</span>
                                   {m.reports.length > 0 && (
                                     <span className="orgviz-caret">{mOpen ? '−' : `${m.reports.length}`}</span>
                                   )}
@@ -94,14 +96,14 @@ export default function OrgVizTree({ company, areas, forceExpand = false }) {
                                         <Link to={`/funcionario/${r.id}`} state={{ from: 'organograma' }} className="orgviz-node orgviz-node-report">
                                           <span className="orgviz-avatar">{initials(r.name)}</span>
                                           <span className="orgviz-node-title">{r.name}</span>
-                                          <span className="orgviz-node-sub">{r.roleLevel}</span>
+                                          <span className="orgviz-node-sub">{tx(r.roleLevel)}</span>
                                         </Link>
                                       </li>
                                     ))}
                                     {m.reports.length > REPORTS_CAP && (
                                       <li>
                                         <div className="orgviz-node orgviz-node-more">
-                                          +{m.reports.length - REPORTS_CAP} mais
+                                          +{m.reports.length - REPORTS_CAP} {tx('mais')}
                                         </div>
                                       </li>
                                     )}

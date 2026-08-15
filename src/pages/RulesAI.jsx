@@ -1,23 +1,23 @@
 import { Link } from 'react-router-dom';
+import { useLang } from '../i18n/LanguageContext.jsx';
 import { AI_FRAMEWORKS as FRAMEWORKS, AI_PRINCIPLES as PRINCIPLES, AI_CAPABILITIES as CAPABILITIES } from '../data/aiRules.js';
 import './RulesAI.css';
 
 export default function RulesAI() {
+  const { tx } = useLang();
   return (
     <div className="page fade-in">
       <div className="page-header">
         <div>
-          <h1>Regras e governança da IA</h1>
-          <p className="page-subtitle">Como a Íris funciona, com base nos frameworks de IA responsável usados no mercado</p>
+          <h1>{tx('Regras e governança da IA')}</h1>
+          <p className="page-subtitle">{tx('Como a Íris funciona, com base nos frameworks de IA responsável usados no mercado')}</p>
         </div>
-        <Link to="/configuracoes" className="btn btn-sm">← Configurações</Link>
+        <Link to="/configuracoes" className="btn btn-sm">← {tx('Configurações')}</Link>
       </div>
 
       <div className="rules-intro card">
         <p>
-          As regras da <strong>Íris</strong> seguem os padrões atuais de <strong>IA responsável</strong>: os frameworks
-          internacionais de governança e a regulação brasileira. Cada princípio abaixo mostra o que o mercado adota e,
-          ao lado, como a Íris aplica na prática.
+          {tx('As regras da')} <strong>Íris</strong> {tx('seguem os padrões atuais de')} <strong>{tx('IA responsável')}</strong>: {tx('os frameworks internacionais de governança e a regulação brasileira. Cada princípio abaixo mostra o que o mercado adota e, ao lado, como a Íris aplica na prática.')}
         </p>
         <div className="rules-frameworks">
           {FRAMEWORKS.map((f) => (
@@ -29,7 +29,7 @@ export default function RulesAI() {
         </div>
       </div>
 
-      <div className="section-title"><span>O que a Íris faz</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>capacidades e regras operacionais</span></div>
+      <div className="section-title"><span>{tx('O que a Íris faz')}</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>{tx('capacidades e regras operacionais')}</span></div>
       <ol className="rules-ops">
         {CAPABILITIES.map((c, i) => (
           <li className="rules-op" key={c.title}>
@@ -42,7 +42,7 @@ export default function RulesAI() {
         ))}
       </ol>
 
-      <div className="section-title" style={{ marginTop: 28 }}><span>Princípios de governança</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>frameworks de IA responsável</span></div>
+      <div className="section-title" style={{ marginTop: 28 }}><span>{tx('Princípios de governança')}</span><span className="text-tertiary" style={{ fontSize: 12, fontWeight: 400 }}>{tx('frameworks de IA responsável')}</span></div>
       <div className="rules-grid">
         {PRINCIPLES.map((p, i) => (
           <div className="rules-card card" key={p.title}>
@@ -53,7 +53,7 @@ export default function RulesAI() {
             <h3 className="rules-card-title">{p.title}</h3>
             <p className="rules-card-market">{p.market}</p>
             <div className="rules-card-iris">
-              <span className="rules-card-iris-label">Na Íris</span>
+              <span className="rules-card-iris-label">{tx('Na Íris')}</span>
               <span>{p.iris}</span>
             </div>
           </div>
@@ -61,8 +61,8 @@ export default function RulesAI() {
       </div>
 
       <p className="rules-foot">
-        Referências: NIST AI Risk Management Framework · ISO/IEC 42001 · EU AI Act · LGPD (Lei 13.709/2018) · PL 2338/2023.
-        A Íris está no menu <Link to="/copilot">Íris IA</Link>.
+        {tx('Referências')}: NIST AI Risk Management Framework · ISO/IEC 42001 · EU AI Act · LGPD (Lei 13.709/2018) · PL 2338/2023.
+        {' '}{tx('A Íris está no menu')} <Link to="/copilot">Íris IA</Link>.
       </p>
     </div>
   );

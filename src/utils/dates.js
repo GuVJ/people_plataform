@@ -1,4 +1,8 @@
 import { MONTH_LABELS } from '../data/constants.js';
+import { pick } from '../i18n/lang.js';
+
+// Abreviações de mês em inglês, na mesma ordem de MONTH_LABELS (Jan..Dez).
+const MONTH_LABELS_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 export function addMonths(date, n) {
   const d = new Date(date);
@@ -19,7 +23,8 @@ export function monthKey(date) {
 
 export function monthLabel(date) {
   const d = new Date(date);
-  return `${MONTH_LABELS[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`;
+  const months = pick(MONTH_LABELS, MONTH_LABELS_EN);
+  return `${months[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`;
 }
 
 export function diffInMonths(a, b) {
