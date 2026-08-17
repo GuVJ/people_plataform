@@ -110,6 +110,13 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety, 
       conclusaoMedia: formatPercent(metrics.training.completionPct),
       roiPorReal: formatNumber(metrics.training.roiRatio, 2),
     },
+    // Desempenho / avaliação (nine box). notaMedia é a média das notas 1–5 dos colaboradores.
+    desempenho: {
+      notaMediaDe5: formatNumber(metrics.activeNow.reduce((s, e) => s + (e.performanceScore || 0), 0) / (metrics.activeNow.length || 1), 2),
+      distribuicao: metrics.performanceDistribution.map((d) => ({ nivel: d.label, pct: formatPercent(d.pct), pessoas: d.count })),
+      talentosCriticos: metrics.criticalTalents.length,
+      engajamentoMedioPct: formatPercent(metrics.activeNow.reduce((s, e) => s + (e.engagementScore || 0), 0) / (metrics.activeNow.length || 1)),
+    },
     // Indicadores de RH operacional / compliance (Lei de Cotas, trabalhista, SST).
     cotaPcd: hr?.pcd ? {
       pcdAtual: hr.pcd.kpis.current,

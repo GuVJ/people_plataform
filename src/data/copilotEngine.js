@@ -46,7 +46,7 @@ const PAGE_MAP = [
   { kws: ['recrutamento', 'contratac', 'admiss', 'funil'], to: '/recruitment', label: 'Recrutamento' },
   { kws: ['diversidade', 'genero', 'raca', 'mulheres'], to: '/diversity', label: 'Diversidade' },
   { kws: ['treinamento', 'capacita'], to: '/training', label: 'Treinamentos' },
-  { kws: ['desempenho', 'nine box', 'nine-box', 'potencial', 'talento'], to: '/performance', label: 'Desempenho' },
+  { kws: ['desempenho', 'avaliac', /\bnotas?\b/, 'nine box', 'nine-box', 'potencial', 'talento'], to: '/performance', label: 'Desempenho' },
   { kws: ['orcamento', 'custo de pessoal', 'custo de pessoas', 'folha de pagamento'], to: '/orcamento', label: 'Orçamento' },
   { kws: ['organograma'], to: '/organograma', label: 'Organograma' },
   { kws: ['visao do gestor', 'por gestor', 'time do gestor'], to: '/gestor', label: 'Visão do Gestor' },
@@ -733,6 +733,57 @@ export function answerQuestion(question, ctx) {
         `Women make up ${formatPercent(women)} of the total workforce and ${formatPercent(womenLead)} of leadership positions. People with disabilities make up ${formatPercent(metrics.diversity.pcdPct)}.`,
       ),
       chart: { type: 'bar', title: txt('Distribuição por gênero'), data: metrics.diversity.gender, valueKey: 'pct', labelKey: 'label', formatValue: (v) => formatPercent(v) },
+    };
+  }
+
+  if (has(q, 'desempenho', 'avaliac', 'nine box', 'nine-box', 'potencial', 'talento') || /\bnotas?\b/.test(q)) {
+    const emps = metrics.activeNow;
+    const n = emps.length || 1;
+    const avgScore = emps.reduce((s, e) => s + (e.performanceScore || 0), 0) / n;
+    const dist = metrics.performanceDistribution;
+    const bkt = (label) => dist.find((d) => d.label === label);
+    const alto = bkt('Alto'), medio = bkt('Médio'), baixo = bkt('Baixo');
+    const crit = metrics.criticalTalents.length;
+    const wantsList = has(q, 'lista', 'listar', 'quais', 'ranking', 'top', 'melhor', 'pior', 'todos', 'tabela', 'baixar', 'planilha', 'nome')
+      || (/\bnotas?\b/.test(q) && has(q, 'funcionario', 'colaborador'));
+
+    if (wantsList) {
+      const ranked = [...emps].sort((a, b) => b.performanceScore - a.performanceScore);
+      const rows = ranked.slice(0, 50).map((e) => ({ id: e.id, name: e.name, area: e.area, roleLevel: e.roleLevel, score: e.performanceScore, bucket: e.performanceBucket, potential: e.potential, eng: e.engagementScore }));
+      return {
+        text: pick(
+          `Notas de avaliação de desempenho (escala 1–5), média geral de **${formatNumber(avgScore, 2)}**. Mostrando os 50 primeiros — baixe o Excel para todos. Clique no nome para abrir a ficha.`,
+          `Performance scores (1–5 scale), overall average **${formatNumber(avgScore, 2)}**. Showing the first 50 — download the Excel for all. Click a name to open the profile.`,
+        ),
+        table: {
+          title: txt('Notas de desempenho'),
+          columns: [
+            { key: 'name', label: txt('Nome'), href: (r) => `/funcionario/${r.id}` },
+            { key: 'area', label: txt('Diretoria'), render: (r) => txt(r.area) },
+            { key: 'roleLevel', label: txt('Cargo'), render: (r) => txt(r.roleLevel) },
+            { key: 'score', label: txt('Nota (1–5)'), align: 'right', render: (r) => formatNumber(r.score, 1) },
+            { key: 'bucket', label: txt('Desempenho'), render: (r) => txt(r.bucket) },
+            { key: 'potential', label: txt('Potencial'), render: (r) => txt(r.potential) },
+            { key: 'eng', label: txt('Engajamento'), align: 'right', render: (r) => `${formatNumber(r.eng)}%` },
+          ],
+          rows,
+          exportRows: ranked.map((r) => ({ Nome: r.name, Diretoria: r.area, Cargo: r.roleLevel, 'Nota (1-5)': r.performanceScore, Desempenho: r.performanceBucket, Potencial: r.potential, 'Engajamento (%)': r.engagementScore })),
+          filename: 'notas_desempenho', sheetName: 'Desempenho',
+        },
+      };
+    }
+
+    return {
+      text: pick(
+        `A nota média de desempenho é **${formatNumber(avgScore, 2)}/5**. Na distribuição, ${alto ? formatPercent(alto.pct) : '—'} está em **Alto** desempenho, ${medio ? formatPercent(medio.pct) : '—'} em Médio e ${baixo ? formatPercent(baixo.pct) : '—'} em Baixo. Há **${formatNumber(crit)} talentos críticos** (alto desempenho + alto potencial — o quadrante de retenção prioritária no nine box).`,
+        `The average performance score is **${formatNumber(avgScore, 2)}/5**. In the distribution, ${alto ? formatPercent(alto.pct) : '—'} are **High** performers, ${medio ? formatPercent(medio.pct) : '—'} Medium and ${baixo ? formatPercent(baixo.pct) : '—'} Low. There are **${formatNumber(crit)} critical talents** (high performance + high potential — the priority-retention quadrant in the nine box).`,
+      ),
+      chart: { type: 'bar', title: txt('Distribuição de desempenho'), data: dist, valueKey: 'count', labelKey: 'label', formatValue: (v) => formatNumber(v) },
+      recommendations: [
+        pick(`Priorizar retenção e planos de sucessão para os ${formatNumber(crit)} talentos críticos.`, `Prioritize retention and succession plans for the ${formatNumber(crit)} critical talents.`),
+        pick('Estruturar PDI para o grupo de médio desempenho e alto potencial (prontos para crescer).', 'Set up development plans for the medium-performance / high-potential group (ready to grow).'),
+        pick('Acompanhar de perto o quadrante de baixo desempenho e baixo potencial em ciclos de feedback.', 'Closely monitor the low-performance / low-potential quadrant through feedback cycles.'),
+      ],
     };
   }
 
