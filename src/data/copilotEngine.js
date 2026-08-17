@@ -366,18 +366,28 @@ function wantsBreakdown(q) {
 
 // Looks for a specific colleague named in the question (needs >=2 matching name tokens to
 // avoid one common first name accidentally matching the wrong person).
-function findEmployeeMention(q, activeNow) {
+function findEmployeeMention(q, activeNow, preferWithReports = false) {
   const qTokens = new Set(q.split(/\s+/).filter((t) => t.length > 2));
+  // Quando a intenção é "time do FULANO", empate de tokens é desempatado por quem tem mais
+  // reportes (provável gestor) — evita casar um homônimo que não lidera ninguém.
+  let reportsCount = null;
+  if (preferWithReports) {
+    reportsCount = new Map();
+    for (const e of activeNow) if (e.managerId != null) reportsCount.set(e.managerId, (reportsCount.get(e.managerId) || 0) + 1);
+  }
   let best = null;
-  let bestScore = 0;
+  let bestScore = -1;
   for (const e of activeNow) {
     // Set (tokens distintos) para não pontuar sobrenome repetido (ex.: "Almeida Almeida"
     // não deve casar 2 com uma pergunta que cita "Almeida" uma vez).
     const nameTokens = new Set(normalize(e.name).split(/\s+/).filter((t) => t.length > 2));
     let matches = 0;
     for (const t of nameTokens) if (qTokens.has(t)) matches += 1;
-    if (matches >= 2 && matches > bestScore) {
-      bestScore = matches;
+    if (matches < 2) continue;
+    // Tokens é o critério primário; reportes só desempatam dentro do mesmo nº de tokens.
+    const score = matches * 1000 + (preferWithReports ? Math.min(999, reportsCount.get(e.id) || 0) : 0);
+    if (score > bestScore) {
+      bestScore = score;
       best = e;
     }
   }
@@ -395,7 +405,9 @@ export function answerQuestion(question, ctx) {
     // "lista/time/equipe do FULANO" → tabela dos reportes diretos, em vez do card da pessoa.
     const wantsTeam = has(q, 'lista', 'time', 'equipe', 'subordinad', 'reportes', 'reporta', 'liderados', 'quem trabalha', 'funcionarios do', 'funcionarios da', 'colaboradores do', 'colaboradores da', 'pessoas do', 'pessoas da');
     if (wantsTeam) {
-      const team = metrics.activeNow.filter((e) => e.managerId === mentionedEmployee.id && e.id !== mentionedEmployee.id);
+      // Prefere o homônimo que é gestor (tem reportes) para o time sair certo.
+      const mgr = findEmployeeMention(q, metrics.activeNow, true) || mentionedEmployee;
+      const team = metrics.activeNow.filter((e) => e.managerId === mgr.id && e.id !== mgr.id);
       if (team.length > 0) {
         const riskById = new Map(risk.map((r) => [r.id, r]));
         const rows = team
@@ -403,11 +415,11 @@ export function answerQuestion(question, ctx) {
           .sort((a, b) => a.name.localeCompare(b.name));
         return {
           text: pick(
-            `Time de **${mentionedEmployee.name}** (${mentionedEmployee.roleLevel} · ${mentionedEmployee.area}) — **${team.length}** ${team.length === 1 ? 'reporte direto' : 'reportes diretos'}. Clique no nome para abrir a ficha.`,
-            `**${mentionedEmployee.name}**'s team (${mentionedEmployee.roleLevel} · ${mentionedEmployee.area}) — **${team.length}** direct report${team.length === 1 ? '' : 's'}. Click a name to open the profile.`,
+            `Time de **${mgr.name}** (${mgr.roleLevel} · ${mgr.area}) — **${team.length}** ${team.length === 1 ? 'reporte direto' : 'reportes diretos'}. Clique no nome para abrir a ficha.`,
+            `**${mgr.name}**'s team (${mgr.roleLevel} · ${mgr.area}) — **${team.length}** direct report${team.length === 1 ? '' : 's'}. Click a name to open the profile.`,
           ),
           table: {
-            title: pick(`Time de ${mentionedEmployee.name}`, `${mentionedEmployee.name}'s team`),
+            title: pick(`Time de ${mgr.name}`, `${mgr.name}'s team`),
             columns: [
               { key: 'name', label: txt('Nome'), href: (r) => `/funcionario/${r.id}` },
               { key: 'roleLevel', label: txt('Cargo'), render: (r) => txt(r.roleLevel) },
@@ -419,23 +431,23 @@ export function answerQuestion(question, ctx) {
             ],
             rows,
             exportRows: rows.map((r) => ({ Nome: r.name, Cargo: r.roleLevel, Diretoria: r.area, Unidade: r.unit, Desempenho: r.perf, 'Engajamento (%)': r.eng, Risco: r.risk })),
-            filename: `time_${mentionedEmployee.name.split(' ')[0].toLowerCase()}`, sheetName: 'Time',
+            filename: `time_${mgr.name.split(' ')[0].toLowerCase()}`, sheetName: 'Time',
           },
         };
       }
       // Pessoa sem reportes diretos — cai no card com uma nota.
-      const riskEntry0 = risk.find((r) => r.id === mentionedEmployee.id);
+      const riskEntry0 = risk.find((r) => r.id === mgr.id);
       return {
         text: pick(
-          `**${mentionedEmployee.name}** não tem reportes diretos no quadro atual. Aqui está o resumo:`,
-          `**${mentionedEmployee.name}** has no direct reports in the current headcount. Here is the summary:`,
+          `**${mgr.name}** não tem reportes diretos no quadro atual. Aqui está o resumo:`,
+          `**${mgr.name}** has no direct reports in the current headcount. Here is the summary:`,
         ),
         employeeCard: {
-          id: mentionedEmployee.id, name: mentionedEmployee.name, roleLevel: mentionedEmployee.roleLevel,
-          area: mentionedEmployee.area, managerName: mentionedEmployee.managerName,
-          tenureYears: diffInYears(mentionedEmployee.admissionDate, metrics.referenceDate),
-          performanceBucket: mentionedEmployee.performanceBucket, potential: mentionedEmployee.potential,
-          engagementScore: mentionedEmployee.engagementScore,
+          id: mgr.id, name: mgr.name, roleLevel: mgr.roleLevel,
+          area: mgr.area, managerName: mgr.managerName,
+          tenureYears: diffInYears(mgr.admissionDate, metrics.referenceDate),
+          performanceBucket: mgr.performanceBucket, potential: mgr.potential,
+          engagementScore: mgr.engagementScore,
           risk: riskEntry0 ? { score: riskEntry0.score, level: riskEntry0.level } : null,
         },
       };
