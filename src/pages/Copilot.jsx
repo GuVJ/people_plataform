@@ -50,7 +50,16 @@ export default function Copilot() {
     if (!skipGemini) {
       try {
         const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr });
-        const geminiText = await askGemini(q, context);
+        // Histórico da conversa (memória) — turnos anteriores em texto, sem a saudação inicial.
+        const history = messages
+          .filter((m) => !(m.role === 'assistant' && m.content?.initial))
+          .map((m) => ({
+            role: m.role === 'user' ? 'user' : 'model',
+            text: typeof m.content === 'string' ? m.content : (m.content?.text ?? ''),
+          }))
+          .filter((h) => h.text)
+          .slice(-10);
+        const geminiText = await askGemini(q, context, history);
         // Só usa a resposta do Gemini se vier texto de verdade (evita substituir por vazio/undefined).
         if (geminiText && typeof geminiText === 'string' && geminiText.trim()) {
           // No fallback, a resposta do Gemini substitui os botões; nos demais, preserva gráfico/recomendações.

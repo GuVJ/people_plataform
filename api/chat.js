@@ -12,11 +12,20 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { message, context } = req.body ?? {};
+  const { message, context, history } = req.body ?? {};
   if (!message || typeof message !== 'string') {
     res.status(400).json({ error: 'Campo "message" é obrigatório.' });
     return;
   }
+
+  // Histórico da conversa (memória): mantém só turnos válidos, alternando user/model,
+  // limitado aos últimos 10 para não estourar o prompt.
+  const historyContents = Array.isArray(history)
+    ? history
+        .filter((h) => h && typeof h.text === 'string' && h.text.trim() && (h.role === 'user' || h.role === 'model'))
+        .slice(-10)
+        .map((h) => ({ role: h.role, parts: [{ text: h.text.slice(0, 4000) }] }))
+    : [];
 
   const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   const systemInstruction = `Você é a Íris, a inteligência de People Analytics de uma plataforma de RH. Responda SEMPRE em português do Brasil, em tom executivo e direto (2 a 6 frases; use **negrito** nos números-chave).
@@ -46,7 +55,7 @@ ${JSON.stringify(context ?? {}, null, 2)}`;
         signal: controller.signal,
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents: [{ role: 'user', parts: [{ text: message }] }],
+          contents: [...historyContents, { role: 'user', parts: [{ text: message }] }],
           generationConfig: {
             temperature: 0.4,
             maxOutputTokens: 1024,
