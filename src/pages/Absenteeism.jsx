@@ -53,10 +53,12 @@ export default function Absenteeism() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Tendência de absenteísmo')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={history} formatValue={(v) => formatPercent(v)} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Motivos de ausência')} subtitle={tx('Dias perdidos, mês a mês (12 meses)')}>
           <HeatmapTable rows={metrics.absenteeismByReasonMonthly.rows} cols={metrics.absenteeismByReasonMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>

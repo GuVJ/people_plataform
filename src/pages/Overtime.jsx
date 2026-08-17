@@ -125,10 +125,12 @@ export default function Overtime() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Evolução do custo de horas extras')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={history} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Custo de horas extras por diretoria')} subtitle={tx('Matriz mês a mês (12 meses)')}>
           <HeatmapTable rows={metrics.overtimeByAreaMonthly.rows} cols={metrics.overtimeByAreaMonthly.cols} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>

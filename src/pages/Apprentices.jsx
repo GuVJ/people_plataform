@@ -41,10 +41,12 @@ export default function Apprentices() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Aprendizes por diretoria')}>
           <BarChart data={a.byArea} valueKey="count" labelKey="area" formatValue={(v) => formatNumber(v)} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Contratos vencendo por mês')} subtitle={tx('Próximos 12 meses')}>
           <LineChart history={a.expirations} color="var(--chart-5)" formatValue={(v) => formatNumber(v)} />
         </SectionCard>

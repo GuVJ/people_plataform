@@ -52,10 +52,12 @@ export default function Turnover() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Desligamentos por mês')} subtitle={tx('Voluntário vs. involuntário — últimos 12 meses')}>
           <StackedBarChart data={chartData} series={SERIES} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Motivos de desligamento')} subtitle={tx('Últimos 12 meses')}>
           <BarChart data={metrics.terminationReasons} valueKey="count" labelKey="reason" color="var(--chart-5)" formatValue={(v) => formatNumber(v)} />
         </SectionCard>

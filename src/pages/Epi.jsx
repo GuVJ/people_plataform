@@ -47,10 +47,13 @@ export default function Epi() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Consumo por tipo de EPI')} subtitle={tx('No mês')}>
           <BarChart data={e.consumo} valueKey="value" labelKey="label" formatValue={(v) => formatNumber(v)} />
         </SectionCard>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Custo mensal de EPI')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={e.custoSeries} formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>

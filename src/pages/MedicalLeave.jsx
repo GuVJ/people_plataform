@@ -91,10 +91,13 @@ export default function MedicalLeave() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Distribuição por grupo de CID')} subtitle={tx('Últimos 12 meses')}>
           <DonutChart data={donutData} centerValue={formatNumber(medical.total12)} centerLabel={tx('atestados')} formatValue={(v) => formatNumber(v, 1)} />
         </SectionCard>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Tendência de saúde mental')} subtitle={tx('Participação % do CID F por mês')}>
           <LineChart history={mentalTrend} color="var(--chart-6)" formatValue={(v) => `${formatNumber(v, 1)}%`} />
         </SectionCard>

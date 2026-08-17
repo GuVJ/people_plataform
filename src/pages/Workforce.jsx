@@ -50,10 +50,12 @@ export default function Workforce() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
-        <SectionCard title={tx('Evolução de headcount')} subtitle={tx('Últimos 12 meses')} span={1}>
+      <div style={{ marginBottom: 16 }}>
+        <SectionCard title={tx('Evolução de headcount')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={history} formatValue={(v) => formatNumber(v, 0)} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Headcount por diretoria')} subtitle={tx('Matriz mês a mês (12 meses)')}>
           <HeatmapTable rows={metrics.headcountByAreaMonthly.rows} cols={metrics.headcountByAreaMonthly.cols} formatValue={(v) => formatNumber(v)} />
         </SectionCard>

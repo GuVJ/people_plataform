@@ -42,10 +42,12 @@ export default function Labor() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Evolução da provisão')} subtitle={tx('Últimos 12 meses')}>
           <LineChart history={l.provisionSeries} color="var(--chart-7)" formatValue={(v) => formatCurrency(v, { compact: true })} />
         </SectionCard>
+      </div>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Novas vs. encerradas')} subtitle={tx('Por mês')}>
           <StackedBarChart data={l.flow} series={l.flowKeys} height={200} formatValue={(v) => formatNumber(v)} />
         </SectionCard>

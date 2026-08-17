@@ -46,10 +46,13 @@ export default function Nrs() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2">
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Treinamentos realizados')} subtitle={tx('Por mês')}>
           <LineChart history={n.treinadosMes} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Reciclagens vencendo')} subtitle={tx('Por mês')}>
           <LineChart history={n.vencimentos} color="var(--chart-5)" formatValue={(v) => formatNumber(v)} />
         </SectionCard>

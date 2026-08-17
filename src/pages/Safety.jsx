@@ -88,10 +88,13 @@ export default function Safety() {
         </SectionCard>
       </div>
 
-      <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Inspeções realizadas')} subtitle={tx('Volume mensal')}>
           <LineChart history={safety.inspectionSeries.map((s) => ({ label: s.label, y: s.y }))} formatValue={(v) => formatNumber(v)} />
         </SectionCard>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Índice de conformidade')} subtitle={tx('% de itens conformes por mês')}>
           <LineChart history={safety.conformitySeries.map((s) => ({ label: s.label, y: s.y }))} color="var(--chart-4)" formatValue={(v) => `${formatNumber(v, 0)}%`} />
         </SectionCard>
