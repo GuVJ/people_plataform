@@ -121,3 +121,7 @@
   justify-content: flex-start;
   gap: 8px 14px;
 }
+
+/* Wrapper do LineChart: ocupa toda a largura para o gráfico esticar (largura medida). */
+.line-chart-wrap { width: 100%; line-height: 0; }
+.line-chart-wrap .line-chart-svg { display: block; }

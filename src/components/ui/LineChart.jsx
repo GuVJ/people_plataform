@@ -1,9 +1,24 @@
 import './charts.css';
+import { useRef, useState, useEffect } from 'react';
 import { useLang } from '../../i18n/LanguageContext.jsx';
 
-export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220, formatValue = (v) => `${Math.round(v)}` }) {
+export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220, formatValue = (v) => `${Math.round(v)}`, showAllLabels = false }) {
   const { tx } = useLang();
-  const width = 640;
+  // Mede a largura real do container para o gráfico esticar e preencher todo o espaço
+  // (o card virou full-width; um width fixo deixava o gráfico centralizado e estreito).
+  const wrapRef = useRef(null);
+  const [measuredW, setMeasuredW] = useState(640);
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver((entries) => {
+      const cw = entries[0]?.contentRect?.width;
+      if (cw && cw > 0) setMeasuredW(cw);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const width = Math.max(320, Math.round(measuredW));
   const padTop = 20;
   const padBottom = 26;
   const padLeft = 52;
@@ -48,7 +63,8 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
   const clampLabelY = (y) => Math.min(Math.max(y, padTop + 10), height - padBottom - 4);
 
   return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg" width="100%" height={height}>
+    <div ref={wrapRef} className="line-chart-wrap">
+    <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg" width="100%" height={height} preserveAspectRatio="none">
       {gridLines.map((v, i) => {
         const label = formatValue(v);
         const isDuplicate = i > 0 && label === formatValue(gridLines[i - 1]);
@@ -70,15 +86,32 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
         <circle key={`f-${i}`} cx={xAt(forecastStartIdx + 1 + i)} cy={yAt(f.y)} r="2.8" fill="var(--color-surface)" stroke={color} strokeWidth="2" />
       ))}
 
-      {lastHistory && (
-        <text x={xAt(history.length - 1)} y={clampLabelY(yAt(lastHistory.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
-          {formatValue(lastHistory.y)}
-        </text>
-      )}
-      {lastForecast && (
-        <text x={xAt(n - 1)} y={clampLabelY(yAt(lastForecast.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
-          {formatValue(lastForecast.y)}
-        </text>
+      {showAllLabels ? (
+        <>
+          {history.map((h, i) => (
+            <text key={`vh-${i}`} x={xAt(i)} y={clampLabelY(yAt(h.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+              {formatValue(h.y)}
+            </text>
+          ))}
+          {forecast.map((f, i) => (
+            <text key={`vf-${i}`} x={xAt(forecastStartIdx + 1 + i)} y={clampLabelY(yAt(f.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+              {formatValue(f.y)}
+            </text>
+          ))}
+        </>
+      ) : (
+        <>
+          {lastHistory && (
+            <text x={xAt(history.length - 1)} y={clampLabelY(yAt(lastHistory.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+              {formatValue(lastHistory.y)}
+            </text>
+          )}
+          {lastForecast && (
+            <text x={xAt(n - 1)} y={clampLabelY(yAt(lastForecast.y) - 10)} textAnchor="middle" className="line-chart-value-label" fill={color}>
+              {formatValue(lastForecast.y)}
+            </text>
+          )}
+        </>
       )}
 
       {allPoints.map((p, i) => (
@@ -86,5 +119,6 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
       ))}
       <rect x={xAt(forecastStartIdx)} y={padTop} width={plotW - forecastStartIdx * stepX} height={plotH} fill="var(--color-surface-subtle)" opacity="0.35" />
     </svg>
+    </div>
   );
 }

@@ -52,7 +52,7 @@ export default function Workforce() {
 
       <div style={{ marginBottom: 16 }}>
         <SectionCard title={tx('Evolução de headcount')} subtitle={tx('Últimos 12 meses')}>
-          <LineChart history={history} formatValue={(v) => formatNumber(v, 0)} />
+          <LineChart history={history} formatValue={(v) => formatNumber(v, 0)} showAllLabels />
         </SectionCard>
       </div>
       <div style={{ marginBottom: 16 }}>
