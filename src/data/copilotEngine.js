@@ -24,6 +24,45 @@ function has(text, ...keywords) {
   return keywords.some((k) => text.includes(k));
 }
 
+// Mapa tema → página de indicadores. Ordenado do mais específico para o mais genérico
+// (o primeiro match vence). Usado para oferecer um botão "ir para a página" na resposta.
+const PAGE_MAP = [
+  { kws: ['posicionamento', 'compa', 'faixa salarial'], to: '/posicionamento', label: 'Posicionamento Salarial' },
+  { kws: ['pcd', 'deficien', 'cota de pcd'], to: '/pcd', label: 'PCD' },
+  { kws: ['aprendiz'], to: '/aprendizes', label: 'Jovem Aprendiz' },
+  { kws: ['disciplinar', 'advertenc', 'suspensao', 'justa causa'], to: '/disciplinar', label: 'Medidas Disciplinares' },
+  { kws: ['chamado', 'ticket', 'atendimento de rh'], to: '/chamados', label: 'Chamados de RH' },
+  { kws: ['trabalhista', 'reclamat', 'processo'], to: '/trabalhista', label: 'Trabalhista' },
+  { kws: ['aso', 'exame ocupacional'], to: '/aso', label: 'ASO' },
+  { kws: [' epi', 'equipamento de prot'], to: '/epi', label: 'EPI' },
+  { kws: ['nr-', ' nrs', 'norma regulament'], to: '/nrs', label: 'NRs' },
+  { kws: ['atestado', 'cid', 'afastamento', 'saude mental', 'licenca medica'], to: '/atestados', label: 'Atestados' },
+  { kws: ['seguranca', 'acidente', 'paralisac', 'inspec', 'sst'], to: '/seguranca', label: 'Segurança do Trabalho' },
+  { kws: ['produtividade', 'linha de montagem', 'gargalo', 'takt', 'oee', 'estacao', 'chao de fabrica', 'veiculos/dia'], to: '/produtividade', label: 'Produtividade da Linha' },
+  { kws: ['risco de saida', 'preditivo', 'attrition', 'previsao de saida'], to: '/predictions', label: 'Preditivo de Saída' },
+  { kws: ['turnover', 'rotativ', 'deslig'], to: '/turnover', label: 'Turnover' },
+  { kws: ['absent', 'falta'], to: '/absenteeism', label: 'Absenteísmo' },
+  { kws: ['hora extra', 'horas extras', 'banco de horas'], to: '/overtime', label: 'Horas Extras' },
+  { kws: ['recrutamento', 'contratac', 'admiss', 'funil'], to: '/recruitment', label: 'Recrutamento' },
+  { kws: ['diversidade', 'genero', 'raca', 'mulheres'], to: '/diversity', label: 'Diversidade' },
+  { kws: ['treinamento', 'capacita'], to: '/training', label: 'Treinamentos' },
+  { kws: ['desempenho', 'nine box', 'nine-box', 'potencial', 'talento'], to: '/performance', label: 'Desempenho' },
+  { kws: ['orcamento', 'custo de pessoal', 'custo de pessoas', 'folha de pagamento'], to: '/orcamento', label: 'Orçamento' },
+  { kws: ['organograma'], to: '/organograma', label: 'Organograma' },
+  { kws: ['visao do gestor', 'por gestor', 'time do gestor'], to: '/gestor', label: 'Visão do Gestor' },
+  { kws: ['relatorio', 'exportar em excel', 'baixar em excel'], to: '/reports', label: 'Relatórios' },
+  { kws: ['headcount', 'quadro', 'forca de trabalho', 'workforce', 'cargo'], to: '/workforce', label: 'Workforce' },
+];
+
+// Descobre a página de indicadores relacionada à pergunta (ou null). Recebe a pergunta crua.
+export function pageForQuestion(question) {
+  const q = normalize(question);
+  for (const p of PAGE_MAP) {
+    if (p.kws.some((k) => q.includes(k))) return { to: p.to, label: p.label };
+  }
+  return null;
+}
+
 // Detecta intenção de listar/tabular (com opção de baixar) — inclusive quando o usuário não usa
 // a palavra "tabela" (ex.: "funcionários com maior banco de horas", "ranking de...", "top ...").
 function wantsTable(q) {

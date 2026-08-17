@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import { useBudget } from '../context/BudgetContext.jsx';
 import ChatMessage from '../components/copilot/ChatMessage.jsx';
-import { answerQuestion, SUGGESTED_PROMPTS } from '../data/copilotEngine.js';
+import { answerQuestion, SUGGESTED_PROMPTS, pageForQuestion } from '../data/copilotEngine.js';
 import { buildCopilotContext } from '../data/copilotContext.js';
 import { askGemini } from '../data/geminiClient.js';
 import { useLang } from '../i18n/LanguageContext.jsx';
@@ -61,6 +61,12 @@ export default function Copilot() {
       } catch {
         // Gemini não configurado ou falhou — a resposta local (incl. fallback com botões) permanece.
       }
+    }
+
+    // Se o tema tem uma página de indicadores, anexa um botão para ir até ela (exceto em card de pessoa).
+    if (!localAnswer.employeeCard) {
+      const pageLink = pageForQuestion(q);
+      if (pageLink) answer = { ...answer, pageLink };
     }
 
     setMessages((m) => [...m, { role: 'assistant', content: answer }]);

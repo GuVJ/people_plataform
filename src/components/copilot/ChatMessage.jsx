@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import MiniMarkdown from './MiniMarkdown.jsx';
 import BarChart from '../ui/BarChart.jsx';
 import Table from '../ui/Table.jsx';
@@ -9,7 +10,7 @@ import { useLang } from '../../i18n/LanguageContext.jsx';
 import './ChatMessage.css';
 
 export default function ChatMessage({ message, onQuickReply }) {
-  const { tx } = useLang();
+  const { tx, tNav } = useLang();
   const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
 
@@ -28,7 +29,7 @@ export default function ChatMessage({ message, onQuickReply }) {
     );
   }
 
-  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard, initial, quickReplies } = message.content;
+  const { text, chart, table, execSummary, recommendations, financialImpact, source, employeeCard, initial, quickReplies, pageLink } = message.content;
 
   return (
     <div className="chat-row chat-row-assistant fade-in">
@@ -95,6 +96,13 @@ export default function ChatMessage({ message, onQuickReply }) {
               {recommendations.map((r, i) => <li key={i}>{r}</li>)}
             </ul>
           </div>
+        )}
+
+        {pageLink && (
+          <Link to={pageLink.to} className="chat-page-link">
+            <span aria-hidden="true">📊 </span>{tx('Ir para')} {tNav(pageLink.to, pageLink.label)}
+            <span aria-hidden="true"> →</span>
+          </Link>
         )}
 
         {!initial && (
