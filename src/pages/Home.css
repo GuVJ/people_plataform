@@ -20,3 +20,9 @@
   color: var(--color-text-secondary);
   line-height: 1.4;
 }
+
+/* +8px de respiro no topo e na base do card do resumo executivo (28px em vez de 20px). */
+.section-card.exec-summary-card {
+  padding-top: 28px;
+  padding-bottom: 28px;
+}

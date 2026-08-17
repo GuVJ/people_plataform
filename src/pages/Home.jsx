@@ -40,7 +40,7 @@ export default function Home() {
         </div>
       </div>
 
-      <SectionCard title={t('home.execSummary')}>
+      <SectionCard title={t('home.execSummary')} className="exec-summary-card">
         <ExecutiveSummaryTable rows={summaryRows} />
       </SectionCard>
 
