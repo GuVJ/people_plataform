@@ -17,6 +17,79 @@
   font-weight: 600;
 }
 
+/* ===== Info tooltip (ⓘ ao lado do título) ===== */
+.info-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  margin-left: 6px;
+  border-radius: 50%;
+  border: 1.3px solid var(--color-text-tertiary);
+  color: var(--color-text-tertiary);
+  font-size: 9.5px;
+  font-weight: 700;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  transform: translateY(-1px);
+  transition: color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+}
+.info-tip:hover,
+.info-tip:focus {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.info-tip-bubble {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: 250px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: inherit;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-align: left;
+  white-space: normal;
+  box-shadow: var(--shadow-popover, 0 8px 24px -8px rgba(0, 0, 0, 0.35));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 60;
+  transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+}
+/* seta apontando para o ícone */
+.info-tip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-text);
+}
+.info-tip:hover .info-tip-bubble,
+.info-tip:focus .info-tip-bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
 .section-card-subtitle {
   font-size: 12px;
   color: var(--color-text-secondary);

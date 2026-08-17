@@ -48,38 +48,38 @@ export default function Production() {
 
       {/* KPIs principais */}
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-        <SectionCard title={tx('OEE da linha')}>
+        <SectionCard title={tx('OEE da linha')} info="OEE = Disponibilidade × Performance × Qualidade. Mede quanto da capacidade teórica da linha vira veículo bom de verdade. Referência de classe mundial: ~85%.">
           <div className={`stat-big ${oeeBand}-text`}>{oeePct}%</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('Disp.')} {Math.round(prod.availability * 100)}% × {tx('Perf.')} {Math.round(prod.performance * 100)}% × {tx('Qual.')} {Math.round(prod.quality * 100)}%</p>
         </SectionCard>
-        <SectionCard title={tx('Produção projetada')}>
+        <SectionCard title={tx('Produção projetada')} info="Quantos veículos por dia a linha entrega no ritmo atual — limitada pela estação mais lenta (gargalo) — comparada com a meta diária.">
           <div className="stat-big">{formatNumber(prod.carsDay)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('veículos/dia')} · {tx('meta')} {formatNumber(prod.demandPerDay)} ({prod.carsDay >= prod.demandPerDay ? tx('✓ no alvo') : `${formatNumber(prod.demandPerDay - prod.carsDay)} ${tx('abaixo')}`})</p>
         </SectionCard>
-        <SectionCard title={tx('Cadência real (gargalo)')}>
+        <SectionCard title={tx('Cadência real (gargalo)')} info="Tempo que a linha leva para produzir um veículo, ditado pela estação mais lenta. Se for maior que o takt, a linha não acompanha a demanda.">
           <div className="stat-big">{formatNumber(prod.lineCycle, 0)}s</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('por veículo')} · takt {prod.takt}s → {prod.lineCycle > prod.takt ? tx('acima do takt') : tx('dentro do takt')}</p>
         </SectionCard>
-        <SectionCard title={tx('Estação gargalo')}>
+        <SectionCard title={tx('Estação gargalo')} info="A estação com menor capacidade: ela limita o ritmo de toda a linha (teoria das restrições).">
           <div className="stat-big" style={{ fontSize: 22 }}>{prod.bottleneck.icon} {tx(prod.bottleneck.name)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('capacidade')} {formatNumber(prod.bottleneck.capacity, 1)} {tx('veíc/h')} — {tx('limita a linha')}</p>
         </SectionCard>
       </div>
 
       <div className="grid grid-cols-4" style={{ marginBottom: 16 }}>
-        <SectionCard title={tx('Pessoas na linha')}>
+        <SectionCard title={tx('Pessoas na linha')} info="Total de operadores alocados nas estações da linha de montagem.">
           <div className="stat-big">{formatNumber(prod.totalAssigned)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('operadores alocados nas 7 estações')}</p>
         </SectionCard>
-        <SectionCard title={tx('Ativas hoje')}>
+        <SectionCard title={tx('Ativas hoje')} info="Operadores presentes hoje na produção, já descontadas as faltas.">
           <div className="stat-big prod-green-text">{formatNumber(prod.totalPresent)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('presentes na produção')}</p>
         </SectionCard>
-        <SectionCard title={tx('Faltas hoje')}>
+        <SectionCard title={tx('Faltas hoje')} info="Operadores ausentes hoje e o percentual da tripulação total que isso representa.">
           <div className="stat-big prod-red-text">{formatNumber(prod.totalAbsent)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{formatPercent(prod.absenceRate * 100)} {tx('da tripulação')}</p>
         </SectionCard>
-        <SectionCard title="Takt time">
+        <SectionCard title="Takt time" info="Ritmo exigido pela demanda: tempo disponível ÷ veículos a produzir. Cada veículo deve sair a cada X segundos para atender ao pedido do dia.">
           <div className="stat-big">{prod.takt}s</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('ritmo exigido pela demanda')}</p>
         </SectionCard>
