@@ -33,9 +33,9 @@ const PAGE_MAP = [
   { kws: ['disciplinar', 'advertenc', 'suspensao', 'justa causa'], to: '/disciplinar', label: 'Medidas Disciplinares' },
   { kws: ['chamado', 'ticket', 'atendimento de rh'], to: '/chamados', label: 'Chamados de RH' },
   { kws: ['trabalhista', 'reclamat', 'processo'], to: '/trabalhista', label: 'Trabalhista' },
-  { kws: ['aso', 'exame ocupacional'], to: '/aso', label: 'ASO' },
-  { kws: [' epi', 'equipamento de prot'], to: '/epi', label: 'EPI' },
-  { kws: ['nr-', ' nrs', 'norma regulament'], to: '/nrs', label: 'NRs' },
+  { kws: [/\basos?\b/, 'exame ocupacional'], to: '/aso', label: 'ASO' },
+  { kws: [/\bepis?\b/, 'equipamento de prot'], to: '/epi', label: 'EPI' },
+  { kws: [/\bnrs?\b/, /\bnr-?\d/, 'norma regulament'], to: '/nrs', label: 'NRs' },
   { kws: ['atestado', 'cid', 'afastamento', 'saude mental', 'licenca medica'], to: '/atestados', label: 'Atestados' },
   { kws: ['seguranca', 'acidente', 'paralisac', 'inspec', 'sst'], to: '/seguranca', label: 'Segurança do Trabalho' },
   { kws: ['produtividade', 'linha de montagem', 'gargalo', 'takt', 'oee', 'estacao', 'chao de fabrica', 'veiculos/dia'], to: '/produtividade', label: 'Produtividade da Linha' },
@@ -58,7 +58,10 @@ const PAGE_MAP = [
 export function pageForQuestion(question) {
   const q = normalize(question);
   for (const p of PAGE_MAP) {
-    if (p.kws.some((k) => q.includes(k))) return { to: p.to, label: p.label };
+    // kws pode ser string (substring) ou RegExp (para termos curtos como "epi", "aso", "nr").
+    if (p.kws.some((k) => (k instanceof RegExp ? k.test(q) : q.includes(k)))) {
+      return { to: p.to, label: p.label };
+    }
   }
   return null;
 }
