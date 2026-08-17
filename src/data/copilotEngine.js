@@ -389,6 +389,54 @@ export function answerQuestion(question, ctx) {
 
   const mentionedEmployee = findEmployeeMention(q, metrics.activeNow);
   if (mentionedEmployee) {
+    // "lista/time/equipe do FULANO" → tabela dos reportes diretos, em vez do card da pessoa.
+    const wantsTeam = has(q, 'lista', 'time', 'equipe', 'subordinad', 'reportes', 'reporta', 'liderados', 'quem trabalha', 'funcionarios do', 'funcionarios da', 'colaboradores do', 'colaboradores da', 'pessoas do', 'pessoas da');
+    if (wantsTeam) {
+      const team = metrics.activeNow.filter((e) => e.managerId === mentionedEmployee.id && e.id !== mentionedEmployee.id);
+      if (team.length > 0) {
+        const riskById = new Map(risk.map((r) => [r.id, r]));
+        const rows = team
+          .map((e) => ({ id: e.id, name: e.name, roleLevel: e.roleLevel, area: e.area, unit: e.unit, perf: e.performanceBucket, eng: e.engagementScore, risk: riskById.get(e.id)?.level ?? '—' }))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        return {
+          text: pick(
+            `Time de **${mentionedEmployee.name}** (${mentionedEmployee.roleLevel} · ${mentionedEmployee.area}) — **${team.length}** ${team.length === 1 ? 'reporte direto' : 'reportes diretos'}. Clique no nome para abrir a ficha.`,
+            `**${mentionedEmployee.name}**'s team (${mentionedEmployee.roleLevel} · ${mentionedEmployee.area}) — **${team.length}** direct report${team.length === 1 ? '' : 's'}. Click a name to open the profile.`,
+          ),
+          table: {
+            title: pick(`Time de ${mentionedEmployee.name}`, `${mentionedEmployee.name}'s team`),
+            columns: [
+              { key: 'name', label: txt('Nome'), href: (r) => `/funcionario/${r.id}` },
+              { key: 'roleLevel', label: txt('Cargo'), render: (r) => txt(r.roleLevel) },
+              { key: 'area', label: txt('Diretoria'), render: (r) => txt(r.area) },
+              { key: 'unit', label: txt('Unidade') },
+              { key: 'perf', label: txt('Desempenho'), render: (r) => txt(r.perf) },
+              { key: 'eng', label: txt('Engajamento'), align: 'right', render: (r) => `${formatNumber(r.eng)}%` },
+              { key: 'risk', label: txt('Risco'), render: (r) => txt(r.risk) },
+            ],
+            rows,
+            exportRows: rows.map((r) => ({ Nome: r.name, Cargo: r.roleLevel, Diretoria: r.area, Unidade: r.unit, Desempenho: r.perf, 'Engajamento (%)': r.eng, Risco: r.risk })),
+            filename: `time_${mentionedEmployee.name.split(' ')[0].toLowerCase()}`, sheetName: 'Time',
+          },
+        };
+      }
+      // Pessoa sem reportes diretos — cai no card com uma nota.
+      const riskEntry0 = risk.find((r) => r.id === mentionedEmployee.id);
+      return {
+        text: pick(
+          `**${mentionedEmployee.name}** não tem reportes diretos no quadro atual. Aqui está o resumo:`,
+          `**${mentionedEmployee.name}** has no direct reports in the current headcount. Here is the summary:`,
+        ),
+        employeeCard: {
+          id: mentionedEmployee.id, name: mentionedEmployee.name, roleLevel: mentionedEmployee.roleLevel,
+          area: mentionedEmployee.area, managerName: mentionedEmployee.managerName,
+          tenureYears: diffInYears(mentionedEmployee.admissionDate, metrics.referenceDate),
+          performanceBucket: mentionedEmployee.performanceBucket, potential: mentionedEmployee.potential,
+          engagementScore: mentionedEmployee.engagementScore,
+          risk: riskEntry0 ? { score: riskEntry0.score, level: riskEntry0.level } : null,
+        },
+      };
+    }
     const riskEntry = risk.find((r) => r.id === mentionedEmployee.id);
     return {
       text: pick(
