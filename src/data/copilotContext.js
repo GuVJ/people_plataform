@@ -186,16 +186,23 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety, 
       turnoverMensal: formatPercent(metrics.benchmark.turnoverMonthly),
       absenteismo: formatPercent(metrics.benchmark.absenteeismRate),
     },
-    // Metas de orçamento do ano (use para comparar "realizado vs. meta"). targets é
-    // aninhado por ano — o ano corrente é 2026.
-    metasOrcamento: targets?.[2026] ? {
-      headcountMeta: formatNumber(targets[2026].headcountTarget),
-      turnoverMetaAnualPct: formatPercent(targets[2026].turnoverTarget),
-      turnoverMetaMensalPct: formatPercent(targets[2026].turnoverTarget / 12),
-      custoPessoasMetaAnual: formatCurrency(targets[2026].peopleCostTarget, { compact: true }),
-      custoPessoasMetaMensal: formatCurrency(targets[2026].peopleCostTarget / 12, { compact: true }),
-      custoHorasExtrasMetaAnual: formatCurrency(targets[2026].overtimeCostTarget, { compact: true }),
-      custoHorasExtrasMetaMensal: formatCurrency(targets[2026].overtimeCostTarget / 12, { compact: true }),
-    } : undefined,
+    // Orçamento: realizado vs. meta para cada item orçado (targets é aninhado por ano; 2026 é o corrente).
+    // Use este bloco para "orçamento", "realizado vs meta", "estamos dentro da meta?".
+    orcamento: (() => {
+      const t = targets?.[2026];
+      if (!t) return undefined;
+      const headcount = metrics.activeNow.length;
+      const payrollLast = last(metrics.payrollSeries)?.total ?? 0;
+      const ot12 = metrics.overtimeSeries.slice(-12).reduce((s, o) => s + o.cost, 0);
+      const turnMonth = last(metrics.turnoverSeries)?.totalRate ?? 0;
+      const st = (real, meta, lowerIsBetter = true) => (lowerIsBetter ? (real <= meta ? 'dentro da meta' : 'acima da meta') : (real >= meta ? 'dentro da meta' : 'abaixo da meta'));
+      return {
+        headcount: { realizado: headcount, meta: t.headcountTarget, status: headcount <= t.headcountTarget ? 'dentro da meta' : 'acima da meta' },
+        turnoverMensal: { realizado: formatPercent(turnMonth), meta: formatPercent(t.turnoverTarget / 12), status: st(turnMonth, t.turnoverTarget / 12) },
+        custoPessoalMensal: { realizado: formatCurrency(payrollLast, { compact: true }), meta: formatCurrency(t.peopleCostTarget / 12, { compact: true }), status: st(payrollLast, t.peopleCostTarget / 12) },
+        custoPessoalMetaAnual: formatCurrency(t.peopleCostTarget, { compact: true }),
+        custoHorasExtras12m: { realizado: formatCurrency(ot12, { compact: true }), meta: formatCurrency(t.overtimeCostTarget, { compact: true }), status: st(ot12, t.overtimeCostTarget) },
+      };
+    })(),
   };
 }
