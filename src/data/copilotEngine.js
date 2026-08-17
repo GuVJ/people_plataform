@@ -670,6 +670,9 @@ export function answerQuestion(question, ctx) {
   }
 
   return {
+    // fallback: nenhum branch local reconheceu o tema. Marcado para o Copilot tentar o
+    // Gemini (que tem o contexto completo) antes de mostrar estes botões de esclarecimento.
+    fallback: true,
     text: pick(
       'Não tenho certeza do que você quis dizer. Escolha um tema abaixo ou reformule a pergunta:',
       'I am not sure what you meant. Pick a topic below or rephrase your question:',

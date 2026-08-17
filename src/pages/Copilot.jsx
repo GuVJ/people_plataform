@@ -41,15 +41,25 @@ export default function Copilot() {
     const localAnswer = answerQuestion(q, { metrics, forecasts, insights, risk, targets, medical, safety, hr, production });
     let answer = { ...localAnswer, source: 'local' };
 
-    // Cards, tabelas e esclarecimentos com botões são determinísticos — pulamos o Gemini para o
-    // dado aparecer na hora e o texto não contradizer (ex.: "não tenho acesso à lista").
-    if (!localAnswer.employeeCard && !localAnswer.table && !localAnswer.quickReplies) {
+    // Cards, tabelas e esclarecimentos GENUÍNOS (ambiguidade) são determinísticos — pulamos o
+    // Gemini para o dado aparecer na hora e o texto não contradizer. Mas o fallback "não entendi"
+    // (fallback:true) NÃO é uma resposta: mandamos a pergunta para o Gemini, que tem o contexto
+    // completo de todos os indicadores; só se ele falhar mostramos os botões de esclarecimento.
+    const genuineClarify = localAnswer.quickReplies && !localAnswer.fallback;
+    const skipGemini = localAnswer.employeeCard || localAnswer.table || genuineClarify;
+    if (!skipGemini) {
       try {
-        const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production });
+        const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr });
         const geminiText = await askGemini(q, context);
-        answer = { ...localAnswer, text: geminiText, source: 'gemini' };
+        // Só usa a resposta do Gemini se vier texto de verdade (evita substituir por vazio/undefined).
+        if (geminiText && typeof geminiText === 'string' && geminiText.trim()) {
+          // No fallback, a resposta do Gemini substitui os botões; nos demais, preserva gráfico/recomendações.
+          answer = localAnswer.fallback
+            ? { text: geminiText, source: 'gemini' }
+            : { ...localAnswer, text: geminiText, source: 'gemini' };
+        }
       } catch {
-        // Gemini not configured yet or request failed — the grounded local answer above still stands.
+        // Gemini não configurado ou falhou — a resposta local (incl. fallback com botões) permanece.
       }
     }
 

@@ -11,7 +11,7 @@ function formatKpi(k) {
 // Builds a small, JSON-safe snapshot of the current dataset — grounding data for the
 // Gemini prompt. Deliberately compact: never send the full employee list (thousands of
 // records) to the model, only pre-aggregated numbers it can quote back accurately.
-export function buildCopilotContext({ metrics, insights, risk, medical, safety, production }) {
+export function buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr }) {
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
 
@@ -110,6 +110,62 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety, 
       conclusaoMedia: formatPercent(metrics.training.completionPct),
       roiPorReal: formatNumber(metrics.training.roiRatio, 2),
     },
+    // Indicadores de RH operacional / compliance (Lei de Cotas, trabalhista, SST).
+    cotaPcd: hr?.pcd ? {
+      pcdAtual: hr.pcd.kpis.current,
+      exigidoPorLei: hr.pcd.kpis.required,
+      cotaLegalPct: formatPercent(hr.pcd.kpis.quotaPct),
+      cumprimentoDaCotaPct: formatPercent(hr.pcd.kpis.cumprimento),
+      gapParaCota: hr.pcd.kpis.gap,
+      pctDoQuadro: formatPercent(hr.pcd.kpis.currentPct),
+    } : undefined,
+    jovemAprendiz: hr?.apprentices ? {
+      aprendizesAtual: hr.apprentices.kpis.current,
+      exigidoPorLei: hr.apprentices.kpis.required,
+      gapParaCota: hr.apprentices.kpis.gap,
+      cumprimentoDaCotaPct: formatPercent(hr.apprentices.kpis.cumprimento),
+    } : undefined,
+    posicionamentoSalarial: hr?.positioning ? {
+      compaRatioMedio: formatNumber(hr.positioning.kpis.compaMedio, 2),
+      pctAbaixoDoPiso: formatPercent(hr.positioning.kpis.pctAbaixo),
+      pctDentroDaFaixa: formatPercent(hr.positioning.kpis.pctDentro),
+      pctAcimaDoTeto: formatPercent(hr.positioning.kpis.pctAcima),
+    } : undefined,
+    disciplinar: hr?.disciplinary ? {
+      ocorrencias12m: hr.disciplinary.kpis.total12,
+      suspensoes: hr.disciplinary.kpis.suspensoes,
+      justaCausa: hr.disciplinary.kpis.justaCausa,
+      principalMotivo: hr.disciplinary.byReason?.[0]?.reason,
+    } : undefined,
+    chamadosRh: hr?.tickets ? {
+      abertosMes: hr.tickets.kpis.abertosMes,
+      resolvidosMes: hr.tickets.kpis.resolvidosMes,
+      backlog: hr.tickets.kpis.backlog,
+      slaPct: formatPercent(hr.tickets.kpis.sla),
+    } : undefined,
+    trabalhista: hr?.labor ? {
+      processosAtivos: hr.labor.kpis.ativos,
+      provisao: formatCurrency(hr.labor.kpis.provisao, { compact: true }),
+      ticketMedio: formatCurrency(hr.labor.kpis.ticket, { compact: true }),
+      principalMotivo: hr.labor.byReason?.[0]?.reason,
+    } : undefined,
+    saudeOcupacionalASO: hr?.aso ? {
+      asosMes: hr.aso.kpis.asosMes,
+      emDiaPct: formatPercent(hr.aso.kpis.emDia),
+      vencidos: hr.aso.kpis.vencidos,
+      inaptos: hr.aso.kpis.inaptos,
+    } : undefined,
+    treinamentoNrs: hr?.nrs ? {
+      coberturaMediaPct: formatPercent(hr.nrs.kpis.coberturaMedia),
+      vencidos: hr.nrs.kpis.vencidos,
+      menorCobertura: [...(hr.nrs.cobertura ?? [])].sort((a, b) => a.value - b.value)[0]?.label,
+    } : undefined,
+    epi: hr?.epi ? {
+      entregasMes: hr.epi.kpis.entregasMes,
+      custoMes: formatCurrency(hr.epi.kpis.custoMes, { compact: true }),
+      conformidadeUsoPct: formatPercent(hr.epi.kpis.conformidade),
+      rupturasEstoque: hr.epi.kpis.rupturas,
+    } : undefined,
     recrutamento: {
       tempoMedioContratacaoDias: formatNumber(metrics.recruitment.avgTimeToHireDaysCurrent, 0),
       slaPct: formatPercent(metrics.recruitment.slaPct),
