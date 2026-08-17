@@ -371,8 +371,11 @@ function findEmployeeMention(q, activeNow) {
   let best = null;
   let bestScore = 0;
   for (const e of activeNow) {
-    const nameTokens = normalize(e.name).split(/\s+/).filter((t) => t.length > 2);
-    const matches = nameTokens.filter((t) => qTokens.has(t)).length;
+    // Set (tokens distintos) para não pontuar sobrenome repetido (ex.: "Almeida Almeida"
+    // não deve casar 2 com uma pergunta que cita "Almeida" uma vez).
+    const nameTokens = new Set(normalize(e.name).split(/\s+/).filter((t) => t.length > 2));
+    let matches = 0;
+    for (const t of nameTokens) if (qTokens.has(t)) matches += 1;
     if (matches >= 2 && matches > bestScore) {
       bestScore = matches;
       best = e;

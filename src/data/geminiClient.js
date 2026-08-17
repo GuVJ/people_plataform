@@ -1,3 +1,5 @@
+import { recordUsage } from './geminiUsage.js';
+
 // Talks to the /api/chat serverless function (never calls Gemini directly from the browser).
 // `history` é o histórico da conversa ([{role:'user'|'model', text}]) para dar memória ao chat.
 export async function askGemini(message, context, history = []) {
@@ -11,5 +13,6 @@ export async function askGemini(message, context, history = []) {
   if (!response.ok) {
     throw new Error(data.error || `Erro ${response.status}`);
   }
+  if (data.usage) recordUsage(data.usage);
   return data.text;
 }

@@ -47,6 +47,7 @@ import Nrs from './pages/Nrs.jsx';
 import Aso from './pages/Aso.jsx';
 import Locked from './pages/Locked.jsx';
 import Analytics from './pages/Analytics.jsx';
+import GeminiUsage from './pages/GeminiUsage.jsx';
 
 function App() {
   return (
@@ -99,6 +100,8 @@ function App() {
                   <Route path="/configuracoes/ia" element={<RulesAI />} />
                   {/* Rota interna (sem link no menu) — métricas de acesso do Google Analytics. */}
                   <Route path="/analytics-interno" element={<Analytics />} />
+                  {/* Rota interna (sem link no menu) — consumo do Gemini (tokens e custo). */}
+                  <Route path="/consumo-gemini" element={<GeminiUsage />} />
                   <Route path="/gatilhos" element={<Locked title="Gatilhos & Alertas" note="O envio de alertas e o Resumo Executivo por e-mail estão travados por enquanto e voltam em breve." />} />
                 </Route>
               </Routes>

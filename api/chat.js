@@ -83,7 +83,14 @@ ${JSON.stringify(context ?? {}, null, 2)}`;
       return;
     }
 
-    res.status(200).json({ text });
+    const um = data?.usageMetadata;
+    const usage = um ? {
+      promptTokens: um.promptTokenCount ?? 0,
+      outputTokens: um.candidatesTokenCount ?? 0,
+      totalTokens: um.totalTokenCount ?? ((um.promptTokenCount ?? 0) + (um.candidatesTokenCount ?? 0)),
+    } : null;
+
+    res.status(200).json({ text, usage });
   } catch (err) {
     res.status(500).json({ error: `Falha ao chamar a Gemini: ${err.message}` });
   }
