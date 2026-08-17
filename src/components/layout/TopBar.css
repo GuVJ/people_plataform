@@ -310,19 +310,17 @@
   color: var(--color-text-tertiary);
 }
 
-/* Faixa de laptop (1241–1440px): esconde o wordmark da marca para o nav em PT caber
-   inteiro numa linha só, sem cortar "Funcionários". O ícone da marca permanece. */
-@media (min-width: 1241px) and (max-width: 1440px) {
+/* O conteúdo da top bar é limitado por --content-max-width (para alinhar com a página),
+   então em PT (labels longos) o wordmark + o nav completo não cabem em uma linha.
+   Solução: quando o nav horizontal aparece (>=1241px), esconde o wordmark da marca
+   (o ícone permanece) para os 12 botões caberem sem cortar. Abaixo de 1240px o nav
+   colapsa no menu hambúrguer — aí sobra espaço e o wordmark volta a aparecer. */
+@media (min-width: 1241px) {
   .topbar-brand-text { display: none; }
+  .topbar-mobile-menu { display: none; }
 }
 
-/* Abaixo de 1240px o nav não cabe mesmo sem o wordmark — colapsa no menu hambúrguer
-   (aí sobra espaço, então o wordmark volta a aparecer). */
 @media (max-width: 1240px) {
   .topbar-nav { display: none; }
   .topbar-mobile-toggle { display: flex; }
-}
-
-@media (min-width: 1241px) {
-  .topbar-mobile-menu { display: none; }
 }
