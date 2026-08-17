@@ -43,6 +43,27 @@
   background: var(--color-surface-subtle);
 }
 
+/* Linhas que levam ao dashboard do indicador ao clicar. */
+.exec-table tbody tr.exec-row-link {
+  cursor: pointer;
+}
+.exec-table tbody tr.exec-row-link:hover .exec-label {
+  color: var(--color-primary);
+}
+/* seta discreta indicando que a linha abre uma página */
+.exec-table tbody tr.exec-row-link .exec-label::after {
+  content: '›';
+  margin-left: 6px;
+  color: var(--color-text-tertiary);
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.exec-table tbody tr.exec-row-link:hover .exec-label::after {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
 .exec-label {
   font-weight: 500;
   color: var(--color-text);

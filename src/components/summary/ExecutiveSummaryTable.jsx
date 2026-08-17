@@ -1,9 +1,24 @@
+import { useNavigate } from 'react-router-dom';
 import { formatByType } from '../ui/formatValue.js';
 import { formatNumber } from '../../utils/format.js';
 import { useLang } from '../../i18n/LanguageContext.jsx';
 import './ExecutiveSummaryTable.css';
 
 const ARROW = { up: '↑', down: '↓', flat: '=' };
+
+// Cada indicador do resumo leva ao dashboard correspondente ao clicar na linha.
+const ROUTE_BY_KEY = {
+  headcount: '/workforce',
+  admissoes: '/recruitment',
+  desligamentos: '/turnover',
+  turnover: '/turnover',
+  absenteismo: '/absenteeism',
+  horasExtras: '/overtime',
+  custoPessoal: '/orcamento',
+  diversidade: '/diversity',
+  tempoContratacao: '/recruitment',
+  tempoEmpresa: '/workforce',
+};
 
 function deltaLabel({ delta, isPP }, lang) {
   const mag = Math.abs(delta);
@@ -43,6 +58,7 @@ function MetaBar({ target, format, lang, t }) {
 
 export default function ExecutiveSummaryTable({ rows }) {
   const { lang, t, tIndicator } = useLang();
+  const navigate = useNavigate();
   return (
     <div className="exec-table-wrap">
       <table className="exec-table">
@@ -57,8 +73,15 @@ export default function ExecutiveSummaryTable({ rows }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.key}>
+          {rows.map((row) => {
+            const route = ROUTE_BY_KEY[row.key];
+            return (
+            <tr
+              key={row.key}
+              className={route ? 'exec-row-link' : undefined}
+              onClick={route ? () => navigate(route) : undefined}
+              title={route ? (lang === 'en' ? 'Open dashboard' : 'Abrir dashboard') : undefined}
+            >
               <td className="exec-label">{tIndicator(row.key, row.label)}</td>
               <td className="num exec-prev">{row.previous !== null ? formatByType(row.previous, row.format, lang) : '—'}</td>
               <td className="num exec-current">{formatByType(row.current, row.format, lang)}</td>
@@ -79,7 +102,8 @@ export default function ExecutiveSummaryTable({ rows }) {
                 {row.target ? <MetaBar target={row.target} format={row.format} lang={lang} t={t} /> : <span className="exec-no-meta">—</span>}
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
