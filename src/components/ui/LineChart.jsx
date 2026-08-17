@@ -1,24 +1,29 @@
 import './charts.css';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useLayoutEffect } from 'react';
 import { useLang } from '../../i18n/LanguageContext.jsx';
 
 export default function LineChart({ history, forecast = [], color = 'var(--color-primary)', height = 220, formatValue = (v) => `${Math.round(v)}`, showAllLabels = false }) {
   const { tx } = useLang();
-  // Mede a largura real do container para o gráfico esticar e preencher todo o espaço
-  // (o card virou full-width; um width fixo deixava o gráfico centralizado e estreito).
+  // Mede a largura real do container (síncrono, antes do paint) para o gráfico esticar e
+  // preencher todo o espaço — o viewBox usa a largura em px, então fica 1:1 (sem distorção).
   const wrapRef = useRef(null);
-  const [measuredW, setMeasuredW] = useState(640);
-  useEffect(() => {
+  const [measuredW, setMeasuredW] = useState(0);
+  useLayoutEffect(() => {
     const el = wrapRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return undefined;
-    const ro = new ResizeObserver((entries) => {
-      const cw = entries[0]?.contentRect?.width;
-      if (cw && cw > 0) setMeasuredW(cw);
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
+    if (!el) return undefined;
+    const measure = () => {
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) setMeasuredW(w);
+    };
+    measure();
+    let ro;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(measure);
+      ro.observe(el);
+    }
+    return () => { if (ro) ro.disconnect(); };
   }, []);
-  const width = Math.max(320, Math.round(measuredW));
+  const width = measuredW > 0 ? Math.round(measuredW) : 640;
   const padTop = 20;
   const padBottom = 26;
   const padLeft = 52;
@@ -64,7 +69,7 @@ export default function LineChart({ history, forecast = [], color = 'var(--color
 
   return (
     <div ref={wrapRef} className="line-chart-wrap">
-    <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg" width="100%" height={height} preserveAspectRatio="none">
+    <svg viewBox={`0 0 ${width} ${height}`} className="line-chart-svg" width="100%" height={height}>
       {gridLines.map((v, i) => {
         const label = formatValue(v);
         const isDuplicate = i > 0 && label === formatValue(gridLines[i - 1]);
