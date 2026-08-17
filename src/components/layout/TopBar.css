@@ -310,12 +310,19 @@
   color: var(--color-text-tertiary);
 }
 
-@media (max-width: 1080px) {
-  .topbar-nav { display: none; }
-  .topbar-mobile-toggle { display: flex; }
+/* Faixa de laptop (1241–1440px): esconde o wordmark da marca para o nav em PT caber
+   inteiro numa linha só, sem cortar "Funcionários". O ícone da marca permanece. */
+@media (min-width: 1241px) and (max-width: 1440px) {
   .topbar-brand-text { display: none; }
 }
 
-@media (min-width: 1081px) {
+/* Abaixo de 1240px o nav não cabe mesmo sem o wordmark — colapsa no menu hambúrguer
+   (aí sobra espaço, então o wordmark volta a aparecer). */
+@media (max-width: 1240px) {
+  .topbar-nav { display: none; }
+  .topbar-mobile-toggle { display: flex; }
+}
+
+@media (min-width: 1241px) {
   .topbar-mobile-menu { display: none; }
 }
