@@ -61,7 +61,7 @@ export default function Production() {
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('por veículo')} · takt {prod.takt}s → {prod.lineCycle > prod.takt ? tx('acima do takt') : tx('dentro do takt')}</p>
         </SectionCard>
         <SectionCard title={tx('Estação gargalo')}>
-          <div className="stat-big" style={{ fontSize: 22 }}>{prod.bottleneck.icon} {prod.bottleneck.name}</div>
+          <div className="stat-big" style={{ fontSize: 22 }}>{prod.bottleneck.icon} {tx(prod.bottleneck.name)}</div>
           <p className="text-secondary" style={{ fontSize: 12 }}>{tx('capacidade')} {formatNumber(prod.bottleneck.capacity, 1)} {tx('veíc/h')} — {tx('limita a linha')}</p>
         </SectionCard>
       </div>
@@ -96,7 +96,7 @@ export default function Production() {
                   <span className="prod-station-icon">{s.icon}</span>
                   <span className="prod-station-dot" style={{ background: s.statusColor }} />
                 </div>
-                <div className="prod-station-name">{s.name}</div>
+                <div className="prod-station-name">{tx(s.name)}</div>
                 <div className="prod-station-metric">
                   <span className="prod-station-present">{s.present}</span>
                   <span className="prod-station-sep">/</span>
@@ -114,7 +114,7 @@ export default function Production() {
           ))}
         </div>
         <p className="prod-flow-out">
-          🚗 {tx('Saída da linha')}: <strong>{formatNumber(prod.carsDay)} {tx('veículos/dia')}</strong> — {tx('ritmo ditado pela estação')} <strong>{prod.bottleneck.name}</strong> ({tx('teoria das restrições: a linha anda no passo da estação mais lenta')}).
+          🚗 {tx('Saída da linha')}: <strong>{formatNumber(prod.carsDay)} {tx('veículos/dia')}</strong> — {tx('ritmo ditado pela estação')} <strong>{tx(prod.bottleneck.name)}</strong> ({tx('teoria das restrições: a linha anda no passo da estação mais lenta')}).
         </p>
       </SectionCard>
 
@@ -132,7 +132,7 @@ export default function Production() {
                     className={`prod-sim-chip${simStation === s.id ? ' active' : ''}`}
                     onClick={() => { setSimStation(s.id); setExtra(0); }}
                   >
-                    {s.icon} {s.short}
+                    {s.icon} {tx(s.short)}
                   </button>
                 ))}
               </div>
@@ -173,9 +173,9 @@ export default function Production() {
               <p className="prod-sim-verdict">
                 {(() => {
                   const newBn = sim.bottleneck;
-                  if (extra === 0) return `${tx('Cenário atual: o gargalo é')} ${prod.bottleneck.name}. ${tx('Adicione faltas para simular.')}`;
+                  if (extra === 0) return `${tx('Cenário atual: o gargalo é')} ${tx(prod.bottleneck.name)}. ${tx('Adicione faltas para simular.')}`;
                   const changedBn = newBn.id !== prod.bottleneck.id;
-                  const stName = simStationData?.name;
+                  const stName = simStationData ? tx(simStationData.name) : '';
                   if (simStationData && simStationData.present <= 0) {
                     return `⛔ ${tx('Com')} ${extra} ${tx('faltas a mais,')} ${stName} ${tx('fica sem operadores e PARA a linha — produção vai a zero até realocar gente.')}`;
                   }
@@ -183,9 +183,9 @@ export default function Production() {
                     return `🔴 ${tx('Com')} ${extra} ${tx('faltas a mais,')} ${stName} ${tx('vira o novo gargalo da linha e a produção cai para')} ${formatNumber(sim.carsDay)} ${tx('veículos/dia')} (${formatNumber(simDelta)}).`;
                   }
                   if (simDelta < 0) {
-                    return `🟠 ${extra} ${tx('faltas a mais em')} ${stName} ${tx('derrubam a produção em')} ${formatNumber(Math.abs(simDelta))} ${tx('veículos/dia. Gargalo segue em')} ${newBn.name}.`;
+                    return `🟠 ${extra} ${tx('faltas a mais em')} ${stName} ${tx('derrubam a produção em')} ${formatNumber(Math.abs(simDelta))} ${tx('veículos/dia. Gargalo segue em')} ${tx(newBn.name)}.`;
                   }
-                  return `🟢 ${stName} ${tx('tem folga: aguenta')} ${extra} ${tx('faltas a mais sem virar gargalo — a linha continua limitada por')} ${newBn.name}.`;
+                  return `🟢 ${stName} ${tx('tem folga: aguenta')} ${extra} ${tx('faltas a mais sem virar gargalo — a linha continua limitada por')} ${tx(newBn.name)}.`;
                 })()}
               </p>
             </div>
@@ -199,7 +199,7 @@ export default function Production() {
           <Table
             rows={tableRows}
             columns={[
-              { key: 'estacao', label: tx('Estação'), render: (r) => <span>{r.icon} {r.name}</span> },
+              { key: 'estacao', label: tx('Estação'), render: (r) => <span>{r.icon} {tx(r.name)}</span> },
               { key: 'assigned', label: tx('Postos'), align: 'right' },
               { key: 'present', label: tx('Presentes'), align: 'right' },
               { key: 'absent', label: tx('Faltas'), align: 'right', render: (r) => (r.absent > 0 ? <span className="prod-red-text">{r.absent}</span> : '0') },
@@ -229,7 +229,7 @@ export default function Production() {
                 key: 'status',
                 label: tx('Status'),
                 sortAccessor: (r) => (r.status === 'gargalo' ? 2 : r.status === 'atencao' ? 1 : 0),
-                render: (r) => <span className={`prod-badge ${statusClass(r.status)}`}>{r.statusLabel}</span>,
+                render: (r) => <span className={`prod-badge ${statusClass(r.status)}`}>{tx(r.statusLabel)}</span>,
               },
             ]}
           />
@@ -243,10 +243,10 @@ export default function Production() {
             <div className="prod-absent-grid">
               {prod.stations.filter((s) => s.absentList.length > 0).map((s) => (
                 <div key={s.id} className="prod-absent-col">
-                  <div className="prod-absent-col-head">{s.icon} {s.name} <span>({s.absentList.length})</span></div>
+                  <div className="prod-absent-col-head">{s.icon} {tx(s.name)} <span>({s.absentList.length})</span></div>
                   <ul className="prod-absent-list">
                     {s.absentList.slice(0, 8).map((p) => (
-                      <li key={p.id}><Link to={`/funcionario/${p.id}`}>{p.name}</Link> <span className="text-tertiary">· {p.roleLevel}</span></li>
+                      <li key={p.id}><Link to={`/funcionario/${p.id}`}>{p.name}</Link> <span className="text-tertiary">· {tx(p.roleLevel)}</span></li>
                     ))}
                     {s.absentList.length > 8 && <li className="text-tertiary">+{s.absentList.length - 8} {tx('outros')}</li>}
                   </ul>

@@ -4,15 +4,17 @@ import SectionCard from '../components/ui/SectionCard.jsx';
 import { exportSheet, exportWorkbook } from '../utils/exportExcel.js';
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import { useLang } from '../i18n/LanguageContext.jsx';
+import { requiresEpi, getEpiChecklist } from '../data/epiRequirements.js';
 import './Reports.css';
 
-function buildReportDefinitions(metrics) {
+function buildReportDefinitions(metrics, employees) {
+  const active = metrics.activeNow;
   return [
     {
       id: 'colaboradores',
       title: 'Colaboradores ativos',
       description: 'Quadro completo com diretoria, cargo, gestor, salário e admissão',
-      rows: () => metrics.activeNow.map((e) => ({
+      rows: () => active.map((e) => ({
         Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Gestor: e.managerName, Unidade: e.unit,
         Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Salário: e.salary, Gênero: e.gender, Raça: e.race,
       })),
@@ -21,8 +23,13 @@ function buildReportDefinitions(metrics) {
       id: 'desligamentos',
       title: 'Desligamentos (12 meses)',
       description: 'Todos os desligamentos com tipo, motivo e custo estimado',
-      // rows() is replaced below — needs the raw employee list, not just aggregated metrics.
-      rows: () => [],
+      rows: () => employees
+        .filter((e) => e.status === 'Desligado' && e.terminationDate >= metrics.months.at(-12))
+        .map((e) => ({
+          Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Tipo: e.terminationType, Motivo: e.terminationReason,
+          Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Desligamento: e.terminationDate.toLocaleDateString('pt-BR'),
+          'Custo estimado (R$)': (e.salary * 12 * 0.6).toFixed(2),
+        })),
     },
     {
       id: 'turnover-area',
@@ -50,6 +57,61 @@ function buildReportDefinitions(metrics) {
       description: 'Colaboradores com alto desempenho e alto potencial (nine box)',
       rows: () => metrics.criticalTalents.map((t) => ({
         Nome: t.name, Diretoria: t.area, Cargo: t.roleLevel, Gestor: t.managerName, Engajamento: t.engagementScore,
+      })),
+    },
+    {
+      id: 'epi',
+      title: 'EPI por colaborador',
+      description: 'Equipamentos exigidos por função operacional, situação de entrega e nº do CA',
+      rows: () => active.filter(requiresEpi).flatMap((e) => getEpiChecklist(e).map((item) => ({
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Unidade: e.unit,
+        EPI: item.name, Situação: item.statusLabel, Possui: item.has ? 'Sim' : 'Não', CA: item.caNumber,
+      }))),
+    },
+    {
+      id: 'diversidade',
+      title: 'Diversidade — quadro ativo',
+      description: 'Gênero, raça, geração, idade e PCD por colaborador',
+      rows: () => active.map((e) => ({
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Gênero: e.gender, Raça: e.race,
+        Geração: e.generation, Idade: e.age, PCD: e.pcd ? 'Sim' : 'Não', 'Tipo PCD': e.pcd ? e.pcdType : '',
+      })),
+    },
+    {
+      id: 'remuneracao',
+      title: 'Remuneração e benefícios',
+      description: 'Salário, saldo de férias e benefícios ativos por colaborador',
+      rows: () => active.map((e) => ({
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Salário: e.salary,
+        'Saldo de férias (dias)': e.vacationBalance, Benefícios: (e.benefits || []).join(', '),
+      })),
+    },
+    {
+      id: 'treinamento',
+      title: 'Treinamentos por colaborador',
+      description: 'Horas de capacitação no ano e treinamentos concluídos',
+      rows: () => active.map((e) => ({
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, 'Horas no ano': e.trainingHoursYear,
+        'Treinamentos concluídos': (e.trainingsCompleted || []).length,
+        Cursos: (e.trainingsCompleted || []).join(', '),
+      })),
+    },
+    {
+      id: 'cota-pcd',
+      title: 'Cota PCD (pessoas com deficiência)',
+      description: 'Colaboradores PCD ativos com tipo de deficiência e unidade',
+      rows: () => active.filter((e) => e.pcd).map((e) => ({
+        Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Unidade: e.unit,
+        'Tipo de deficiência': e.pcdType, Admissão: e.admissionDate.toLocaleDateString('pt-BR'),
+      })),
+    },
+    {
+      id: 'aprendizes',
+      title: 'Jovens aprendizes',
+      description: 'Aprendizes ativos (cota da Lei da Aprendizagem) com unidade e admissão',
+      rows: () => active.filter((e) => e.roleLevel === 'Aprendiz').map((e) => ({
+        Nome: e.name, Diretoria: e.area, Unidade: e.unit, Idade: e.age,
+        Admissão: e.admissionDate.toLocaleDateString('pt-BR'),
       })),
     },
   ];
@@ -101,19 +163,7 @@ export default function Reports() {
   const { tx } = useLang();
   const { metrics, employees, insights } = useData();
   const [busyAll, setBusyAll] = useState(false);
-  const reports = buildReportDefinitions(metrics).map((r) => {
-    if (r.id === 'desligamentos') {
-      return {
-        ...r,
-        rows: () => employees.filter((e) => e.status === 'Desligado' && e.terminationDate >= metrics.months.at(-12)).map((e) => ({
-          Nome: e.name, Diretoria: e.area, Cargo: e.roleLevel, Tipo: e.terminationType, Motivo: e.terminationReason,
-          Admissão: e.admissionDate.toLocaleDateString('pt-BR'), Desligamento: e.terminationDate.toLocaleDateString('pt-BR'),
-          'Custo estimado (R$)': (e.salary * 12 * 0.6).toFixed(2),
-        })),
-      };
-    }
-    return r;
-  });
+  const reports = buildReportDefinitions(metrics, employees);
 
   async function handleExportAll() {
     setBusyAll(true);

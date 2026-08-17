@@ -17,6 +17,8 @@ import epi from './epi.js';
 import budgetcost from './budgetcost.js';
 import overtimetypes from './overtimetypes.js';
 import themesui from './themesui.js';
+import production from './production.js';
+import reportsextra from './reportsextra.js';
 
 export const DICT = {
   ...common,
@@ -35,4 +37,6 @@ export const DICT = {
   ...budgetcost,
   ...overtimetypes,
   ...themesui,
+  ...production,
+  ...reportsextra,
 };
