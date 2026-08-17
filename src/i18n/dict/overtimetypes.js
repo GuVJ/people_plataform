@@ -26,4 +26,9 @@ export default {
     'Employee awaiting orders at the workplace itself, paid at 2/3 of the normal hour.',
   'Reflexo das horas extras no descanso semanal remunerado — infla a folha de forma indireta.':
     'Impact of overtime on paid weekly rest — indirectly inflates payroll.',
+  // Evolução mensal por tipo
+  'Evolução mensal por tipo de hora extra': 'Monthly overtime cost by type',
+  'Composição do custo mês a mês (últimos 12 meses)': 'Month-by-month cost composition (last 12 months)',
+  'Cada barra é o custo total de HE do mês, empilhado pela proporção de cada tipo da CLT. Passe o mouse num segmento para ver o valor e a descrição do tipo.':
+    "Each bar is the month's total overtime cost, stacked by each CLT type's share. Hover a segment to see its value and description.",
 };

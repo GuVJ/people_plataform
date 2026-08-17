@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useData } from '../context/DataContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import StackedBarChart from '../components/ui/StackedBarChart.jsx';
 import HeatmapTable from '../components/ui/HeatmapTable.jsx';
 import LineChart from '../components/ui/LineChart.jsx';
 import ExportButton from '../components/ui/ExportButton.jsx';
@@ -34,6 +35,16 @@ export default function Overtime() {
     })),
     [last.cost, annualCost],
   );
+
+  // Evolução mês a mês empilhada por tipo (custo mensal × proporção de cada tipo da CLT).
+  const TYPE_COLORS = ['var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--chart-2)'];
+  const typeSeries = OVERTIME_COST_TYPES.map((t, i) => ({ key: t.key, label: t.label, color: TYPE_COLORS[i % TYPE_COLORS.length] }));
+  const typeSeriesDesc = Object.fromEntries(OVERTIME_COST_TYPES.map((t) => [t.key, t.description]));
+  const monthlyByType = series.slice(-12).map((m) => ({
+    label: m.label,
+    total: m.cost,
+    values: Object.fromEntries(OVERTIME_COST_TYPES.map((t) => [t.key, m.cost * t.share])),
+  }));
 
   const exportRows = byType.map((t) => ({
     Tipo: t.label,
@@ -95,6 +106,22 @@ export default function Overtime() {
               </div>
             ))}
           </div>
+        </SectionCard>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <SectionCard
+          title={tx('Evolução mensal por tipo de hora extra')}
+          subtitle={tx('Composição do custo mês a mês (últimos 12 meses)')}
+          info="Cada barra é o custo total de HE do mês, empilhado pela proporção de cada tipo da CLT. Passe o mouse num segmento para ver o valor e a descrição do tipo."
+        >
+          <StackedBarChart
+            data={monthlyByType}
+            series={typeSeries}
+            seriesDesc={typeSeriesDesc}
+            height={260}
+            formatValue={(v) => formatCurrency(v, { compact: true })}
+          />
         </SectionCard>
       </div>
 
