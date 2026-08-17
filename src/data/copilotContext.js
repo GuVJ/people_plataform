@@ -179,13 +179,16 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety, 
       turnoverMensal: formatPercent(metrics.benchmark.turnoverMonthly),
       absenteismo: formatPercent(metrics.benchmark.absenteeismRate),
     },
-    // Metas de orçamento do ano (use para comparar "realizado vs. meta").
-    metasOrcamento: targets ? {
-      headcountMeta: formatNumber(targets.headcountTarget),
-      custoPessoasMetaAnual: formatCurrency(targets.peopleCostTarget, { compact: true }),
-      turnoverMetaAnualPct: formatPercent(targets.turnoverTarget),
-      turnoverMetaMensalPct: formatPercent(targets.turnoverTarget / 12),
-      custoHorasExtrasMetaAnual: formatCurrency(targets.overtimeCostTarget, { compact: true }),
+    // Metas de orçamento do ano (use para comparar "realizado vs. meta"). targets é
+    // aninhado por ano — o ano corrente é 2026.
+    metasOrcamento: targets?.[2026] ? {
+      headcountMeta: formatNumber(targets[2026].headcountTarget),
+      turnoverMetaAnualPct: formatPercent(targets[2026].turnoverTarget),
+      turnoverMetaMensalPct: formatPercent(targets[2026].turnoverTarget / 12),
+      custoPessoasMetaAnual: formatCurrency(targets[2026].peopleCostTarget, { compact: true }),
+      custoPessoasMetaMensal: formatCurrency(targets[2026].peopleCostTarget / 12, { compact: true }),
+      custoHorasExtrasMetaAnual: formatCurrency(targets[2026].overtimeCostTarget, { compact: true }),
+      custoHorasExtrasMetaMensal: formatCurrency(targets[2026].overtimeCostTarget / 12, { compact: true }),
     } : undefined,
   };
 }
