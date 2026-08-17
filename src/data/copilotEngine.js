@@ -1,6 +1,6 @@
 import { formatCurrency, formatNumber, formatPercent } from '../utils/format.js';
 import { diffInYears } from '../utils/dates.js';
-import { AREAS } from './constants.js';
+import { AREAS, OVERTIME_COST_TYPES } from './constants.js';
 import { buildExecutiveSummary } from './executiveSummary.js';
 import { pick, txt } from '../i18n/lang.js';
 
@@ -625,7 +625,7 @@ export function answerQuestion(question, ctx) {
     };
   }
 
-  if (has(q, 'custo', 'quanto custa')) {
+  if (has(q, 'custo', 'quanto custa') && !has(q, 'hora extra', 'horas extras', 'banco de horas')) {
     const last12Cost = metrics.terminationsSeries.slice(-12).reduce((s, t) => s + t.cost, 0);
     const otCost = metrics.overtimeSeries.slice(-12).reduce((s, o) => s + o.cost, 0);
     return {
@@ -677,16 +677,50 @@ export function answerQuestion(question, ctx) {
   }
 
   if (has(q, 'horas extras', 'hora extra')) {
-    const last12 = metrics.overtimeSeries.slice(-12).reduce((s, o) => s + o.cost, 0);
-    const breakdown = wantsBreakdown(q);
-    const areaPt = breakdown ? `, com a diretoria ${metrics.overtimeByArea[0]?.area} concentrando o maior volume` : '';
-    const areaEn = breakdown ? `, with the ${metrics.overtimeByArea[0]?.area} division concentrating the highest volume` : '';
+    const series = metrics.overtimeSeries;
+    const last12Cost = series.slice(-12).reduce((s, o) => s + o.cost, 0);
+    const last12Hours = series.slice(-12).reduce((s, o) => s + (o.hours ?? 0), 0);
+    const monthlyAvg = last12Cost / 12;
+    const lm = last(series);
+    const pm = prev(series);
+    const deltaPct = pm && pm.cost ? ((lm.cost - pm.cost) / pm.cost) * 100 : 0;
+    const dirUp = lm.cost >= (pm?.cost ?? lm.cost);
+    const payroll = last(metrics.payrollSeries)?.total ?? 0;
+    const pctPayroll = payroll ? (lm.cost / payroll) * 100 : 0;
+    const areas = metrics.overtimeByArea;
+    const totalArea = areas.reduce((s, a) => s + a.cost, 0) || 1;
+    const topA = areas[0];
+    const shareA = (topA.cost / totalArea) * 100;
+    const topType = [...OVERTIME_COST_TYPES].sort((a, b) => b.share - a.share)[0];
+    const meta = targets?.[2026]?.overtimeCostTarget;
+    const overMeta = meta != null ? last12Cost - meta : null;
+    const trendPt = `${dirUp ? 'alta' : 'queda'} de ${formatNumber(Math.abs(deltaPct), 0)}%`;
+    const trendEn = `${dirUp ? 'up' : 'down'} ${formatNumber(Math.abs(deltaPct), 0)}%`;
+
     return {
       text: pick(
-        `O custo de horas extras nos últimos 12 meses somou ${formatCurrency(last12, { compact: true })}${areaPt}.`,
-        `Overtime cost over the last 12 months totaled ${formatCurrency(last12, { compact: true })}${areaEn}.`,
+        `O custo de horas extras somou **${formatCurrency(last12Cost, { compact: true })}** nos últimos 12 meses (${formatNumber(last12Hours)} horas, média de ${formatCurrency(monthlyAvg, { compact: true })}/mês). No último mês fechado foi ${formatCurrency(lm.cost, { compact: true })}, ${trendPt} vs. o mês anterior, equivalente a **${formatPercent(pctPayroll)} da folha**. A diretoria **${topA.area}** concentra o maior custo (${formatCurrency(topA.cost, { compact: true })}, ${formatNumber(shareA, 0)}% do total) e o tipo mais representativo é **${topType.label.toLowerCase()}** (~${formatNumber(topType.share * 100, 0)}% do custo).`,
+        `Overtime cost totaled **${formatCurrency(last12Cost, { compact: true })}** over the last 12 months (${formatNumber(last12Hours)} hours, averaging ${formatCurrency(monthlyAvg, { compact: true })}/mo). Last closed month was ${formatCurrency(lm.cost, { compact: true })}, ${trendEn} vs. the previous month, equal to **${formatPercent(pctPayroll)} of payroll**. The **${topA.area}** division concentrates the highest cost (${formatCurrency(topA.cost, { compact: true })}, ${formatNumber(shareA, 0)}% of the total) and the most representative type is **${topType.label.toLowerCase()}** (~${formatNumber(topType.share * 100, 0)}% of the cost).`,
       ),
-      chart: breakdown ? { type: 'bar', title: txt('Custo de horas extras por diretoria'), data: metrics.overtimeByArea, valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) } : undefined,
+      chart: { type: 'bar', title: txt('Custo de horas extras por diretoria'), data: areas.slice(0, 6), valueKey: 'cost', labelKey: 'area', formatValue: (v) => formatCurrency(v, { compact: true }) },
+      financialImpact: meta != null ? pick(
+        `Meta anual de horas extras: ${formatCurrency(meta, { compact: true })}. Realizado em 12 meses: ${formatCurrency(last12Cost, { compact: true })} — ${overMeta > 0 ? `${formatCurrency(overMeta, { compact: true })} acima da meta` : `${formatCurrency(Math.abs(overMeta), { compact: true })} abaixo da meta`}.`,
+        `Annual overtime target: ${formatCurrency(meta, { compact: true })}. 12-month actual: ${formatCurrency(last12Cost, { compact: true })} — ${overMeta > 0 ? `${formatCurrency(overMeta, { compact: true })} over target` : `${formatCurrency(Math.abs(overMeta), { compact: true })} under target`}.`,
+      ) : undefined,
+      recommendations: [
+        pick(
+          `Concentrar o controle em ${topA.area}, que responde por ${formatNumber(shareA, 0)}% do custo de HE — revisar dimensionamento de equipe e escalas.`,
+          `Focus control on ${topA.area}, which accounts for ${formatNumber(shareA, 0)}% of overtime cost — review team sizing and shifts.`,
+        ),
+        pick(
+          `Atacar "${topType.label.toLowerCase()}" (o tipo dominante) e avaliar banco de horas para reduzir o que é pago com adicional.`,
+          `Tackle "${topType.label.toLowerCase()}" (the dominant type) and consider an hours bank to cut premium-paid overtime.`,
+        ),
+        pick(
+          'Definir um teto de HE por diretoria e cruzar com turnover e absenteísmo — HE alta costuma sinalizar sobrecarga e risco de saída.',
+          'Set an overtime cap per division and cross it with turnover and absenteeism — high overtime often signals overload and attrition risk.',
+        ),
+      ],
     };
   }
 
