@@ -27,7 +27,7 @@ function has(text, ...keywords) {
 // Mapa tema → página de indicadores. Ordenado do mais específico para o mais genérico
 // (o primeiro match vence). Usado para oferecer um botão "ir para a página" na resposta.
 const PAGE_MAP = [
-  { kws: ['posicionamento', 'compa', 'faixa salarial'], to: '/posicionamento', label: 'Posicionamento Salarial' },
+  { kws: ['posicionamento', /\bcompa\b/, 'faixa salarial'], to: '/posicionamento', label: 'Posicionamento Salarial' },
   { kws: ['pcd', 'deficien', 'cota de pcd'], to: '/pcd', label: 'PCD' },
   { kws: ['aprendiz'], to: '/aprendizes', label: 'Jovem Aprendiz' },
   { kws: ['disciplinar', 'advertenc', 'suspensao', 'justa causa'], to: '/disciplinar', label: 'Medidas Disciplinares' },

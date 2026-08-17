@@ -26,6 +26,8 @@ export default function Copilot() {
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef(null);
+  // Último tema com página — para follow-ups sem tema explícito herdarem o botão certo.
+  const lastPageLinkRef = useRef(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -49,7 +51,7 @@ export default function Copilot() {
     const skipGemini = localAnswer.employeeCard || localAnswer.table || genuineClarify;
     if (!skipGemini) {
       try {
-        const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr });
+        const context = buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr, targets });
         // Histórico da conversa (memória) — turnos anteriores em texto, sem a saudação inicial.
         const history = messages
           .filter((m) => !(m.role === 'assistant' && m.content?.initial))
@@ -72,10 +74,14 @@ export default function Copilot() {
       }
     }
 
-    // Se o tema tem uma página de indicadores, anexa um botão para ir até ela (exceto em card de pessoa).
+    // Botão "ir para a página" do tema. Follow-ups sem tema explícito herdam o último tema
+    // da conversa (ex.: "e comparado com a meta?" mantém a página de Turnover).
     if (!localAnswer.employeeCard) {
-      const pageLink = pageForQuestion(q);
-      if (pageLink) answer = { ...answer, pageLink };
+      const pageLink = pageForQuestion(q) ?? lastPageLinkRef.current;
+      if (pageLink) {
+        lastPageLinkRef.current = pageLink;
+        answer = { ...answer, pageLink };
+      }
     }
 
     setMessages((m) => [...m, { role: 'assistant', content: answer }]);

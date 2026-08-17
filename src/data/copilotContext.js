@@ -11,7 +11,7 @@ function formatKpi(k) {
 // Builds a small, JSON-safe snapshot of the current dataset — grounding data for the
 // Gemini prompt. Deliberately compact: never send the full employee list (thousands of
 // records) to the model, only pre-aggregated numbers it can quote back accurately.
-export function buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr }) {
+export function buildCopilotContext({ metrics, insights, risk, medical, safety, production, hr, targets }) {
   const last = (arr) => arr[arr.length - 1];
   const prev = (arr) => arr[arr.length - 2];
 
@@ -179,5 +179,13 @@ export function buildCopilotContext({ metrics, insights, risk, medical, safety, 
       turnoverMensal: formatPercent(metrics.benchmark.turnoverMonthly),
       absenteismo: formatPercent(metrics.benchmark.absenteeismRate),
     },
+    // Metas de orçamento do ano (use para comparar "realizado vs. meta").
+    metasOrcamento: targets ? {
+      headcountMeta: formatNumber(targets.headcountTarget),
+      custoPessoasMetaAnual: formatCurrency(targets.peopleCostTarget, { compact: true }),
+      turnoverMetaAnualPct: formatPercent(targets.turnoverTarget),
+      turnoverMetaMensalPct: formatPercent(targets.turnoverTarget / 12),
+      custoHorasExtrasMetaAnual: formatCurrency(targets.overtimeCostTarget, { compact: true }),
+    } : undefined,
   };
 }
