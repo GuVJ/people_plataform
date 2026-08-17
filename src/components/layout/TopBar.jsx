@@ -25,11 +25,11 @@ const DASHBOARD_LINKS = [
   { to: '/performance', label: 'Desempenho' },
 ];
 
+// Íris ('/copilot') e Meu Painel são renderizados fora desta lista (posições fixas no início).
 const PRIMARY_LINKS = [
   { to: '/produtividade', label: 'Produtividade' },
   { to: '/organograma', label: 'Organograma' },
   { to: '/gestor', label: 'Visão do Gestor' },
-  { to: '/copilot', label: 'Íris IA' },
   { to: '/planning', label: 'Planejamento' },
   { to: '/orcamento', label: 'Orçamento' },
   { to: '/gatilhos', label: 'Gatilhos' },
@@ -90,9 +90,6 @@ export default function TopBar() {
           <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
             {t('nav.overview')}
           </NavLink>
-          <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
-            {t('nav.myPanel')}
-          </NavLink>
 
           <div className="topbar-dropdown" ref={dashRef}>
             <button
@@ -114,6 +111,13 @@ export default function TopBar() {
               </div>
             )}
           </div>
+
+          <NavLink to="/copilot" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+            {tNav('/copilot', 'Íris IA')}
+          </NavLink>
+          <NavLink to="/meu-painel" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
+            {t('nav.myPanel')}
+          </NavLink>
 
           {PRIMARY_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>
@@ -153,6 +157,7 @@ export default function TopBar() {
       {mobileMenuOpen && (
         <div className="topbar-mobile-menu fade-in">
           <NavLink to="/" end className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.overview')}</NavLink>
+          <NavLink to="/copilot" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{tNav('/copilot', 'Íris IA')}</NavLink>
           <NavLink to="/meu-painel" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.myPanel')}</NavLink>
           <NavLink to="/sobre" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.about')}</NavLink>
           <NavLink to="/configuracoes" className="topbar-mobile-link" onClick={() => setMobileMenuOpen(false)}>{t('nav.settings')}</NavLink>
