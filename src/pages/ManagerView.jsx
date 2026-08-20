@@ -4,6 +4,7 @@ import { useData } from '../context/DataContext.jsx';
 import { useLang } from '../i18n/LanguageContext.jsx';
 import SectionCard from '../components/ui/SectionCard.jsx';
 import BarChart from '../components/ui/BarChart.jsx';
+import StackedBarChart from '../components/ui/StackedBarChart.jsx';
 import Table from '../components/ui/Table.jsx';
 import AIInsightPanel from '../components/profile/AIInsightPanel.jsx';
 import { RISK_LEVEL_COLOR } from '../data/risk.js';
@@ -44,6 +45,15 @@ export default function ManagerView() {
   const geminiContext = buildManagerCopilotContext(view);
   const maxNineBox = Math.max(...view.nineBoxGrid.map((c) => c.count), 1);
   const maxOvertime = Math.max(...view.roster.map((r) => r.recentOvertimeHours || 0), 1);
+
+  // Séries mensais do time (barras verticais).
+  const headcountBars = view.movementSeries.map((m) => ({ label: m.label, total: m.headcount, values: { headcount: m.headcount } }));
+  const headcountSeries = [{ key: 'headcount', label: 'Headcount', color: 'var(--color-primary)' }];
+  const flowBars = view.movementSeries.map((m) => ({ label: m.label, total: m.admissions + m.terminations, values: { admissions: m.admissions, terminations: m.terminations } }));
+  const flowSeries = [
+    { key: 'admissions', label: 'Admissões', color: 'var(--color-success)' },
+    { key: 'terminations', label: 'Demissões', color: 'var(--color-danger)' },
+  ];
 
   return (
     <div className="page fade-in">
@@ -114,6 +124,15 @@ export default function ManagerView() {
                   );
                 })}
               </div>
+            </SectionCard>
+          </div>
+
+          <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+            <SectionCard title={tx('Evolução do headcount do time')} subtitle={tx('Últimos 12 meses')}>
+              <StackedBarChart data={headcountBars} series={headcountSeries} height={220} formatValue={(v) => formatNumber(v)} />
+            </SectionCard>
+            <SectionCard title={tx('Admissões e demissões do time')} subtitle={tx('Movimentação mês a mês (12 meses)')}>
+              <StackedBarChart data={flowBars} series={flowSeries} height={220} formatValue={(v) => formatNumber(v)} />
             </SectionCard>
           </div>
 

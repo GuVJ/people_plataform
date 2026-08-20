@@ -1,5 +1,5 @@
 import { average } from '../utils/stats.js';
-import { monthKey } from '../utils/dates.js';
+import { monthKey, monthLabel, endOfMonth } from '../utils/dates.js';
 
 const RECENT_MONTHS = 3;
 
@@ -45,6 +45,20 @@ export function buildManagerView({ managerId, employees, risk, months, reference
   const criticalTalents = team.filter((e) => e.performanceBucket === 'Alto' && e.potential === 'Alto');
   const highRisk = teamRisk.filter((r) => r.level === 'Alto' || r.level === 'Muito Alto');
 
+  // Série mensal (12 meses) escopada aos reportes do gestor — inclui desligados para
+  // reconstruir headcount, admissões e demissões de cada mês.
+  const allReports = employees.filter((e) => e.managerId === managerId);
+  const movementSeries = months.slice(-12).map((m) => {
+    const key = monthKey(m);
+    const end = endOfMonth(m);
+    return {
+      label: monthLabel(m),
+      admissions: allReports.filter((e) => monthKey(e.admissionDate) === key).length,
+      terminations: allReports.filter((e) => e.terminationDate && monthKey(e.terminationDate) === key).length,
+      headcount: allReports.filter((e) => e.admissionDate <= end && (!e.terminationDate || e.terminationDate > end)).length,
+    };
+  });
+
   const roster = team.map((e) => ({
     ...e,
     risk: riskById.get(e.id) ?? null,
@@ -69,6 +83,7 @@ export function buildManagerView({ managerId, employees, risk, months, reference
     nineBoxGrid,
     criticalTalents,
     highRisk,
+    movementSeries,
     promotionsCount: team.reduce((s, e) => s + e.promotions, 0),
     avgTrainingHours: average(team, (e) => e.trainingHoursYear),
   };
