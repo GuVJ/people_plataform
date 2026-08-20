@@ -40,10 +40,13 @@
   color: var(--color-primary);
 }
 
-/* Alinha os cards ao topo para as barras não deixarem espaço vazio ao esticar
-   até a altura do Nine Box (o mais alto da linha). */
-.manager-charts-row {
-  align-items: start;
+/* Os cards da linha esticam para a mesma altura (a do Nine Box). Para os cards de
+   barra não deixarem um bloco vazio embaixo, o corpo cresce e centraliza as barras. */
+.manager-bars-card .section-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .manager-ninebox {
