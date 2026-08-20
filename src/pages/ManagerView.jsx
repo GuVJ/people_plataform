@@ -95,16 +95,13 @@ export default function ManagerView() {
             <SectionCard title={tx('Talentos críticos')}><div className="stat-big">{formatNumber(view.criticalTalents.length)}</div><p className="text-secondary" style={{ fontSize: 12 }}>{tx('alto desempenho + potencial')}</p></SectionCard>
           </div>
 
-          <div className="grid grid-cols-2" style={{ marginBottom: 16 }}>
+          <div className="grid grid-cols-3" style={{ marginBottom: 16 }}>
             <SectionCard title={tx('Desempenho do time')}>
               <BarChart data={view.performanceDistribution} valueKey="count" labelKey="label" formatValue={(v) => formatNumber(v)} />
             </SectionCard>
             <SectionCard title={tx('Risco de saída do time')}>
               <BarChart data={view.riskDistribution} valueKey="count" labelKey="label" color="var(--color-warning)" formatValue={(v) => formatNumber(v)} />
             </SectionCard>
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
             <SectionCard title={tx('Nine Box do time')} subtitle={tx('Desempenho x Potencial')}>
               <div className="manager-ninebox">
                 {view.nineBoxGrid.map((c, i) => {
