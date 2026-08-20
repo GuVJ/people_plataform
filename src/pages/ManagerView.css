@@ -40,6 +40,12 @@
   color: var(--color-primary);
 }
 
+/* Alinha os cards ao topo para as barras não deixarem espaço vazio ao esticar
+   até a altura do Nine Box (o mais alto da linha). */
+.manager-charts-row {
+  align-items: start;
+}
+
 .manager-ninebox {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
